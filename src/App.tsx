@@ -1,13 +1,11 @@
-import Navbar from "./components/Navbar";
-import ReservationPanel from "./components/ReservationPanel";
-import Footer from "./components/Footer";
+import ReservationPanel from "./ReservationPanel/ReservationPanel";
+import Navbar from './Navbar';
 
 function App() {
   return (
     <>
       <Navbar />
       <ReservationPanel />
-      <Footer />
     </>
   );
 }

@@ -3,7 +3,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { CardActionArea, Button } from "@mui/material";
+import { CardActionArea } from "@mui/material";
 
 import { makeStyles } from "@mui/styles";
 
@@ -17,19 +17,13 @@ const useStyles = makeStyles({
 });
 
 interface ActionAreaCardProps {
-  name: String;
+  name: string;
+  type: string;
+  imageUrl: string;
 }
 
-const ActionAreaCard = ({ name }: ActionAreaCardProps) => {
+const ActionAreaCard = ({ name, type, imageUrl }: ActionAreaCardProps) => {
   const classes = useStyles();
-
-  const narty1 =
-    "https://roweryczeladz.pl/userdata/public/gfx/23514/593d47c148d09f50c3ae71c3d84c.jpg";
-  const narty2 =
-    "https://snowsport.pl/oferta-02/1586442431_Narty-Atomic-Redster-S9+wiazanie-X-14-GW-2021-1.jpg";
-
-  const random = Math.random();
-  const narty = Math.round(random) === 0 ? narty1 : narty2;
 
   return (
     <Card className={classes.root}>
@@ -37,7 +31,7 @@ const ActionAreaCard = ({ name }: ActionAreaCardProps) => {
         <CardMedia
           component="img"
           height="140"
-          image={narty}
+          image={imageUrl}
           alt="green iguana"
         />
         <CardContent>
@@ -45,15 +39,8 @@ const ActionAreaCard = ({ name }: ActionAreaCardProps) => {
             {name}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Narty
+            {type}
           </Typography>
-          <Button
-            variant="contained"
-            color="success"
-            className={classes.button}
-          >
-            Sprawdź dostępność
-          </Button>
         </CardContent>
       </CardActionArea>
     </Card>
