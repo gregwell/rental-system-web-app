@@ -10,7 +10,7 @@ import {
 import { useFetchDocuments } from "./useFetchDocuments";
 import { useState } from "react";
 import { useEffect } from "react";
-import { Item, Reservation } from "./types";
+import { Item, Reservation, User } from "./types";
 import AvailableItems from "./AvailableItems/AvailableItems";
 import { ReservationDateTimePicker } from "./ReservationDateTimePicker";
 import { ReservationConfirmation } from "./ReservationConfirmation";
@@ -44,7 +44,13 @@ const useStyles = makeStyles({
   },
 });
 
-const ReservationPanel = () => {
+interface ReservationPanelProps {
+  users: User[] | null;
+  loggedUser: User | null;
+  setLoggedUser: (value: User | null) => void;
+}
+
+const ReservationPanel = ({ users, loggedUser, setLoggedUser }: ReservationPanelProps) => {
   const classes = useStyles();
 
   const types = ["Narty", "Deski Snowboardowe"];
@@ -119,15 +125,15 @@ const ReservationPanel = () => {
   return (
     <>
       {!!isShowingReservationForm && choosenItem && (
-        <div className={classes.panel}>
-          <Container className={classes.reservation}>
-            <ReservationConfirmation
-              choosenItem={choosenItem}
-              startDate={startDate}
-              finishDate={finishDate}
-            />
-          </Container>
-        </div>
+        <ReservationConfirmation
+          choosenItem={choosenItem}
+          startDate={startDate}
+          finishDate={finishDate}
+          isUserLogged={false}
+          users={users}
+          loggedUser={loggedUser}
+          setLoggedUser={setLoggedUser}
+        />
       )}
       <div className={classes.panel}>
         <Container className={classes.reservation}>

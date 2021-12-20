@@ -7,12 +7,28 @@ export interface Item {
   productId: string;
 }
 
-export interface Reservation {
-  _id?: string;
+export interface ReservationPostBody {
   productId: string;
   userId: string;
   startDate: string;
   finishDate: string;
+}
+
+export interface UserPostBody {
+  name: string;
+  surname: string;
+  phone: string;
+  googleId: string;
+  email: string;
+  password: string;
+}
+
+export interface User extends UserPostBody {
+  _id?: string;
+}
+
+export interface Reservation extends ReservationPostBody {
+  _id?: string;
 }
 
 export enum TypePolishNames {

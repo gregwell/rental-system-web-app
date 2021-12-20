@@ -1,5 +1,8 @@
 import { makeStyles } from "@mui/styles";
 import { Button, Grid, Typography } from "@mui/material";
+import Auth from "./Auth";
+import { useState, useEffect } from "react";
+import { User } from "./ReservationPanel/types";
 
 const useStyles = makeStyles({
   root: {
@@ -18,8 +21,30 @@ const useStyles = makeStyles({
   },
 });
 
-const Navbar = () => {
+interface NavbarProps {
+  users: User[] | null;
+  loggedUser: User | null;
+  setLoggedUser: (value: User | null) => void;
+}
+
+const Navbar = ({ users, loggedUser, setLoggedUser }: NavbarProps) => {
   const classes = useStyles();
+
+  const [showAuth, setShowAuth] = useState<boolean>(false);
+
+  const onButtonClick = () => {
+    setShowAuth(!showAuth);
+  };
+
+  const signOut = () => {
+    setLoggedUser(null);
+  };
+
+  useEffect(() => {
+    if (loggedUser) {
+      setShowAuth(false);
+    }
+  }, [loggedUser]);
 
   return (
     <Grid container className={classes.root}>
@@ -27,10 +52,26 @@ const Navbar = () => {
         <Typography variant="h5">System rezerwacji on-line</Typography>
       </Grid>
       <Grid item className={classes.item} xs={5}>
-        <Button variant="contained" color="primary">
-          Zaloguj się
-        </Button>
+        {!loggedUser ? (
+          <Button variant="contained" color="primary" onClick={onButtonClick}>
+            Zaloguj się
+          </Button>
+        ) : (
+          <>
+            <Typography>{`Cześć ${loggedUser.name}!`}</Typography>
+            <Button color="primary" onClick={signOut}>
+              Wyloguj
+            </Button>
+          </>
+        )}
       </Grid>
+      {!!showAuth && (
+        <Auth
+          users={users}
+          loggedUser={loggedUser}
+          setLoggedUser={setLoggedUser}
+        />
+      )}
     </Grid>
   );
 };
