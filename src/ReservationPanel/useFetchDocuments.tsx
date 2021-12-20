@@ -18,7 +18,7 @@ export const useFetchDocuments = () => {
 export async function searchDocuments(collection: string): Promise<
   Item[] | Reservation[]
 > {
-  try {
+  try { 
     const response = await axios({
       method: "POST",
       url: "https://data.mongodb-api.com/app/data-lasjp/endpoint/data/beta/action/find",
