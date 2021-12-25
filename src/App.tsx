@@ -3,8 +3,9 @@ import Navbar from "./Navbar";
 import { User } from "./ReservationPanel/types";
 import { useState, useEffect } from "react";
 import { useFetchDocuments } from "./ReservationPanel/useFetchDocuments";
+import { Reservation } from "./ReservationPanel/types";
 
-import { Routes, Route, Link, BrowserRouter as Router } from "react-router-dom";
+import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
 
 import MyReservations from "./MyReservations/MyReservations";
 
@@ -13,7 +14,22 @@ function App() {
   const [users, setUsers] = useState<User[] | null>(null);
   const [isUsersInitialized, setIsUsersInitialized] = useState<boolean>(false);
 
+  const [reservationsInitialized, setReservationsInitialized] =
+    useState<boolean>(false);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+
   const { fetchDocuments } = useFetchDocuments();
+
+  useEffect(() => {
+    const prepareReservationsState = async () => {
+      const fetchedReservations = await fetchDocuments("reservations");
+      setReservations(fetchedReservations as Reservation[]);
+      setReservationsInitialized(true);
+    };
+    if (!reservationsInitialized) {
+      prepareReservationsState();
+    }
+  }, [fetchDocuments, reservationsInitialized]);
 
   useEffect(() => {
     const prepareUsersState = async () => {
@@ -44,10 +60,11 @@ function App() {
                 users={users}
                 loggedUser={loggedUser}
                 setLoggedUser={setLoggedUser}
+                reservations={reservations}
               />
             }
           />
-          <Route path="/reservations" element={<MyReservations />} />
+          <Route path="/reservations" element={<MyReservations reservations={reservations}/>} />
         </Routes>
       </Router>
     </>

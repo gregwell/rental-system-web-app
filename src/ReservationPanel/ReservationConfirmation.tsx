@@ -1,4 +1,4 @@
-import { Item, ReservationPostBody, User } from "./types";
+import { Item, ReservationPostBody, User, Status } from "./types";
 import { Typography, Container } from "@mui/material";
 import { usePostData } from "./usePostData";
 import { Button } from "@mui/material";
@@ -71,6 +71,8 @@ export const ReservationConfirmation = ({
         userId: loggedUser._id,
         startDate: startDate.toString(),
         finishDate: finishDate.toString(),
+        price: "120",
+        status: Status.potwierdzona,
       };
       postData("reservations", reservationPostData);
       navigate('/reservations');

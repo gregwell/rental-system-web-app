@@ -3,6 +3,7 @@ import { Button, Grid, Typography } from "@mui/material";
 import Auth from "./Auth";
 import { useState, useEffect } from "react";
 import { User } from "./ReservationPanel/types";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {
@@ -29,6 +30,7 @@ interface NavbarProps {
 
 const Navbar = ({ users, loggedUser, setLoggedUser }: NavbarProps) => {
   const classes = useStyles();
+  const navigate = useNavigate();
 
   const [showAuth, setShowAuth] = useState<boolean>(false);
 
@@ -38,6 +40,11 @@ const Navbar = ({ users, loggedUser, setLoggedUser }: NavbarProps) => {
 
   const signOut = () => {
     setLoggedUser(null);
+    navigate("/");
+  };
+
+  const goToReservations = () => {
+    navigate("/reservations");
   };
 
   useEffect(() => {
@@ -61,6 +68,9 @@ const Navbar = ({ users, loggedUser, setLoggedUser }: NavbarProps) => {
             <Typography>{`Cześć ${loggedUser.name}!`}</Typography>
             <Button color="primary" onClick={signOut}>
               Wyloguj
+            </Button>
+            <Button color="primary" onClick={goToReservations}>
+              Zarządzaj rezerwacjami
             </Button>
           </>
         )}

@@ -10,7 +10,7 @@ import {
 import { useFetchDocuments } from "./useFetchDocuments";
 import { useState } from "react";
 import { useEffect } from "react";
-import { Item, Reservation, User } from "./types";
+import { Item, User, Reservation } from "./types";
 import AvailableItems from "./AvailableItems/AvailableItems";
 import { ReservationDateTimePicker } from "./ReservationDateTimePicker";
 import { ReservationConfirmation } from "./ReservationConfirmation";
@@ -48,19 +48,21 @@ interface ReservationPanelProps {
   users: User[] | null;
   loggedUser: User | null;
   setLoggedUser: (value: User | null) => void;
+  reservations: Reservation[] | null;
 }
 
-const ReservationPanel = ({ users, loggedUser, setLoggedUser }: ReservationPanelProps) => {
+const ReservationPanel = ({
+  users,
+  loggedUser,
+  setLoggedUser,
+  reservations,
+}: ReservationPanelProps) => {
   const classes = useStyles();
 
   const types = ["Narty", "Deski Snowboardowe"];
 
   const [itemsInitialized, setItemsInitialized] = useState<boolean>(false);
   const [items, setItems] = useState<Item[]>([]);
-
-  const [reservationsInitialized, setReservationsInitialized] =
-    useState<boolean>(false);
-  const [reservations, setReservations] = useState<Reservation[]>([]);
 
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [finishDate, setFinishDate] = useState<Date | null>(null);
@@ -84,17 +86,6 @@ const ReservationPanel = ({ users, loggedUser, setLoggedUser }: ReservationPanel
     }
   }, [fetchDocuments, itemsInitialized]);
 
-  useEffect(() => {
-    const prepareReservationsState = async () => {
-      const fetchedReservations = await fetchDocuments("reservations");
-      setReservations(fetchedReservations as Reservation[]);
-      setReservationsInitialized(true);
-    };
-    if (!reservationsInitialized) {
-      prepareReservationsState();
-    }
-  }, [fetchDocuments, reservationsInitialized]);
-
   let selectedTimeAvailableItems: Item[] = [];
 
   if (startDate !== null && finishDate && items && reservations) {
@@ -103,7 +94,7 @@ const ReservationPanel = ({ users, loggedUser, setLoggedUser }: ReservationPanel
       console.log(getPolishName(item.type));
       console.log(type);
       return (
-        !canWeRentThisProduct(
+        canWeRentThisProduct(
           item.productId,
           startDate,
           finishDate,
@@ -121,6 +112,8 @@ const ReservationPanel = ({ users, loggedUser, setLoggedUser }: ReservationPanel
   const searchPanelText = isShowingReservationForm
     ? "... lub wyszukaj ponownie"
     : "Wybierz termin i sprawdź dostępny sprzęt";
+
+  console.log(selectedTimeAvailableItems);
 
   return (
     <>
