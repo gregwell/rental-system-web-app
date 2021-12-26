@@ -48,11 +48,11 @@ export interface PricePostBody {
 
 export interface UserPostBody {
   name: string;
-  surname: string;
-  phone: string;
-  googleId: string;
+  surname?: string;
+  phone?: string;
+  googleId?: string;
   email: string;
-  password: string;
+  password?: string;
 }
 
 export interface User extends UserPostBody {
@@ -67,4 +67,14 @@ export interface Price extends PricePostBody {
   _id?: string;
 }
 
-// equipment types should be more like type low-end ski, medium-end ski, high-end ski with each other price
+export interface GoogleResponse {
+  googleId: string;
+  profileObj: {
+    googleId: string;
+    imageUrl: string;
+    email: string;
+    name: string;
+    givenName: string;
+    familyName: string;
+  };
+}

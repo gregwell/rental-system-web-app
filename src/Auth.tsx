@@ -7,7 +7,7 @@ import { useState, useCallback } from "react";
 import { GoogleLogin } from "react-google-login";
 import GoogleIcon from "@mui/icons-material/Google";
 
-import CryptoJS from "crypto-js";
+import { encrypt, decrypt } from "./utils";
 
 const useStyles = makeStyles({
   login: {
@@ -27,24 +27,6 @@ interface AuthProps {
 const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
   const classes = useStyles();
 
-  console.log(process.env.REACT_APP_HASH_KEY);
-
-  const encrypt = (plainText: string): string => {
-    const encrypted = CryptoJS.AES.encrypt(
-      plainText,
-      process.env.REACT_APP_HASH_KEY as string
-    );
-    return encrypted.ciphertext.toString(CryptoJS.enc.Base64);
-  };
-
-  const decrypt = (encryptedText: string): string => {
-    const decrypted = CryptoJS.AES.decrypt(
-      encryptedText,
-      process.env.REACT_APP_HASH_KEY as string
-    );
-    return decrypted.toString(CryptoJS.enc.Utf8);
-  };
-
   const [showGoogleRegisterForm, setShowGoogleRegisterForm] =
     useState<boolean>(false);
 
@@ -55,6 +37,12 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
   const [password, setPassword] = useState<string>("");
   const [passwordSecond, setPasswordSecond] = useState<string>("");
   const [showPasswordAlert, setShowPasswordAlert] = useState<boolean>(false);
+
+  const [loginEmail, setLoginEmail] = useState<string>("");
+  const [loginPassword, setLoginPassword] = useState<string>("");
+
+  const [wrongLoginPassword, setWrongLoginPassword] = useState<boolean>(false);
+  const [wrongLoginEmail, setWrongLoginEmail] = useState<boolean>(false);
 
   //todo type for google response
 
@@ -67,6 +55,7 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
       setShowPasswordAlert(true);
       return;
     }
+
     const postBody: UserPostBody = {
       name: name,
       surname: surname,
@@ -75,12 +64,51 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
       phone: phone,
       password: password,
     };
-    postData("users", postBody);
-  }, [email, name, password, passwordSecond, postData, surname, phone]);
+
+    const encryptedPostBody: UserPostBody = {
+      name: encrypt(name),
+      surname: encrypt(surname),
+      email: encrypt(email),
+      googleId: "",
+      phone: encrypt(phone),
+      password: encrypt(password),
+    };
+
+    postData("users", encryptedPostBody);
+    setLoggedUser(postBody);
+  }, [password, passwordSecond, name, surname, email, phone, postData, setLoggedUser]);
 
   const handleLogin = useCallback(() => {
-    alert("we dont support login feature yet");
-  }, []);
+
+    const userFound: User | undefined = users?.find((user) => {
+      return user?.email.length > 0 && decrypt(user?.email) === loginEmail;
+    });
+
+    if (!userFound) {
+      setWrongLoginEmail(true);
+      return;
+    }
+
+    if (decrypt(userFound?.password as string) !== loginPassword) {
+      setWrongLoginPassword(true);
+      return;
+    }
+
+    console.log(userFound);
+
+    const decryptedUserFound: UserPostBody = {
+      name: decrypt(userFound.name),
+      surname: decrypt(userFound.surname),
+      email: decrypt(userFound.email),
+      googleId: userFound?.googleId && userFound?.googleId.length > 0 ? decrypt(userFound.googleId) : "",
+      phone: decrypt(userFound.phone),
+      password: decrypt(userFound.password),
+    };
+
+    setLoggedUser(decryptedUserFound);
+    return;
+
+  }, [loginEmail, loginPassword, setLoggedUser, users]);
 
   const handleGoogleRegister = useCallback(() => {
     if (googleUserData) {
@@ -92,17 +120,40 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
         phone: phone,
         password: "",
       };
-      postData("users", postBody);
+
+      const encryptedPostBody: UserPostBody = {
+        name: encrypt(name),
+        surname: encrypt(surname),
+        email: encrypt(googleUserData?.email),
+        googleId: encrypt(googleUserData?.googleId as string),
+        phone: encrypt(phone),
+        password: "",
+      };
+      postData("users", encryptedPostBody);
       setLoggedUser(postBody);
     }
   }, [googleUserData, name, surname, phone, postData, setLoggedUser]);
 
   const googleSuccess = async (res: any) => {
-    const userFound: User | undefined = users?.find(
-      (user) => user?.googleId === res.googleId
-    );
+    const userFound: User | undefined = users?.find((user) => {
+      return (
+        user?.googleId && user?.googleId.length > 0 && decrypt(user?.googleId) === res.googleId
+      );
+    });
+
+    console.log(res);
+
     if (userFound) {
-      setLoggedUser(userFound);
+      const decryptedUserFound: UserPostBody = {
+        name: decrypt(userFound.name),
+        surname: decrypt(userFound.surname as string),
+        email: decrypt(userFound.email),
+        googleId: decrypt(userFound.googleId as string),
+        phone: decrypt(userFound.phone as string),
+        password: "",
+      };
+
+      setLoggedUser(decryptedUserFound);
       return;
     }
 
@@ -209,7 +260,7 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
                   </Grid>
                   {!!showPasswordAlert && (
                     <Grid item xs={12} sm={12} md={12}>
-                      <Typography>Hasła są różne!</Typography>
+                      <Typography color="error">Hasła są różne!</Typography>
                     </Grid>
                   )}
                   <Grid item xs={12} sm={12} md={12}>
@@ -233,8 +284,8 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
                       label="Email"
                       variant="outlined"
                       fullWidth
-                      value={phone}
-                      onChange={(event) => setPhone(event.target.value)}
+                      value={loginEmail}
+                      onChange={(event) => setLoginEmail(event.target.value)}
                     />
                   </Grid>
                   <Grid item xs={12} sm={12} md={12}>
@@ -243,10 +294,15 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
                       variant="outlined"
                       fullWidth
                       type="password"
-                      value={password}
-                      onChange={(event) => setPassword(event.target.value)}
+                      value={loginPassword}
+                      onChange={(event) => setLoginPassword(event.target.value)}
                     />
                   </Grid>
+                  {(wrongLoginPassword || wrongLoginEmail) && (
+                    <Grid item xs={12} sm={12} md={12}>
+                      <Typography color="error">{wrongLoginPassword ? "Złe hasło" : "Ten email nie został jeszcze zarejrestrowany"}</Typography>
+                    </Grid>
+                  )}
                   <Grid item xs={12} sm={12} md={12}>
                     <Button variant="contained" fullWidth onClick={handleLogin}>
                       Zaloguj

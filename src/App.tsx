@@ -39,7 +39,7 @@ function App() {
     if (!isUsersInitialized) {
       prepareUsersState();
     }
-  }, [fetchDocuments, isUsersInitialized]);
+  }, [fetchDocuments, isUsersInitialized, loggedUser]);
 
   return (
     <>
