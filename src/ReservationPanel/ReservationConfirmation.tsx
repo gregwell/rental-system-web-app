@@ -1,11 +1,13 @@
-import { Item, ReservationPostBody, User, Status } from "./types";
+import { Item, ReservationPostBody, User, Status, ItemPrice } from "../General/types";
+
 import { Typography, Container } from "@mui/material";
 import { usePostData } from "./usePostData";
 import { Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Auth from "../Auth";
+import CustomIcon from "../General/CustomIcon";
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 import { useCallback } from "react";
 
@@ -32,6 +34,11 @@ const useStyles = makeStyles({
     height: "55px",
     width: "100%",
   },
+  customIcon: {
+    transform: "scale(2.5)",
+    paddingTop: "20px",
+    paddingBottom: "20px",
+  }
 });
 
 interface ReservationConfirmationProps {
@@ -42,6 +49,8 @@ interface ReservationConfirmationProps {
   users: User[] | null;
   loggedUser: User | null;
   setLoggedUser: (value: User | null) => void;
+  pricesTable: ItemPrice[] | null;
+  setIsShowingReservationForm: (value: boolean) => void;
 }
 
 export const ReservationConfirmation = ({
@@ -52,11 +61,16 @@ export const ReservationConfirmation = ({
   users,
   loggedUser,
   setLoggedUser,
+  setIsShowingReservationForm,
+  pricesTable,
 }: ReservationConfirmationProps) => {
   const { postData } = usePostData();
   const classes = useStyles();
   const navigate = useNavigate();
 
+  const itemPrice = pricesTable?.find(
+    (priceItem) => priceItem.type === choosenItem.type
+  );
 
   const onSendReservation = useCallback(() => {
     if (
@@ -75,7 +89,7 @@ export const ReservationConfirmation = ({
         status: Status.potwierdzona,
       };
       postData("reservations", reservationPostData);
-      navigate('/reservations');
+      navigate("/reservations");
     }
   }, [choosenItem, finishDate, loggedUser, navigate, postData, startDate]);
 
@@ -83,6 +97,9 @@ export const ReservationConfirmation = ({
     <>
       <div className={classes.panel}>
         <Container className={classes.reservation}>
+          <div className={classes.customIcon}>
+            <CustomIcon type={choosenItem.type}/>
+          </div>
           <Typography variant="h3">
             {`${choosenItem.producer} ${choosenItem.model}`}
           </Typography>
@@ -90,7 +107,16 @@ export const ReservationConfirmation = ({
           <Typography>{`Odbiór: ${startDate}`}</Typography>
           <Typography>{`Koniec: ${finishDate}`}</Typography>
           <br />
-          <Typography>Cena: 120 zł (7 dni)</Typography>
+          <Typography variant="h5">
+            {`${itemPrice?.price} zł` || "cena zł"}
+          </Typography>
+          <Typography variant="caption">
+            {`Cena za ${itemPrice?.howMuch} ${
+              itemPrice?.isPerDay ? "dni" : "godzin"
+            } wynajmu.`}
+            {`(stawka ${itemPrice?.isPerDay ? "dzienna" : "godzinna"})`}
+          </Typography>
+          <br />
           <br />
           {!!loggedUser ? (
             <Button onClick={onSendReservation} variant="contained">
@@ -105,6 +131,12 @@ export const ReservationConfirmation = ({
               />
             </>
           )}
+          <br />
+          <br/>
+          <Button
+            onClick={() => setIsShowingReservationForm(false)}
+            children={"wróć do wyników wyszukiwania"}
+          />
         </Container>
       </div>
     </>

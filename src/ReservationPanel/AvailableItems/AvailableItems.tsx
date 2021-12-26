@@ -2,8 +2,7 @@ import { makeStyles } from "@mui/styles";
 import { Grid, Typography, Container } from "@mui/material";
 import ActionAreaCard from "./ActionAreaCard";
 import { useCallback } from "react";
-import { getPolishName } from "../utils";
-import { Item } from "../types";
+import { Item, ItemPrice } from "../../General/types";
 
 const useStyles = makeStyles({
   root: {
@@ -34,10 +33,15 @@ interface AvailableItemsProps {
   items: Item[];
   setIsShowingReservationForm: (value: boolean) => void;
   setChoosenItem: (value: Item) => void;
+  pricesTable: ItemPrice[] | null;
 }
 
-const AvailableItems = (props: AvailableItemsProps) => {
-  const { items, setIsShowingReservationForm, setChoosenItem } = props;
+const AvailableItems = ({
+  items,
+  setIsShowingReservationForm,
+  setChoosenItem,
+  pricesTable,
+}: AvailableItemsProps) => {
   const classes = useStyles();
 
   const onCardClick = useCallback(
@@ -62,9 +66,10 @@ const AvailableItems = (props: AvailableItemsProps) => {
               <Grid item xs={12} sm={6} md={3} key={item._id}>
                 <div onClick={() => onCardClick(item)}>
                   <ActionAreaCard
-                    name={`${item.producer} ${item.model}`}
-                    type={getPolishName(item.type)}
-                    imageUrl={item.photo}
+                    producer={item.producer}
+                    model={item.model}
+                    type={item.type}
+                    pricesTable={pricesTable}
                   />
                 </div>
               </Grid>

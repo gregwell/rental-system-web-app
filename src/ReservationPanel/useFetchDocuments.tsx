@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback } from "react";
 
-import { Item, Reservation } from "./types";
+import { Item, Reservation } from "../General/types";
 
 export const useFetchDocuments = () => {
   const fetchDocuments = useCallback((collection: string) => {

@@ -1,7 +1,7 @@
 import { Typography, Container } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SingleReservation from "./SingleReservation";
-import { Reservation } from "../ReservationPanel/types";
+import { Reservation } from "../General/types";
 
 const useStyles = makeStyles({
   panel: {
@@ -34,7 +34,7 @@ const MyReservations = ({ reservations }: MyReservationsProps) => {
           {!!reservations &&
             reservations.map((reservation) => (
               <SingleReservation
-                key={`${reservation.productId} ${reservation.startDate} ${reservation.finishDate} ${reservation.userId}`}
+                key={reservation._id}
                 reservation={reservation}
               />
             ))}

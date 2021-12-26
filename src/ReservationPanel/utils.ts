@@ -1,24 +1,25 @@
-import { TypePolishNames, Reservation } from "./types";
+import { Reservation, Price, ItemPrice , ItemType} from "../General/types";
 
-export const getPolishName = (itemType: string) => {
-  let name: string;
-
-  switch (itemType) {
-    case "ski": {
-      name = TypePolishNames.ski;
-      break;
-    }
-    case "snowboard": {
-      name = TypePolishNames.snowboard;
-      break;
-    }
-    default: {
-      name = "inne";
-      break;
-    }
+export const getPolishName = (type: string):string => {
+  switch(type) {
+    case ItemType.ski:
+      return "Narty";
+    case ItemType.snowboard:
+      return "Snowboard";
+    case ItemType.car:
+      return "Samochód";
+    case ItemType.scooter:
+      return "Hulajnoga elektryczna";
+    case ItemType.bike:
+      return "Rower";
+    case ItemType.electricBike:
+      return "Rower elektryczny";
+    case ItemType.kayak:
+      return "Kajak";
+    default: 
+      return type;
   }
-  return name;
-};
+}
 
 export const canWeRentThisProduct = (
   productId: string,
@@ -30,9 +31,6 @@ export const canWeRentThisProduct = (
 
   const requestedStartTime = startDate.getTime();
   const requestedFinishTime = finishDate.getTime();
-
-  console.log(reservations);
-  console.log(productId);
 
   reservations.forEach((reservation) => {
     if (reservation.productId === productId) {
@@ -46,9 +44,6 @@ export const canWeRentThisProduct = (
         requestedFinishTime > reservationFinishTime &&
         requestedStartTime < reservationFinishTime;
 
-      console.log(variant1);
-      console.log(variant2);
-
       if (variant2 || variant1) {
         result = false;
       }
@@ -56,4 +51,37 @@ export const canWeRentThisProduct = (
   });
 
   return result;
+};
+
+export const calculateReservationPriceForEachType = (
+  prices: Price[] | null,
+  startDate: Date | null,
+  finishDate: Date | null
+): ItemPrice[] | null => {
+  if (!startDate || !finishDate || !prices) {
+    return null;
+  }
+  const time = finishDate.getTime() - startDate.getTime();
+  //1 hour = 3600000 ms
+  const hourMs = 3600000;
+  const hours = Math.ceil((time / hourMs));
+  const days = Math.ceil(time / hourMs / 24);
+
+  const pricesNew: ItemPrice[] = prices.map((price) => {
+    const pricePerDay = price.day * days;
+    const pricePerHour = price.hour * hours;
+
+    const isPerDayBetter = pricePerDay < pricePerHour;
+    const cheaperPrice = isPerDayBetter ? pricePerDay : pricePerHour;
+    const howMuch = isPerDayBetter ? days : hours;
+
+    return {
+      type: price.type,
+      price: cheaperPrice,
+      isPerDay: isPerDayBetter,
+      howMuch: howMuch,
+    };
+  });
+
+  return pricesNew;
 };

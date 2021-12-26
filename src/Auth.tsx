@@ -1,10 +1,13 @@
 import { Grid, TextField, Button, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { UserPostBody, User } from "./ReservationPanel/types";
+import { UserPostBody, User } from "./General/types";
 import { usePostData } from "./ReservationPanel/usePostData";
 import { useState, useCallback } from "react";
 
 import { GoogleLogin } from "react-google-login";
+import GoogleIcon from "@mui/icons-material/Google";
+
+import CryptoJS from "crypto-js";
 
 const useStyles = makeStyles({
   login: {
@@ -24,6 +27,24 @@ interface AuthProps {
 const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
   const classes = useStyles();
 
+  console.log(process.env.REACT_APP_HASH_KEY);
+
+  const encrypt = (plainText: string): string => {
+    const encrypted = CryptoJS.AES.encrypt(
+      plainText,
+      process.env.REACT_APP_HASH_KEY as string
+    );
+    return encrypted.ciphertext.toString(CryptoJS.enc.Base64);
+  };
+
+  const decrypt = (encryptedText: string): string => {
+    const decrypted = CryptoJS.AES.decrypt(
+      encryptedText,
+      process.env.REACT_APP_HASH_KEY as string
+    );
+    return decrypted.toString(CryptoJS.enc.Utf8);
+  };
+
   const [showGoogleRegisterForm, setShowGoogleRegisterForm] =
     useState<boolean>(false);
 
@@ -35,8 +56,7 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
   const [passwordSecond, setPasswordSecond] = useState<string>("");
   const [showPasswordAlert, setShowPasswordAlert] = useState<boolean>(false);
 
-  //to do: create a new account when google first time login
-  //to do: type for google repsonse
+  //todo type for google response
 
   const [googleUserData, setGoogleUserData] = useState<User | null>(null);
 
@@ -58,6 +78,10 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
     postData("users", postBody);
   }, [email, name, password, passwordSecond, postData, surname, phone]);
 
+  const handleLogin = useCallback(() => {
+    alert("we dont support login feature yet");
+  }, []);
+
   const handleGoogleRegister = useCallback(() => {
     if (googleUserData) {
       const postBody: UserPostBody = {
@@ -74,22 +98,15 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
   }, [googleUserData, name, surname, phone, postData, setLoggedUser]);
 
   const googleSuccess = async (res: any) => {
-    console.log(res.googleId);
-    console.log(res.profileObj);
-    console.log(users);
     const userFound: User | undefined = users?.find(
       (user) => user?.googleId === res.googleId
     );
     if (userFound) {
-      console.log("dd");
-      console.log(userFound);
-      //set current user
       setLoggedUser(userFound);
       return;
     }
 
     if (!userFound) {
-      console.log("we have to create a new user");
       setGoogleUserData(res.profileObj);
       setName(res.profileObj?.givenName);
       setSurname(res.profileObj?.familyName);
@@ -114,7 +131,8 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
                   disabled={renderProps.disabled}
                   variant="contained"
                 >
-                  Kontynuuj z użyciem konta Google
+                  <GoogleIcon />
+                  {` Kontynuuj z użyciem konta Google`}
                 </Button>
               )}
               onSuccess={googleSuccess}
@@ -200,7 +218,7 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
                       fullWidth
                       onClick={handleRegister}
                     >
-                      Kontynuuj
+                      Zarejestruj
                     </Button>
                   </Grid>
                 </Grid>
@@ -228,6 +246,11 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
                       value={password}
                       onChange={(event) => setPassword(event.target.value)}
                     />
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={12}>
+                    <Button variant="contained" fullWidth onClick={handleLogin}>
+                      Zaloguj
+                    </Button>
                   </Grid>
                 </Grid>
               </Grid>
@@ -278,7 +301,7 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
                 fullWidth
                 onClick={googleUserData ? handleGoogleRegister : handleRegister}
               >
-                Kontynuuj
+                Utwórz konto
               </Button>
             </Grid>
           </Grid>

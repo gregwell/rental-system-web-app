@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback } from "react";
 
-import { Item, Reservation, ReservationPostBody, UserPostBody } from "./types";
+import { Item, Reservation, ReservationPostBody, UserPostBody } from "../General/types";
 
 export const usePostData = () => {
   const postData = useCallback(

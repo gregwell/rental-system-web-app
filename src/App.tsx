@@ -1,9 +1,8 @@
 import ReservationPanel from "./ReservationPanel/ReservationPanel";
 import Navbar from "./Navbar";
-import { User } from "./ReservationPanel/types";
+import { User, Reservation } from "./General/types";
 import { useState, useEffect } from "react";
 import { useFetchDocuments } from "./ReservationPanel/useFetchDocuments";
-import { Reservation } from "./ReservationPanel/types";
 
 import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
 
@@ -41,8 +40,6 @@ function App() {
       prepareUsersState();
     }
   }, [fetchDocuments, isUsersInitialized]);
-
-  console.log(users);
 
   return (
     <>

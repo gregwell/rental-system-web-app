@@ -1,9 +1,8 @@
-import * as React from "react";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
+import { Card } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { CardActionArea } from "@mui/material";
+import CustomIcon from "../../General/CustomIcon";
+import { ItemPrice, ItemType } from "../../General/types";
 
 import { makeStyles } from "@mui/styles";
 
@@ -13,35 +12,73 @@ const useStyles = makeStyles({
   },
   root: {
     textAlign: "center",
+    backgroundColor: "red",
+  },
+  black: {
+    paddingTop: "35px",
+    paddingBottom: "15px",
+    marginTop: "10px",
+    color: "white",
+    backgroundColor: "#444444",
+  },
+  icon: {
+    paddingTop: "25px",
+    paddingBottom: "10px",
+    backgroundColor: "#deebff",
+    transform: "scale(1.5)",
+  },
+  type: {
+    fontSize: "10px",
+    fontStyle: "italic",
+  },
+  name: {
+    paddingTop: "10px",
+    paddingBottom: "10px",
   },
 });
 
 interface ActionAreaCardProps {
-  name: string;
-  type: string;
-  imageUrl: string;
+  producer: string;
+  model: string;
+  type: ItemType;
+  pricesTable: ItemPrice[] | null;
 }
 
-const ActionAreaCard = ({ name, type, imageUrl }: ActionAreaCardProps) => {
+const ActionAreaCard = ({
+  producer,
+  model,
+  type,
+  pricesTable,
+}: ActionAreaCardProps) => {
   const classes = useStyles();
+
+  const itemPrice = pricesTable?.find((priceItem) => priceItem.type === type);
 
   return (
     <Card className={classes.root}>
       <CardActionArea>
-        <CardMedia
-          component="img"
-          height="140"
-          image={imageUrl}
-          alt="green iguana"
-        />
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="div">
-            {name}
+        <div className={classes.icon}>
+          <div className={classes.name}>
+            <Typography>{producer}</Typography>
+            <Typography>{model}</Typography>
+          </div>
+          <CustomIcon type={type} />
+          <div className={classes.type}>{type}</div>
+        </div>
+        <div className={classes.black}>
+          <Typography variant="h5">
+            {`${itemPrice?.price} zł` || "cena zł"}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {type}
+          <Typography variant="caption">
+            {`Cena za ${itemPrice?.howMuch} ${
+              itemPrice?.isPerDay ? "dni" : "godzin"
+            } wynajmu.`}
           </Typography>
-        </CardContent>
+          <br />
+          <Typography variant="caption">
+            {`Stawka ${itemPrice?.isPerDay ? "dzienna" : "godzinna"}`}
+          </Typography>
+        </div>
       </CardActionArea>
     </Card>
   );

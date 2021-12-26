@@ -10,14 +10,15 @@ import {
 import { useFetchDocuments } from "./useFetchDocuments";
 import { useState } from "react";
 import { useEffect } from "react";
-import { Item, User, Reservation } from "./types";
+import { Item, User, Reservation, Price, ItemPrice } from "../General/types";
 import AvailableItems from "./AvailableItems/AvailableItems";
 import { ReservationDateTimePicker } from "./ReservationDateTimePicker";
 import { ReservationConfirmation } from "./ReservationConfirmation";
+import { calculateReservationPriceForEachType, getPolishName } from "./utils";
 
 import { useCallback } from "react";
 
-import { getPolishName, canWeRentThisProduct } from "./utils";
+import { canWeRentThisProduct } from "./utils";
 
 const useStyles = makeStyles({
   root: {
@@ -59,10 +60,18 @@ const ReservationPanel = ({
 }: ReservationPanelProps) => {
   const classes = useStyles();
 
-  const types = ["Narty", "Deski Snowboardowe"];
-
   const [itemsInitialized, setItemsInitialized] = useState<boolean>(false);
   const [items, setItems] = useState<Item[]>([]);
+
+  const uniqueTypes = itemsInitialized
+    ? new Set(items.map((item) => item.type as string))
+    : [];
+
+  const types = Array.from(uniqueTypes).map((type) => getPolishName(type));
+
+  const [pricesInitialized, setPricesInitialized] = useState<boolean>(false);
+  const [prices, setPrices] = useState<Price[]>([]);
+  const [pricesTable, setPricesTable] = useState<ItemPrice[] | null>(null);
 
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [finishDate, setFinishDate] = useState<Date | null>(null);
@@ -86,23 +95,37 @@ const ReservationPanel = ({
     }
   }, [fetchDocuments, itemsInitialized]);
 
+  useEffect(() => {
+    setPricesTable(
+      calculateReservationPriceForEachType(prices, startDate, finishDate)
+    );
+  }, [prices, startDate, finishDate]);
+
+  useEffect(() => {
+    const preparePricesState = async () => {
+      const fetchedPrices = await fetchDocuments("prices");
+      setPrices(fetchedPrices as Price[]);
+      setPricesInitialized(true);
+    };
+    if (!pricesInitialized) {
+      preparePricesState();
+    }
+  }, [fetchDocuments, itemsInitialized, pricesInitialized]);
+
   let selectedTimeAvailableItems: Item[] = [];
 
   if (startDate !== null && finishDate && items && reservations) {
-    console.log(items);
     selectedTimeAvailableItems = items.filter((item) => {
-      console.log(getPolishName(item.type));
-      console.log(type);
       return (
         canWeRentThisProduct(
           item.productId,
           startDate,
           finishDate,
           reservations
-        ) && getPolishName(item.type) === type
+        ) &&
+        (!type || getPolishName(item.type) === type)
       );
     });
-    console.log(selectedTimeAvailableItems);
   }
 
   const onSearchButtonClick = useCallback(() => {
@@ -113,19 +136,19 @@ const ReservationPanel = ({
     ? "... lub wyszukaj ponownie"
     : "Wybierz termin i sprawdź dostępny sprzęt";
 
-  console.log(selectedTimeAvailableItems);
-
   return (
     <>
       {!!isShowingReservationForm && choosenItem && (
         <ReservationConfirmation
           choosenItem={choosenItem}
+          setIsShowingReservationForm={setIsShowingReservationForm}
           startDate={startDate}
           finishDate={finishDate}
           isUserLogged={false}
           users={users}
           loggedUser={loggedUser}
           setLoggedUser={setLoggedUser}
+          pricesTable={pricesTable}
         />
       )}
       <div className={classes.panel}>
@@ -177,6 +200,7 @@ const ReservationPanel = ({
                     items={selectedTimeAvailableItems}
                     setIsShowingReservationForm={setIsShowingReservationForm}
                     setChoosenItem={setChoosenItem}
+                    pricesTable={pricesTable}
                   />
                 )}
               </>

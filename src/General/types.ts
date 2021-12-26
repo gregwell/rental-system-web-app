@@ -1,10 +1,29 @@
+export interface ItemPrice {
+  type: ItemType;
+  price: number;
+  isPerDay: boolean;
+  howMuch: number;
+}
+
 export interface Item {
   _id?: string;
-  type: string;
+  type: ItemType;
   producer: string;
   model: string;
   photo: string;
   productId: string;
+  price?: ItemPrice;
+}
+
+export enum ItemType {
+  ski = "ski",
+  snowboard = "snowboard",
+  car = "car",
+  scooter = "scooter",
+  bike = "bike",
+  electricBike = "electricBike",
+  kayak = "kayak",
+  other = "other",
 }
 
 export enum Status {
@@ -19,6 +38,12 @@ export interface ReservationPostBody {
   finishDate: string;
   price: string;
   status: Status;
+}
+
+export interface PricePostBody {
+  type: ItemType;
+  hour: number;
+  day: number;
 }
 
 export interface UserPostBody {
@@ -38,9 +63,8 @@ export interface Reservation extends ReservationPostBody {
   _id?: string;
 }
 
-export enum TypePolishNames {
-  "ski" = "Narty",
-  "snowboard" = "Deski Snowboardowe",
+export interface Price extends PricePostBody {
+  _id?: string;
 }
 
 // equipment types should be more like type low-end ski, medium-end ski, high-end ski with each other price
