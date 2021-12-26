@@ -4,7 +4,11 @@ import { UserPostBody, User } from "./General/types";
 import { usePostData } from "./ReservationPanel/usePostData";
 import { useState, useCallback } from "react";
 
-import { GoogleLogin } from "react-google-login";
+import {
+  GoogleLogin,
+  GoogleLoginResponse,
+  GoogleLoginResponseOffline,
+} from "react-google-login";
 import GoogleIcon from "@mui/icons-material/Google";
 
 import { encrypt, decrypt } from "./utils";
@@ -76,10 +80,18 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
 
     postData("users", encryptedPostBody);
     setLoggedUser(postBody);
-  }, [password, passwordSecond, name, surname, email, phone, postData, setLoggedUser]);
+  }, [
+    password,
+    passwordSecond,
+    name,
+    surname,
+    email,
+    phone,
+    postData,
+    setLoggedUser,
+  ]);
 
   const handleLogin = useCallback(() => {
-
     const userFound: User | undefined = users?.find((user) => {
       return user?.email.length > 0 && decrypt(user?.email) === loginEmail;
     });
@@ -100,14 +112,16 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
       name: decrypt(userFound.name),
       surname: decrypt(userFound.surname),
       email: decrypt(userFound.email),
-      googleId: userFound?.googleId && userFound?.googleId.length > 0 ? decrypt(userFound.googleId) : "",
+      googleId:
+        userFound?.googleId && userFound?.googleId.length > 0
+          ? decrypt(userFound.googleId)
+          : "",
       phone: decrypt(userFound.phone),
       password: decrypt(userFound.password),
     };
 
     setLoggedUser(decryptedUserFound);
     return;
-
   }, [loginEmail, loginPassword, setLoggedUser, users]);
 
   const handleGoogleRegister = useCallback(() => {
@@ -134,10 +148,22 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
     }
   }, [googleUserData, name, surname, phone, postData, setLoggedUser]);
 
-  const googleSuccess = async (res: any) => {
+  const googleSuccess = async (
+    res: GoogleLoginResponse | GoogleLoginResponseOffline
+  ) => {
+    function isGoogleId(res: GoogleLoginResponse | GoogleLoginResponseOffline): res is GoogleLoginResponse {
+      return "googleId" in res;
+    }
+
+    if (!isGoogleId(res)) {
+      return;
+    }
+
     const userFound: User | undefined = users?.find((user) => {
       return (
-        user?.googleId && user?.googleId.length > 0 && decrypt(user?.googleId) === res.googleId
+        user?.googleId &&
+        user?.googleId.length > 0 &&
+        decrypt(user?.googleId) === res?.googleId
       );
     });
 
@@ -300,7 +326,11 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
                   </Grid>
                   {(wrongLoginPassword || wrongLoginEmail) && (
                     <Grid item xs={12} sm={12} md={12}>
-                      <Typography color="error">{wrongLoginPassword ? "Złe hasło" : "Ten email nie został jeszcze zarejrestrowany"}</Typography>
+                      <Typography color="error">
+                        {wrongLoginPassword
+                          ? "Złe hasło"
+                          : "Ten email nie został jeszcze zarejrestrowany"}
+                      </Typography>
                     </Grid>
                   )}
                   <Grid item xs={12} sm={12} md={12}>
