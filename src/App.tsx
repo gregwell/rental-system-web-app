@@ -7,6 +7,7 @@ import { useFetchDocuments } from "./ReservationPanel/useFetchDocuments";
 import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
 
 import MyReservations from "./MyReservations/MyReservations";
+import MyProfile from "./MyProfile/MyProfile";
 
 function App() {
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
@@ -39,7 +40,7 @@ function App() {
     if (!isUsersInitialized) {
       prepareUsersState();
     }
-  }, [fetchDocuments, isUsersInitialized, loggedUser]);
+  }, [fetchDocuments, isUsersInitialized]);
 
   return (
     <>
@@ -61,7 +62,14 @@ function App() {
               />
             }
           />
-          <Route path="/reservations" element={<MyReservations reservations={reservations}/>} />
+          <Route
+            path="/reservations"
+            element={<MyReservations reservations={reservations} />}
+          />
+          <Route
+            path="/profile"
+            element={<MyProfile loggedUser={loggedUser} />}
+          />
         </Routes>
       </Router>
     </>

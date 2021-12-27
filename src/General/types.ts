@@ -48,8 +48,8 @@ export interface PricePostBody {
 
 export interface UserPostBody {
   name: string;
-  surname?: string;
-  phone?: string;
+  surname: string;
+  phone: string;
   googleId?: string;
   email: string;
   password?: string;

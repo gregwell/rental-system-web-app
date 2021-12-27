@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 const useStyles = makeStyles({
   root: {
     backgroundColor: "white",
+    textAlign: "center",
   },
   item: {
     paddingTop: "15px",
@@ -21,10 +22,10 @@ const useStyles = makeStyles({
     textAlign: "right",
   },
   auth: {
-    paddingRight: "10%",
-    paddingLeft: "10%",
     paddingBottom: "60px",
     paddingTop: "30px",
+    marginLeft: "auto",
+    marginRight: "auto",
   },
   topBar: {
     height: "3px",
@@ -62,6 +63,10 @@ const Navbar = ({ users, loggedUser, setLoggedUser }: NavbarProps) => {
     navigate("/");
   };
 
+  const goToProfile = () => {
+    navigate("/profile");
+  }
+
   useEffect(() => {
     if (loggedUser) {
       setShowAuth(false);
@@ -85,6 +90,9 @@ const Navbar = ({ users, loggedUser, setLoggedUser }: NavbarProps) => {
             <Typography>{`Cześć ${loggedUser.name}!`}</Typography>
             <Button color="primary" onClick={goToReservations}>
               Zarządzaj rezerwacjami
+            </Button>
+            <Button color="primary" onClick={goToProfile}>
+              Edytuj profil
             </Button>
             <Button color="primary" onClick={signOut}>
               Wyloguj
