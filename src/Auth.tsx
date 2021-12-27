@@ -1,4 +1,4 @@
-import { Grid, TextField, Button, Typography } from "@mui/material";
+import { Grid, TextField, Button, Typography, Container } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { UserPostBody, User } from "./General/types";
 import { usePostData } from "./ReservationPanel/usePostData";
@@ -16,6 +16,8 @@ import { encrypt, decrypt } from "./utils";
 const useStyles = makeStyles({
   login: {
     textAlign: "center",
+    paddingLeft: "10%",
+    paddingRight: "10%",
   },
   zalogujButton: {
     paddingTop: "20px",
@@ -50,7 +52,7 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
 
   //todo type for google response
 
-  const [googleUserData, setGoogleUserData] = useState<User | null>(null);
+  const [googleId, setGoogleId] = useState<string | null>(null);
 
   const { postData } = usePostData();
 
@@ -79,6 +81,11 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
     };
 
     postData("users", encryptedPostBody);
+
+    if (users) {
+      users.push(encryptedPostBody);
+    }
+
     setLoggedUser(postBody);
   }, [
     password,
@@ -88,6 +95,7 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
     email,
     phone,
     postData,
+    users,
     setLoggedUser,
   ]);
 
@@ -125,12 +133,12 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
   }, [loginEmail, loginPassword, setLoggedUser, users]);
 
   const handleGoogleRegister = useCallback(() => {
-    if (googleUserData) {
+    if (googleId) {
       const postBody: UserPostBody = {
         name: name,
         surname: surname,
-        email: googleUserData?.email,
-        googleId: googleUserData?.googleId,
+        email: email,
+        googleId: googleId,
         phone: phone,
         password: "",
       };
@@ -138,20 +146,27 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
       const encryptedPostBody: UserPostBody = {
         name: encrypt(name),
         surname: encrypt(surname),
-        email: encrypt(googleUserData?.email),
-        googleId: encrypt(googleUserData?.googleId as string),
+        email: encrypt(email),
+        googleId: encrypt(googleId),
         phone: encrypt(phone),
         password: "",
       };
       postData("users", encryptedPostBody);
+
+      if (users) {
+        users.push(encryptedPostBody);
+      }
+
       setLoggedUser(postBody);
     }
-  }, [googleUserData, name, surname, phone, postData, setLoggedUser]);
+  }, [googleId, name, surname, email, phone, postData, users, setLoggedUser]);
 
   const googleSuccess = async (
     res: GoogleLoginResponse | GoogleLoginResponseOffline
   ) => {
-    function isGoogleId(res: GoogleLoginResponse | GoogleLoginResponseOffline): res is GoogleLoginResponse {
+    function isGoogleId(
+      res: GoogleLoginResponse | GoogleLoginResponseOffline
+    ): res is GoogleLoginResponse {
       return "googleId" in res;
     }
 
@@ -184,7 +199,8 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
     }
 
     if (!userFound) {
-      setGoogleUserData(res.profileObj);
+      setGoogleId(res.googleId);
+      setEmail(res.profileObj?.email);
       setName(res.profileObj?.givenName);
       setSurname(res.profileObj?.familyName);
       setShowGoogleRegisterForm(true);
@@ -344,53 +360,61 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
           </>
         )}
         {!!showGoogleRegisterForm && (
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12}>
-              <Typography>
-                Wygląda na to, że to Twoje pierwsze logowanie przy pomocy
-                Google. Uzupełnij poniższe dane by kontynuować!
-              </Typography>
-              <Typography>
-                {`Twój adres email to ${googleUserData?.email}`}
-              </Typography>
+          <Container>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={12} md={12}>
+                <Typography>
+                  Wygląda na to, że to Twoje pierwsze logowanie przy pomocy
+                  Google. Uzupełnij poniższe dane by kontynuować!
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <TextField
+                  label="Adres email"
+                  variant="outlined"
+                  disabled
+                  fullWidth
+                  value={email}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <TextField
+                  label="Imię"
+                  variant="outlined"
+                  fullWidth
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <TextField
+                  label="Nazwisko"
+                  variant="outlined"
+                  fullWidth
+                  value={surname}
+                  onChange={(event) => setSurname(event.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <TextField
+                  label="Numer telefonu"
+                  variant="outlined"
+                  fullWidth
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  onClick={googleId ? handleGoogleRegister : handleRegister}
+                >
+                  Utwórz konto
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={12} md={12}>
-              <TextField
-                label="Imię"
-                variant="outlined"
-                fullWidth
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={12}>
-              <TextField
-                label="Nazwisko"
-                variant="outlined"
-                fullWidth
-                value={surname}
-                onChange={(event) => setSurname(event.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={12}>
-              <TextField
-                label="Numer telefonu"
-                variant="outlined"
-                fullWidth
-                value={phone}
-                onChange={(event) => setPhone(event.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={12}>
-              <Button
-                variant="contained"
-                fullWidth
-                onClick={googleUserData ? handleGoogleRegister : handleRegister}
-              >
-                Utwórz konto
-              </Button>
-            </Grid>
-          </Grid>
+          </Container>
         )}
       </div>
     </>
