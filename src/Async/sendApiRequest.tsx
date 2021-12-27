@@ -15,6 +15,8 @@ interface SendApiRequestProps {
   collection: string;
   operation: CrudOperation;
   body?: ReservationPostBody | UserPostBody;
+  filter?: any;
+  update?: any;
 }
 
 const crudActionName = (crud: CrudOperation): string => {
@@ -32,7 +34,11 @@ export async function sendApiRequest({
   collection,
   operation,
   body,
-}: SendApiRequestProps): Promise<Item[] | Reservation[] | User[] | Price[]> {
+  filter,
+  update,
+}: SendApiRequestProps): Promise<
+  Item[] | Reservation[] | User[] | Price[] | string
+> {
   const apiKey = process.env.REACT_APP_MONGO_API_KEY;
   if (!apiKey) {
     return [];
@@ -48,6 +54,11 @@ export async function sendApiRequest({
     requestData.document = body;
   }
 
+  if (operation === CrudOperation.UPDATE) {
+    requestData.filter = filter;
+    requestData.update = update;
+  }
+
   try {
     const response = await axios({
       method: "POST",
@@ -60,7 +71,9 @@ export async function sendApiRequest({
       },
       data: JSON.stringify(requestData),
     });
-    return response.data.documents;
+    return operation === CrudOperation.CREATE
+      ? response.data.insertedId
+      : response.data.documents;
   } catch (error) {
     console.log(error);
   }

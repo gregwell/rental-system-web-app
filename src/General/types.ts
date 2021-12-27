@@ -47,9 +47,9 @@ export interface PricePostBody {
 }
 
 export enum CrudOperation {
-  CREATE = "CREATE",
-  READ = "READ",
-  UPDATE = "UPDATE",
+  CREATE,
+  READ,
+  UPDATE,
 }
 
 export interface RequestData {
@@ -57,6 +57,8 @@ export interface RequestData {
   database: string;
   dataSource: string;
   document?: any;
+  filter?: any;
+  update?: any;
 }
 
 export interface UserPostBody {

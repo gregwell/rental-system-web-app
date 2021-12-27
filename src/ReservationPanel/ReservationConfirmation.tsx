@@ -8,7 +8,7 @@ import {
 } from "../General/types";
 
 import { Typography, Container } from "@mui/material";
-import { sendApiRequest } from "../Hooks/sendApiRequest";
+import { sendApiRequest } from "../Async/sendApiRequest";
 import { Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Auth from "../Auth";
@@ -88,8 +88,6 @@ export const ReservationConfirmation = ({
         price: "120",
         status: Status.potwierdzona,
       };
-
-      console.log("ddd");
 
       sendApiRequest({
         collection: "reservations",

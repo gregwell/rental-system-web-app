@@ -37,7 +37,6 @@ const SingleReservation = ({ title, reservation }: SingleReservationProps) => {
 
   const makeStylesProps = { isTitle: isTitle };
   const classes = useStyles(makeStylesProps);
-  console.log(classes);
   return (
     <div className={classes.singlePanel}>
       <Container className={classes.singleReservation}>

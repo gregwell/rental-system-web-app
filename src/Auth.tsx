@@ -1,7 +1,8 @@
 import { Grid, TextField, Button, Typography, Container } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { UserPostBody, User, CrudOperation } from "./General/types";
-import { sendApiRequest } from "./Hooks/sendApiRequest";
+
+import { User, CrudOperation } from "./General/types";
+import { sendApiRequest } from "./Async/sendApiRequest";
 import { useState, useCallback } from "react";
 
 import {
@@ -50,17 +51,15 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
   const [wrongLoginPassword, setWrongLoginPassword] = useState<boolean>(false);
   const [wrongLoginEmail, setWrongLoginEmail] = useState<boolean>(false);
 
-  //todo type for google response
-
   const [googleId, setGoogleId] = useState<string | null>(null);
 
-  const handleRegister = useCallback(() => {
+  const handleRegister = useCallback(async () => {
     if (password !== passwordSecond) {
       setShowPasswordAlert(true);
       return;
     }
 
-    const postBody: UserPostBody = {
+    const postBody: User = {
       name: name,
       surname: surname,
       email: email,
@@ -69,7 +68,7 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
       password: password,
     };
 
-    const encryptedPostBody: UserPostBody = {
+    const encryptedPostBody: User = {
       name: encrypt(name),
       surname: encrypt(surname),
       email: encrypt(email),
@@ -78,16 +77,18 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
       password: encrypt(password),
     };
 
-    sendApiRequest({
+    const insertedId: string = (await sendApiRequest({
       collection: "users",
       operation: CrudOperation.CREATE,
       body: encryptedPostBody,
-    });
+    })) as string;
 
     if (users) {
+      encryptedPostBody._id = insertedId;
       users.push(encryptedPostBody);
     }
 
+    postBody._id = insertedId;
     setLoggedUser(postBody);
   }, [
     password,
@@ -115,9 +116,7 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
       return;
     }
 
-    console.log(userFound);
-
-    const decryptedUserFound: UserPostBody = {
+    const decryptedUserFound: User = {
       name: decrypt(userFound.name),
       surname: decrypt(userFound.surname),
       email: decrypt(userFound.email),
@@ -129,43 +128,48 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
       password: decrypt(userFound.password),
     };
 
+    decryptedUserFound._id = userFound._id;
     setLoggedUser(decryptedUserFound);
     return;
   }, [loginEmail, loginPassword, setLoggedUser, users]);
 
-  const handleGoogleRegister = useCallback(() => {
-    if (googleId) {
-      const postBody: UserPostBody = {
-        name: name,
-        surname: surname,
-        email: email,
-        googleId: googleId,
-        phone: phone,
-        password: "",
-      };
-
-      const encryptedPostBody: UserPostBody = {
-        name: encrypt(name),
-        surname: encrypt(surname),
-        email: encrypt(email),
-        googleId: encrypt(googleId),
-        phone: encrypt(phone),
-        password: "",
-      };
-
-      sendApiRequest({
-        collection: "users",
-        operation: CrudOperation.CREATE,
-        body: encryptedPostBody,
-      });
-
-      if (users) {
-        users.push(encryptedPostBody);
-      }
-
-      setLoggedUser(postBody);
+  const handleGoogleRegister = async () => {
+    if (!googleId) {
+      return;
     }
-  }, [googleId, name, surname, email, phone, users, setLoggedUser]);
+
+    const postBody: User = {
+      name: name,
+      surname: surname,
+      email: email,
+      googleId: googleId,
+      phone: phone,
+      password: "",
+    };
+
+    const encryptedPostBody: User = {
+      name: encrypt(name),
+      surname: encrypt(surname),
+      email: encrypt(email),
+      googleId: encrypt(googleId),
+      phone: encrypt(phone),
+      password: "",
+    };
+
+    const insertedId: string = (await sendApiRequest({
+      collection: "users",
+      operation: CrudOperation.CREATE,
+      body: encryptedPostBody,
+    })) as string;
+
+    encryptedPostBody._id = insertedId;
+    if (users) {
+      users.push(encryptedPostBody);
+    }
+
+    postBody._id = insertedId;
+    setLoggedUser(postBody);
+  };
 
   const googleSuccess = async (
     res: GoogleLoginResponse | GoogleLoginResponseOffline
@@ -188,10 +192,12 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
       );
     });
 
-    console.log(res);
+    console.log(users);
+    console.log(userFound);
 
     if (userFound) {
-      const decryptedUserFound: UserPostBody = {
+      const decryptedUserFound: User = {
+        _id: userFound._id,
         name: decrypt(userFound.name),
         surname: decrypt(userFound.surname as string),
         email: decrypt(userFound.email),

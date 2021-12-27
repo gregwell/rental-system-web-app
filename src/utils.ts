@@ -1,27 +1,31 @@
 import crypto from "crypto-js";
 
-export const encrypt = (str: string): string => {
-    const encrypted = crypto.AES.encrypt(
-      JSON.stringify({ str }),
-      process.env.REACT_APP_HASH_KEY as string
-    ).toString();
-    console.log(encrypted);
+export const encrypt = (str: string | undefined): string => {
+  if (str === "" || str === undefined) {
+    return "";
+  }
 
-    return encrypted;
-  };
+  const encrypted = crypto.AES.encrypt(
+    JSON.stringify({ str }),
+    process.env.REACT_APP_HASH_KEY as string
+  ).toString();
 
-  export const decrypt = (encryptedText: string | undefined): string => {
+  return encrypted;
+};
 
-    if(encryptedText === undefined) {
-        return '';
-    }
+export const decrypt = (encryptedText: string | undefined): string => {
+  if (encryptedText === undefined || encryptedText === "") {
+    return "";
+  }
 
-    const decrypted = crypto.AES.decrypt(
-      encryptedText,
-      process.env.REACT_APP_HASH_KEY as string
-    ).toString(crypto.enc.Utf8);
+  console.log(encryptedText);
 
-    const decryptedParsed = JSON.parse(decrypted);
+  const decrypted = crypto.AES.decrypt(
+    encryptedText,
+    process.env.REACT_APP_HASH_KEY as string
+  ).toString(crypto.enc.Utf8);
 
-    return { str: decryptedParsed.str }.str;
-  };
+  const decryptedParsed = JSON.parse(decrypted);
+
+  return { str: decryptedParsed.str }.str;
+};

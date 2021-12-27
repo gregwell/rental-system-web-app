@@ -2,7 +2,7 @@ import ReservationPanel from "./ReservationPanel/ReservationPanel";
 import Navbar from "./Navbar";
 import { User, Reservation, CrudOperation } from "./General/types";
 import { useState, useEffect } from "react";
-import { sendApiRequest } from "./Hooks/sendApiRequest";
+import { sendApiRequest } from "./Async/sendApiRequest";
 
 import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
 
@@ -20,10 +20,10 @@ function App() {
 
   useEffect(() => {
     const prepareReservationsState = async () => {
-      const fetchedReservations = await       sendApiRequest({
+      const fetchedReservations = await sendApiRequest({
         collection: "reservations",
-        operation: CrudOperation.READ
-      });;
+        operation: CrudOperation.READ,
+      });
       setReservations(fetchedReservations as Reservation[]);
       setReservationsInitialized(true);
     };
@@ -34,7 +34,10 @@ function App() {
 
   useEffect(() => {
     const prepareUsersState = async () => {
-      const fetchedUsers = await sendApiRequest({collection: "users", operation: CrudOperation.READ});
+      const fetchedUsers = await sendApiRequest({
+        collection: "users",
+        operation: CrudOperation.READ,
+      });
       setUsers(fetchedUsers as User[]);
       setIsUsersInitialized(true);
     };
@@ -69,7 +72,14 @@ function App() {
           />
           <Route
             path="/profile"
-            element={<MyProfile loggedUser={loggedUser} />}
+            element={
+              <MyProfile
+                loggedUser={loggedUser}
+                users={users}
+                setUsers={setUsers}
+                setLoggedUser={setLoggedUser}
+              />
+            }
           />
         </Routes>
       </Router>
