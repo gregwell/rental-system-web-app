@@ -1,7 +1,7 @@
 import { Grid, TextField, Button, Typography, Container } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { UserPostBody, User } from "./General/types";
-import { usePostData } from "./ReservationPanel/usePostData";
+import { usePostData } from "./Hooks/usePostData";
 import { useState, useCallback } from "react";
 
 import {

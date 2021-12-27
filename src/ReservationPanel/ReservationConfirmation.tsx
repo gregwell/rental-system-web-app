@@ -1,7 +1,7 @@
 import { Item, ReservationPostBody, User, Status, ItemPrice } from "../General/types";
 
 import { Typography, Container } from "@mui/material";
-import { usePostData } from "./usePostData";
+import { usePostData } from "../Hooks/usePostData";
 import { Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Auth from "../Auth";

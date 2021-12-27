@@ -2,7 +2,7 @@ import ReservationPanel from "./ReservationPanel/ReservationPanel";
 import Navbar from "./Navbar";
 import { User, Reservation } from "./General/types";
 import { useState, useEffect } from "react";
-import { useFetchDocuments } from "./ReservationPanel/useFetchDocuments";
+import { useFetchDocuments } from "./Hooks/useFetchDocuments";
 
 import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
 

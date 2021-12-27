@@ -7,7 +7,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { useFetchDocuments } from "./useFetchDocuments";
+import { useFetchDocuments } from "../Hooks/useFetchDocuments";
 import { useState } from "react";
 import { useEffect } from "react";
 import { Item, User, Reservation, Price, ItemPrice } from "../General/types";
