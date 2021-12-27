@@ -15,6 +15,7 @@ interface SendApiRequestProps {
   body?: Reservation | User;
   filter?: any;
   update?: any;
+  setState?: (newState: any) => void;
 }
 
 const crudActionName = (crud: CrudOperation): string => {
@@ -34,6 +35,7 @@ export async function sendApiRequest({
   body,
   filter,
   update,
+  setState,
 }: SendApiRequestProps): Promise<
   Item[] | Reservation[] | User[] | Price[] | string
 > {
@@ -69,11 +71,18 @@ export async function sendApiRequest({
       },
       data: JSON.stringify(requestData),
     });
+    if (setState) {
+      setState(true);
+    }
+
     return operation === CrudOperation.CREATE
       ? response.data.insertedId
       : response.data.documents;
   } catch (error) {
     console.log(error);
+    if (setState) {
+      setState(false);
+    }
   }
   return [];
 }

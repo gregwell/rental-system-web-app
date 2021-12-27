@@ -58,6 +58,8 @@ interface ReservationPanelProps {
   loggedUser: User | null;
   setLoggedUser: (value: User | null) => void;
   reservations: Reservation[] | null;
+  setNewReservationSuccess: (newValue : boolean | null) => void;
+  newReservationSuccess: boolean | null;
 }
 
 const ReservationPanel = ({
@@ -65,6 +67,8 @@ const ReservationPanel = ({
   loggedUser,
   setLoggedUser,
   reservations,
+  setNewReservationSuccess,
+  newReservationSuccess
 }: ReservationPanelProps) => {
   const classes = useStyles();
 
@@ -142,10 +146,11 @@ const ReservationPanel = ({
 
   const onSearchButtonClick = useCallback(() => {
     setIsShowingReservationForm(false);
-  }, []);
+    setNewReservationSuccess(null);
+  }, [setNewReservationSuccess]);
 
-  const searchPanelText = isShowingReservationForm
-    ? "... lub wyszukaj ponownie"
+  const searchPanelText = newReservationSuccess === false 
+    ? "Wyszukaj ponownie" : isShowingReservationForm ? '... lub wyszukaj ponowie'
     : "Wybierz termin i sprawdź dostępny sprzęt";
 
   return (
@@ -161,6 +166,8 @@ const ReservationPanel = ({
           loggedUser={loggedUser}
           setLoggedUser={setLoggedUser}
           pricesTable={pricesTable}
+          setNewReservationSuccess={setNewReservationSuccess}
+          newReservationSuccess={newReservationSuccess}
         />
       )}
       <div className={classes.panel}>

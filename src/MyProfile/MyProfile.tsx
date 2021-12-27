@@ -1,4 +1,12 @@
-import { Typography, Container, Grid, Button, TextField } from "@mui/material";
+import {
+  Typography,
+  Container,
+  Grid,
+  Button,
+  TextField,
+  Alert,
+  AlertTitle,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -62,6 +70,10 @@ const MyProfile = ({
     loggedUser !== null ? loggedUser.email : ""
   );
 
+  const [updateDataSuccesful, setUpdateDataSuccesful] = useState<
+    boolean | null
+  >(null);
+
   /*
   if (!loggedUser) {
     navigate("/");
@@ -95,7 +107,12 @@ const MyProfile = ({
       update: {
         $set: updated,
       },
+      setState: setUpdateDataSuccesful,
     });
+
+    if (updateDataSuccesful === false) {
+      return;
+    }
 
     const newUser = (prevState: User | null): User => {
       return {
@@ -118,8 +135,6 @@ const MyProfile = ({
         password: encrypt(loggedUser?.password),
       };
     };
-
-    console.log(newUserEncrypted(loggedUser));
 
     if (users) {
       setUsers(
@@ -168,11 +183,26 @@ const MyProfile = ({
                     value={email}
                     setValue={setEmail}
                   />
+
                   <Grid item xs={12}>
                     <Button variant="contained" fullWidth onClick={onUpdate}>
                       aktualizuj
                     </Button>
                   </Grid>
+                  {updateDataSuccesful === true && (
+                    <Grid item xs={12}>
+                      <Alert severity="success">
+                        Dane zostały zaktualizowane!
+                      </Alert>
+                    </Grid>
+                  )}
+                  {updateDataSuccesful === false && (
+                    <Grid item xs={12}>
+                      <Alert severity="error">
+                        Wystąpił błąd i nie udało się zaktualizować danych.
+                      </Alert>
+                    </Grid>
+                  )}
                 </Grid>
               </Grid>
               <Grid item md={6} xs={12}>

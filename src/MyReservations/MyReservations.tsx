@@ -1,4 +1,4 @@
-import { Typography, Container } from "@mui/material";
+import { Typography, Container, Alert } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 import SingleReservation from "./SingleReservation";
@@ -17,13 +17,21 @@ const useStyles = makeStyles({
     borderRadius: "10px",
     paddingBottom: "25px",
   },
+  alert: {
+    paddingTop: "15px",
+    paddingBottom: "5px",
+  }
 });
 
 interface MyReservationsProps {
   reservations: Reservation[] | null;
+  newReservationSuccess: boolean | null;
 }
 
-const MyReservations = ({ reservations }: MyReservationsProps) => {
+const MyReservations = ({
+  reservations,
+  newReservationSuccess,
+}: MyReservationsProps) => {
   const classes = useStyles();
 
   return (
@@ -31,6 +39,14 @@ const MyReservations = ({ reservations }: MyReservationsProps) => {
       <div className={classes.panel}>
         <Container className={classes.reservation}>
           <Typography variant="h5">Twoje rezerwacje:</Typography>
+          <div className={classes.alert}>
+            {newReservationSuccess === true && (
+              <Alert severity="success">
+                Rezerwacja została dokonana pomyślnie!
+              </Alert>
+            )}
+          </div>
+
           <SingleReservation title />
           {!!reservations &&
             reservations.map((reservation) => (

@@ -17,6 +17,10 @@ function App() {
     useState<boolean>(false);
   const [reservations, setReservations] = useState<Reservation[]>([]);
 
+  const [newReservationSuccess, setNewReservationSuccess] = useState<
+    boolean | null
+  >(null);
+
   useEffect(() => {
     const prepareReservationsState = async () => {
       const fetchedReservations = await sendApiRequest({
@@ -52,6 +56,7 @@ function App() {
           users={users}
           loggedUser={loggedUser}
           setLoggedUser={setLoggedUser}
+          setNewReservationSuccess={setNewReservationSuccess}
         />
         <Routes>
           <Route
@@ -62,12 +67,19 @@ function App() {
                 loggedUser={loggedUser}
                 setLoggedUser={setLoggedUser}
                 reservations={reservations}
+                setNewReservationSuccess={setNewReservationSuccess}
+                newReservationSuccess={newReservationSuccess}
               />
             }
           />
           <Route
             path="/reservations"
-            element={<MyReservations reservations={reservations} />}
+            element={
+              <MyReservations
+                reservations={reservations}
+                newReservationSuccess={newReservationSuccess}
+              />
+            }
           />
           <Route
             path="/profile"

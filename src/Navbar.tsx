@@ -39,9 +39,15 @@ interface NavbarProps {
   users: User[] | null;
   loggedUser: User | null;
   setLoggedUser: (value: User | null) => void;
+  setNewReservationSuccess: (newVal: boolean | null) => void;
 }
 
-const Navbar = ({ users, loggedUser, setLoggedUser }: NavbarProps) => {
+const Navbar = ({
+  users,
+  loggedUser,
+  setLoggedUser,
+  setNewReservationSuccess,
+}: NavbarProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
 
@@ -57,14 +63,17 @@ const Navbar = ({ users, loggedUser, setLoggedUser }: NavbarProps) => {
   };
 
   const goToReservations = () => {
+    setNewReservationSuccess(null);
     navigate("/reservations");
   };
 
   const goToHome = () => {
+    setNewReservationSuccess(null);
     navigate("/");
   };
 
   const goToProfile = () => {
+    setNewReservationSuccess(null);
     navigate("/profile");
   };
 
