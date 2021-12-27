@@ -1,7 +1,7 @@
 import { Grid, TextField, Button, Typography, Container } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { UserPostBody, User } from "./General/types";
-import { usePostData } from "./Hooks/usePostData";
+import { UserPostBody, User, CrudOperation } from "./General/types";
+import { sendApiRequest } from "./Hooks/sendApiRequest";
 import { useState, useCallback } from "react";
 
 import {
@@ -54,8 +54,6 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
 
   const [googleId, setGoogleId] = useState<string | null>(null);
 
-  const { postData } = usePostData();
-
   const handleRegister = useCallback(() => {
     if (password !== passwordSecond) {
       setShowPasswordAlert(true);
@@ -80,7 +78,11 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
       password: encrypt(password),
     };
 
-    postData("users", encryptedPostBody);
+    sendApiRequest({
+      collection: "users",
+      operation: CrudOperation.CREATE,
+      body: encryptedPostBody,
+    });
 
     if (users) {
       users.push(encryptedPostBody);
@@ -94,7 +96,6 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
     surname,
     email,
     phone,
-    postData,
     users,
     setLoggedUser,
   ]);
@@ -151,7 +152,12 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
         phone: encrypt(phone),
         password: "",
       };
-      postData("users", encryptedPostBody);
+
+      sendApiRequest({
+        collection: "users",
+        operation: CrudOperation.CREATE,
+        body: encryptedPostBody,
+      });
 
       if (users) {
         users.push(encryptedPostBody);
@@ -159,7 +165,7 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
 
       setLoggedUser(postBody);
     }
-  }, [googleId, name, surname, email, phone, postData, users, setLoggedUser]);
+  }, [googleId, name, surname, email, phone, users, setLoggedUser]);
 
   const googleSuccess = async (
     res: GoogleLoginResponse | GoogleLoginResponseOffline

@@ -46,6 +46,19 @@ export interface PricePostBody {
   day: number;
 }
 
+export enum CrudOperation {
+  CREATE = "CREATE",
+  READ = "READ",
+  UPDATE = "UPDATE",
+}
+
+export interface RequestData {
+  collection: string;
+  database: string;
+  dataSource: string;
+  document?: any;
+}
+
 export interface UserPostBody {
   name: string;
   surname: string;

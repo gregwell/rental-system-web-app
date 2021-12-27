@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback } from "react";
 
-import { Item, Reservation } from "../General/types";
+import { Item, Reservation, User, Price } from "../General/types";
 
 export const useFetchDocuments = () => {
   const fetchDocuments = useCallback((collection: string) => {
@@ -15,17 +15,21 @@ export const useFetchDocuments = () => {
   return { fetchDocuments };
 };
 
-export async function searchDocuments(collection: string): Promise<
-  Item[] | Reservation[]
-> {
-  try { 
+export async function searchDocuments(
+  collection: string
+): Promise<Item[] | Reservation[] | User[] | Price[]> {
+  const apiKey = process.env.REACT_APP_MONGO_API_KEY;
+  if (!apiKey) {
+    return [];
+  }
+
+  try {
     const response = await axios({
       method: "POST",
       url: "https://data.mongodb-api.com/app/data-lasjp/endpoint/data/beta/action/find",
       headers: {
         "Content-Type": "application/json",
-        "api-key":
-          "EPj8nhVP0kRnB3swQRfzvgNVMlQCFmcQ7lW2ZbyMfgE23zLZCGDDpp3o3n6X45o6",
+        "api-key": apiKey,
       },
       data: JSON.stringify({
         collection: `${collection}`,

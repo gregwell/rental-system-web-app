@@ -7,10 +7,17 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { useFetchDocuments } from "../Hooks/useFetchDocuments";
+import { sendApiRequest } from "../Hooks/sendApiRequest";
 import { useState } from "react";
 import { useEffect } from "react";
-import { Item, User, Reservation, Price, ItemPrice } from "../General/types";
+import {
+  Item,
+  User,
+  Reservation,
+  Price,
+  ItemPrice,
+  CrudOperation,
+} from "../General/types";
 import AvailableItems from "./AvailableItems/AvailableItems";
 import { ReservationDateTimePicker } from "./ReservationDateTimePicker";
 import { ReservationConfirmation } from "./ReservationConfirmation";
@@ -82,18 +89,19 @@ const ReservationPanel = ({
 
   const [choosenItem, setChoosenItem] = useState<Item | null>(null);
 
-  const { fetchDocuments } = useFetchDocuments();
-
   useEffect(() => {
     const prepareItemsState = async () => {
-      const fetchedItems = await fetchDocuments("items");
+      const fetchedItems = await sendApiRequest({
+        collection: "items",
+        operation: CrudOperation.READ,
+      });
       setItems(fetchedItems as Item[]);
       setItemsInitialized(true);
     };
     if (!itemsInitialized) {
       prepareItemsState();
     }
-  }, [fetchDocuments, itemsInitialized]);
+  }, [itemsInitialized]);
 
   useEffect(() => {
     setPricesTable(
@@ -103,14 +111,17 @@ const ReservationPanel = ({
 
   useEffect(() => {
     const preparePricesState = async () => {
-      const fetchedPrices = await fetchDocuments("prices");
+      const fetchedPrices = await sendApiRequest({
+        collection: "prices",
+        operation: CrudOperation.READ,
+      });
       setPrices(fetchedPrices as Price[]);
       setPricesInitialized(true);
     };
     if (!pricesInitialized) {
       preparePricesState();
     }
-  }, [fetchDocuments, itemsInitialized, pricesInitialized]);
+  }, [itemsInitialized, pricesInitialized]);
 
   let selectedTimeAvailableItems: Item[] = [];
 

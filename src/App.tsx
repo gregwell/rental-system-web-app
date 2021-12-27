@@ -1,8 +1,8 @@
 import ReservationPanel from "./ReservationPanel/ReservationPanel";
 import Navbar from "./Navbar";
-import { User, Reservation } from "./General/types";
+import { User, Reservation, CrudOperation } from "./General/types";
 import { useState, useEffect } from "react";
-import { useFetchDocuments } from "./Hooks/useFetchDocuments";
+import { sendApiRequest } from "./Hooks/sendApiRequest";
 
 import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
 
@@ -18,29 +18,30 @@ function App() {
     useState<boolean>(false);
   const [reservations, setReservations] = useState<Reservation[]>([]);
 
-  const { fetchDocuments } = useFetchDocuments();
-
   useEffect(() => {
     const prepareReservationsState = async () => {
-      const fetchedReservations = await fetchDocuments("reservations");
+      const fetchedReservations = await       sendApiRequest({
+        collection: "reservations",
+        operation: CrudOperation.READ
+      });;
       setReservations(fetchedReservations as Reservation[]);
       setReservationsInitialized(true);
     };
     if (!reservationsInitialized) {
       prepareReservationsState();
     }
-  }, [fetchDocuments, reservationsInitialized]);
+  }, [reservationsInitialized]);
 
   useEffect(() => {
     const prepareUsersState = async () => {
-      const fetchedItems = await fetchDocuments("users");
-      setUsers(fetchedItems as User[]);
+      const fetchedUsers = await sendApiRequest({collection: "users", operation: CrudOperation.READ});
+      setUsers(fetchedUsers as User[]);
       setIsUsersInitialized(true);
     };
     if (!isUsersInitialized) {
       prepareUsersState();
     }
-  }, [fetchDocuments, isUsersInitialized]);
+  }, [isUsersInitialized]);
 
   return (
     <>

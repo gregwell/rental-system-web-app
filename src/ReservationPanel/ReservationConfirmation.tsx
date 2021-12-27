@@ -1,7 +1,14 @@
-import { Item, ReservationPostBody, User, Status, ItemPrice } from "../General/types";
+import {
+  Item,
+  ReservationPostBody,
+  User,
+  Status,
+  ItemPrice,
+  CrudOperation,
+} from "../General/types";
 
 import { Typography, Container } from "@mui/material";
-import { usePostData } from "../Hooks/usePostData";
+import { sendApiRequest } from "../Hooks/sendApiRequest";
 import { Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Auth from "../Auth";
@@ -38,7 +45,7 @@ const useStyles = makeStyles({
     transform: "scale(2.5)",
     paddingTop: "20px",
     paddingBottom: "20px",
-  }
+  },
 });
 
 interface ReservationConfirmationProps {
@@ -64,7 +71,6 @@ export const ReservationConfirmation = ({
   setIsShowingReservationForm,
   pricesTable,
 }: ReservationConfirmationProps) => {
-  const { postData } = usePostData();
   const classes = useStyles();
   const navigate = useNavigate();
 
@@ -73,32 +79,34 @@ export const ReservationConfirmation = ({
   );
 
   const onSendReservation = useCallback(() => {
-    if (
-      choosenItem &&
-      startDate &&
-      finishDate &&
-      loggedUser &&
-      loggedUser?._id
-    ) {
+    if (choosenItem && startDate && finishDate && loggedUser) {
       const reservationPostData: ReservationPostBody = {
         productId: choosenItem.productId,
-        userId: loggedUser._id,
+        userId: "loggedUser._id",
         startDate: startDate.toString(),
         finishDate: finishDate.toString(),
         price: "120",
         status: Status.potwierdzona,
       };
-      postData("reservations", reservationPostData);
+
+      console.log("ddd");
+
+      sendApiRequest({
+        collection: "reservations",
+        operation: CrudOperation.CREATE,
+        body: reservationPostData,
+      });
+
       navigate("/reservations");
     }
-  }, [choosenItem, finishDate, loggedUser, navigate, postData, startDate]);
+  }, [choosenItem, finishDate, loggedUser, navigate, startDate]);
 
   return (
     <>
       <div className={classes.panel}>
         <Container className={classes.reservation}>
           <div className={classes.customIcon}>
-            <CustomIcon type={choosenItem.type}/>
+            <CustomIcon type={choosenItem.type} />
           </div>
           <Typography variant="h3">
             {`${choosenItem.producer} ${choosenItem.model}`}
@@ -132,7 +140,7 @@ export const ReservationConfirmation = ({
             </>
           )}
           <br />
-          <br/>
+          <br />
           <Button
             onClick={() => setIsShowingReservationForm(false)}
             children={"wróć do wyników wyszukiwania"}
