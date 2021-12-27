@@ -1,6 +1,7 @@
 import { Typography, Grid, Container } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { Reservation } from "../General/types";
+
+import { Reservation } from "../general/types";
 
 const useStyles = makeStyles({
   singlePanel: {

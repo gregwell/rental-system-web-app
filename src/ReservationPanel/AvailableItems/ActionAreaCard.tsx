@@ -1,10 +1,8 @@
-import { Card } from "@mui/material";
-import Typography from "@mui/material/Typography";
-import { CardActionArea } from "@mui/material";
-import CustomIcon from "../../General/CustomIcon";
-import { ItemPrice, ItemType } from "../../General/types";
-
+import { Card, Typography, CardActionArea } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+
+import CustomIcon from "../../general/CustomIcon";
+import { ItemPrice, ItemType } from "../../general/types";
 
 const useStyles = makeStyles({
   button: {

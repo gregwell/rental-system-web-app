@@ -1,9 +1,10 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
 import { Button, Grid, Typography } from "@mui/material";
+
 import Auth from "./Auth";
-import { useState, useEffect } from "react";
-import { User } from "./General/types";
-import { useNavigate } from "react-router-dom";
+import { User } from "./general/types";
 
 const useStyles = makeStyles({
   root: {
@@ -65,7 +66,7 @@ const Navbar = ({ users, loggedUser, setLoggedUser }: NavbarProps) => {
 
   const goToProfile = () => {
     navigate("/profile");
-  }
+  };
 
   useEffect(() => {
     if (loggedUser) {

@@ -1,11 +1,12 @@
 import { Typography, Container, Grid, Button, TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { CrudOperation, User } from "../General/types";
-import SingleProfileItem from "./SingleProfileItem";
 import { useNavigate } from "react-router-dom";
-import { sendApiRequest } from "../Async/sendApiRequest";
 import { useState } from "react";
-import { encrypt, decrypt } from "../utils";
+
+import { CrudOperation, User, Collection } from "../general/types";
+import SingleProfileItem from "./SingleProfileItem";
+import { sendApiRequest } from "../async/sendApiRequest";
+import { encrypt } from "../utils";
 
 const useStyles = makeStyles({
   panel: {
@@ -88,7 +89,7 @@ const MyProfile = ({
     }
 
     sendApiRequest({
-      collection: "users",
+      collection: Collection.users,
       operation: CrudOperation.UPDATE,
       filter: { _id: { $oid: loggedUser._id } },
       update: {

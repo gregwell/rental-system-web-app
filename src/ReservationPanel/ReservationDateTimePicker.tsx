@@ -1,6 +1,5 @@
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import { DateTimePicker } from "@mui/lab";
+import { DateTimePicker, LocalizationProvider } from "@mui/lab";
 import { TextField } from "@mui/material";
 
 interface ReservationDateTimePickerProps {

@@ -1,11 +1,10 @@
-import ReservationPanel from "./ReservationPanel/ReservationPanel";
-import Navbar from "./Navbar";
-import { User, Reservation, CrudOperation } from "./General/types";
 import { useState, useEffect } from "react";
-import { sendApiRequest } from "./Async/sendApiRequest";
-
 import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
 
+import ReservationPanel from "./ReservationPanel/ReservationPanel";
+import Navbar from "./Navbar";
+import { User, Reservation, CrudOperation, Collection } from "./general/types";
+import { sendApiRequest } from "./async/sendApiRequest";
 import MyReservations from "./MyReservations/MyReservations";
 import MyProfile from "./MyProfile/MyProfile";
 
@@ -21,7 +20,7 @@ function App() {
   useEffect(() => {
     const prepareReservationsState = async () => {
       const fetchedReservations = await sendApiRequest({
-        collection: "reservations",
+        collection: Collection.reservations,
         operation: CrudOperation.READ,
       });
       setReservations(fetchedReservations as Reservation[]);
@@ -35,7 +34,7 @@ function App() {
   useEffect(() => {
     const prepareUsersState = async () => {
       const fetchedUsers = await sendApiRequest({
-        collection: "users",
+        collection: Collection.users,
         operation: CrudOperation.READ,
       });
       setUsers(fetchedUsers as User[]);

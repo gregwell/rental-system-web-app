@@ -1,22 +1,20 @@
+import { useNavigate } from "react-router-dom";
+import { useCallback } from "react";
+import { Typography, Container, Button } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+
 import {
   Item,
-  ReservationPostBody,
+  Reservation,
   User,
   Status,
   ItemPrice,
   CrudOperation,
-} from "../General/types";
-
-import { Typography, Container } from "@mui/material";
-import { sendApiRequest } from "../Async/sendApiRequest";
-import { Button } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+  Collection,
+} from "../general/types";
+import { sendApiRequest } from "../async/sendApiRequest";
 import Auth from "../Auth";
-import CustomIcon from "../General/CustomIcon";
-
-import { useNavigate } from "react-router-dom";
-
-import { useCallback } from "react";
+import CustomIcon from "../general/CustomIcon";
 
 const useStyles = makeStyles({
   root: {
@@ -80,7 +78,7 @@ export const ReservationConfirmation = ({
 
   const onSendReservation = useCallback(() => {
     if (choosenItem && startDate && finishDate && loggedUser) {
-      const reservationPostData: ReservationPostBody = {
+      const reservationPostData: Reservation = {
         productId: choosenItem.productId,
         userId: "loggedUser._id",
         startDate: startDate.toString(),
@@ -90,7 +88,7 @@ export const ReservationConfirmation = ({
       };
 
       sendApiRequest({
-        collection: "reservations",
+        collection: Collection.reservations,
         operation: CrudOperation.CREATE,
         body: reservationPostData,
       });

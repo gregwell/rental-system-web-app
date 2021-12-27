@@ -1,10 +1,6 @@
+import { useState, useCallback } from "react";
 import { Grid, TextField, Button, Typography, Container } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-
-import { User, CrudOperation } from "./General/types";
-import { sendApiRequest } from "./Async/sendApiRequest";
-import { useState, useCallback } from "react";
-
 import {
   GoogleLogin,
   GoogleLoginResponse,
@@ -12,6 +8,8 @@ import {
 } from "react-google-login";
 import GoogleIcon from "@mui/icons-material/Google";
 
+import { User, CrudOperation, Collection } from "./general/types";
+import { sendApiRequest } from "./async/sendApiRequest";
 import { encrypt, decrypt } from "./utils";
 
 const useStyles = makeStyles({
@@ -78,7 +76,7 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
     };
 
     const insertedId: string = (await sendApiRequest({
-      collection: "users",
+      collection: Collection.users,
       operation: CrudOperation.CREATE,
       body: encryptedPostBody,
     })) as string;
@@ -157,7 +155,7 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
     };
 
     const insertedId: string = (await sendApiRequest({
-      collection: "users",
+      collection: Collection.users,
       operation: CrudOperation.CREATE,
       body: encryptedPostBody,
     })) as string;

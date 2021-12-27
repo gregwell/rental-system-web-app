@@ -1,8 +1,9 @@
+import { useCallback } from "react";
 import { makeStyles } from "@mui/styles";
 import { Grid, Typography, Container } from "@mui/material";
+
 import ActionAreaCard from "./ActionAreaCard";
-import { useCallback } from "react";
-import { Item, ItemPrice } from "../../General/types";
+import { Item, ItemPrice } from "../../general/types";
 
 const useStyles = makeStyles({
   root: {

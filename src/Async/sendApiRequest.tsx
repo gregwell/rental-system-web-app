@@ -5,16 +5,14 @@ import {
   User,
   Price,
   Reservation,
-  ReservationPostBody,
-  UserPostBody,
   CrudOperation,
   RequestData,
-} from "../General/types";
+} from "../general/types";
 
 interface SendApiRequestProps {
   collection: string;
   operation: CrudOperation;
-  body?: ReservationPostBody | UserPostBody;
+  body?: Reservation | User;
   filter?: any;
   update?: any;
 }

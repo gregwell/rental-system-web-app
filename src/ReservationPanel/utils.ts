@@ -1,4 +1,4 @@
-import { Reservation, Price, ItemPrice , ItemType} from "../General/types";
+import { Reservation, Price, ItemPrice , ItemType} from "../general/types";
 
 export const getPolishName = (type: string):string => {
   switch(type) {

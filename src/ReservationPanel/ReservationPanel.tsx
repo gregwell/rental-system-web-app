@@ -1,3 +1,4 @@
+import { useEffect, useState, useCallback } from "react";
 import { makeStyles } from "@mui/styles";
 import {
   Grid,
@@ -7,9 +8,8 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { sendApiRequest } from "../Async/sendApiRequest";
-import { useState } from "react";
-import { useEffect } from "react";
+
+import { sendApiRequest } from "../async/sendApiRequest";
 import {
   Item,
   User,
@@ -17,15 +17,16 @@ import {
   Price,
   ItemPrice,
   CrudOperation,
-} from "../General/types";
+  Collection,
+} from "../general/types";
 import AvailableItems from "./AvailableItems/AvailableItems";
 import { ReservationDateTimePicker } from "./ReservationDateTimePicker";
 import { ReservationConfirmation } from "./ReservationConfirmation";
-import { calculateReservationPriceForEachType, getPolishName } from "./utils";
-
-import { useCallback } from "react";
-
-import { canWeRentThisProduct } from "./utils";
+import {
+  calculateReservationPriceForEachType,
+  getPolishName,
+  canWeRentThisProduct,
+} from "./utils";
 
 const useStyles = makeStyles({
   root: {
@@ -92,7 +93,7 @@ const ReservationPanel = ({
   useEffect(() => {
     const prepareItemsState = async () => {
       const fetchedItems = await sendApiRequest({
-        collection: "items",
+        collection: Collection.items,
         operation: CrudOperation.READ,
       });
       setItems(fetchedItems as Item[]);
@@ -112,7 +113,7 @@ const ReservationPanel = ({
   useEffect(() => {
     const preparePricesState = async () => {
       const fetchedPrices = await sendApiRequest({
-        collection: "prices",
+        collection: Collection.prices,
         operation: CrudOperation.READ,
       });
       setPrices(fetchedPrices as Price[]);

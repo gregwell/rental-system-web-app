@@ -1,8 +1,28 @@
-export interface ItemPrice {
-  type: ItemType;
-  price: number;
-  isPerDay: boolean;
-  howMuch: number;
+export enum Collection {
+  users = "users",
+  items = "items",
+  reservations = "reservations",
+  prices = "prices",
+}
+
+export interface User {
+  name: string;
+  surname: string;
+  phone: string;
+  googleId?: string;
+  email: string;
+  password?: string;
+  _id?: string;
+}
+
+export interface Reservation {
+  productId: string;
+  userId: string;
+  startDate: string;
+  finishDate: string;
+  price: string;
+  status: Status;
+  _id?: string;
 }
 
 export interface Item {
@@ -13,6 +33,13 @@ export interface Item {
   photo: string;
   productId: string;
   price?: ItemPrice;
+}
+
+export interface ItemPrice {
+  type: ItemType;
+  price: number;
+  isPerDay: boolean;
+  howMuch: number;
 }
 
 export enum ItemType {
@@ -31,19 +58,11 @@ export enum Status {
   anulowana = "anulowana",
 }
 
-export interface ReservationPostBody {
-  productId: string;
-  userId: string;
-  startDate: string;
-  finishDate: string;
-  price: string;
-  status: Status;
-}
-
-export interface PricePostBody {
+export interface Price {
   type: ItemType;
   hour: number;
   day: number;
+  _id?: string;
 }
 
 export enum CrudOperation {
@@ -59,27 +78,6 @@ export interface RequestData {
   document?: any;
   filter?: any;
   update?: any;
-}
-
-export interface UserPostBody {
-  name: string;
-  surname: string;
-  phone: string;
-  googleId?: string;
-  email: string;
-  password?: string;
-}
-
-export interface User extends UserPostBody {
-  _id?: string;
-}
-
-export interface Reservation extends ReservationPostBody {
-  _id?: string;
-}
-
-export interface Price extends PricePostBody {
-  _id?: string;
 }
 
 export interface GoogleResponse {
