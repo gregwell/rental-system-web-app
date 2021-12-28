@@ -13,6 +13,7 @@ export interface User {
   email: string;
   password?: string;
   _id?: string;
+  idCard?: string;
 }
 
 export interface Reservation {
@@ -69,7 +70,7 @@ export enum CrudOperation {
   CREATE,
   READ,
   UPDATE,
-  DELETE
+  DELETE,
 }
 
 export interface RequestData {

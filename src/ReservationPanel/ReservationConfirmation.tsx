@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import {
   Typography,
   Container,
@@ -86,8 +86,20 @@ export const ReservationConfirmation = ({
     (priceItem) => priceItem.type === choosenItem.type
   );
 
-  const onSendReservation = useCallback(() => {
+  useEffect(() => {
+    if (newReservationSuccess === true) {
+      navigate("/reservations");
+    }
+  }, [navigate, newReservationSuccess]);
+
+  const onSendReservation = useCallback(async () => {
+    console.log(choosenItem);
+    console.log(startDate);
+    console.log(finishDate);
+    console.log(loggedUser);
     if (choosenItem && startDate && finishDate && loggedUser) {
+      console.log("IM IN");
+
       const reservationPostData: Reservation = {
         productId: choosenItem.productId,
         userId: "loggedUser._id",
@@ -97,23 +109,17 @@ export const ReservationConfirmation = ({
         status: Status.potwierdzona,
       };
 
-      sendApiRequest({
+      await sendApiRequest({
         collection: Collection.reservations,
         operation: CrudOperation.CREATE,
         body: reservationPostData,
         setState: setNewReservationSuccess,
       });
-
-      if (newReservationSuccess === true) {
-        navigate("/reservations");
-      }
     }
   }, [
     choosenItem,
     finishDate,
     loggedUser,
-    navigate,
-    newReservationSuccess,
     setNewReservationSuccess,
     startDate,
   ]);

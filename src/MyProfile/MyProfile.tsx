@@ -40,8 +40,7 @@ const useStyles = makeStyles({
     textAlign: "center",
   },
   deleteButton: {
-    paddingTop: "19px",
-    width: "100%",
+    height: "56px",
   },
 });
 
@@ -298,13 +297,14 @@ const MyProfile = ({
                     {!!showDeletePasswordConfirmation && (
                       <>
                         <Grid item xs={12} className={classes.center}>
-                          <Typography color="error">Jesteś pewien?</Typography>
+                          <Typography color="error">Tej akcji nie możesz cofnąć. Jesteś pewny/na?</Typography>
                         </Grid>
                       </>
                     )}
                     <Grid item xs={12}>
                       <Button
                         fullWidth
+                        className={classes.deleteButton}
                         variant={
                           showDeletePasswordConfirmation
                             ? "contained"
