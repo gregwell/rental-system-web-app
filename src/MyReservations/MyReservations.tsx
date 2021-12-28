@@ -2,7 +2,7 @@ import { Typography, Container, Alert, AlertTitle } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 import SingleReservation from "./SingleReservation";
-import { Reservation } from "../general/types";
+import { Reservation, User } from "../general/types";
 
 const useStyles = makeStyles({
   panel: {
@@ -26,9 +26,11 @@ const useStyles = makeStyles({
 interface MyReservationsProps {
   reservations: Reservation[] | null;
   newReservationSuccess: boolean | null;
+  loggedUser: User | null;
 }
 
 const MyReservations = ({
+  loggedUser,
   reservations,
   newReservationSuccess,
 }: MyReservationsProps) => {
@@ -50,12 +52,17 @@ const MyReservations = ({
 
           <SingleReservation title />
           {!!reservations &&
-            reservations.map((reservation) => (
-              <SingleReservation
-                key={reservation._id}
-                reservation={reservation}
-              />
-            ))}
+            reservations.map((reservation) => {
+              return (
+                loggedUser &&
+                reservation.userId === loggedUser._id && (
+                  <SingleReservation
+                    key={reservation._id}
+                    reservation={reservation}
+                  />
+                )
+              );
+            })}
         </Container>
       </div>
     </>

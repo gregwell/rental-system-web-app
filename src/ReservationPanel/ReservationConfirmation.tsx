@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Typography,
   Container,
@@ -64,6 +64,7 @@ interface ReservationConfirmationProps {
   setIsShowingReservationForm: (value: boolean) => void;
   setNewReservationSuccess: (newValue: boolean | null) => void;
   newReservationSuccess: boolean | null;
+  setReservations: React.Dispatch<React.SetStateAction<Reservation[]>>;
 }
 
 export const ReservationConfirmation = ({
@@ -78,6 +79,7 @@ export const ReservationConfirmation = ({
   pricesTable,
   setNewReservationSuccess,
   newReservationSuccess,
+  setReservations,
 }: ReservationConfirmationProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -86,28 +88,34 @@ export const ReservationConfirmation = ({
     (priceItem) => priceItem.type === choosenItem.type
   );
 
+  const [currentReservation, setCurrentReservation] = useState<Reservation>();
+
   useEffect(() => {
     if (newReservationSuccess === true) {
       navigate("/reservations");
+
+      console.log("ss");
+      setReservations((prevState) => {
+        const arr = [...prevState, currentReservation] as Reservation[];
+        return arr;
+      });
     }
-  }, [navigate, newReservationSuccess]);
+  }, [currentReservation, navigate, newReservationSuccess, setReservations]);
 
   const onSendReservation = useCallback(async () => {
-    console.log(choosenItem);
-    console.log(startDate);
-    console.log(finishDate);
-    console.log(loggedUser);
     if (choosenItem && startDate && finishDate && loggedUser) {
       console.log("IM IN");
 
       const reservationPostData: Reservation = {
         productId: choosenItem.productId,
-        userId: "loggedUser._id",
-        startDate: startDate.toString(),
-        finishDate: finishDate.toString(),
+        userId: loggedUser._id as string,
+        startDate: startDate.getTime().toString(),
+        finishDate: finishDate.getTime().toString(),
         price: "120",
         status: Status.potwierdzona,
       };
+
+      setCurrentReservation(reservationPostData);
 
       await sendApiRequest({
         collection: Collection.reservations,

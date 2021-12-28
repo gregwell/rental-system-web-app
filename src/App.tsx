@@ -69,6 +69,7 @@ function App() {
                 reservations={reservations}
                 setNewReservationSuccess={setNewReservationSuccess}
                 newReservationSuccess={newReservationSuccess}
+                setReservations={setReservations}
               />
             }
           />
@@ -78,6 +79,7 @@ function App() {
               <MyReservations
                 reservations={reservations}
                 newReservationSuccess={newReservationSuccess}
+                loggedUser={loggedUser}
               />
             }
           />
