@@ -26,6 +26,8 @@ const crudActionName = (crud: CrudOperation): string => {
       return "find";
     case CrudOperation.UPDATE:
       return "updateOne";
+    case CrudOperation.DELETE:
+      return "deleteOne";
   }
 };
 
@@ -59,6 +61,10 @@ export async function sendApiRequest({
     requestData.update = update;
   }
 
+  if (operation === CrudOperation.DELETE) {
+    requestData.filter = filter;
+  }
+
   try {
     const response = await axios({
       method: "POST",
@@ -80,8 +86,10 @@ export async function sendApiRequest({
       : response.data.documents;
   } catch (error) {
     console.log(error);
+    console.log(setState);
     if (setState) {
       setState(false);
+      console.log('setState to false');
     }
   }
   return [];

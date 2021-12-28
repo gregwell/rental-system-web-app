@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { CrudOperation, User, Collection } from "../general/types";
 import SingleProfileItem from "./SingleProfileItem";
@@ -39,6 +39,10 @@ const useStyles = makeStyles({
   center: {
     textAlign: "center",
   },
+  deleteButton: {
+    paddingTop: "19px",
+    width: "100%",
+  },
 });
 
 interface MyProfileProps {
@@ -57,6 +61,13 @@ const MyProfile = ({
   const classes = useStyles();
   const navigate = useNavigate();
 
+  console.log("NEW RERENDER ..");
+  console.log(loggedUser);
+  console.log(users);
+  console.log(setUsers);
+  console.log(setLoggedUser);
+  console.log("^^ NEW RERENDER");
+
   const [name, setName] = useState<string>(
     loggedUser !== null ? loggedUser.name : ""
   );
@@ -74,12 +85,49 @@ const MyProfile = ({
     boolean | null
   >(null);
 
-  /*
-  if (!loggedUser) {
-    navigate("/");
-    return null;
-  }
-*/
+  const [deleteUserSuccessful, setDeleteUserSuccessful] = useState<
+    boolean | null
+  >(null);
+
+  const [showDeletePasswordConfirmation, setShowDeletePasswordConfirmation] =
+    useState<boolean>(false);
+
+  useEffect(() => {
+    if (deleteUserSuccessful === true) {
+      const timer = setTimeout(() => {
+        setDeleteUserSuccessful(null);
+        setLoggedUser(null);
+        navigate("/");
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [deleteUserSuccessful, loggedUser, navigate, setLoggedUser]);
+
+  const onDeleteUser = async () => {
+    if (!loggedUser) {
+      return;
+    }
+
+    await sendApiRequest({
+      collection: Collection.users,
+      operation: CrudOperation.DELETE,
+      filter: { _id: { $oid: loggedUser._id } },
+      setState: setDeleteUserSuccessful,
+    });
+
+    if (deleteUserSuccessful === false) {
+      return;
+    }
+
+    if (users) {
+      console.log("THERE ARE USERS!");
+      setUsers(
+        users.filter((user) => {
+          return !(user?._id === loggedUser._id);
+        })
+      );
+    }
+  };
 
   const onUpdate = () => {
     if (!loggedUser) {
@@ -109,6 +157,8 @@ const MyProfile = ({
       },
       setState: setUpdateDataSuccesful,
     });
+
+    console.log(updateDataSuccesful);
 
     if (updateDataSuccesful === false) {
       return;
@@ -153,101 +203,144 @@ const MyProfile = ({
   };
   return (
     <>
-      {!!loggedUser && (
-        <div className={classes.panel}>
-          <Container className={classes.reservation}>
-            <Typography variant="h5">Edycja profilu</Typography>
-            <Grid container spacing={4}>
-              <Grid item md={6} xs={12}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} className={classes.center}>
-                    <Typography variant="h6">Dane osobowe</Typography>
-                  </Grid>
-                  <SingleProfileItem
-                    caption="Imię"
-                    value={name}
-                    setValue={setName}
-                  />
-                  <SingleProfileItem
-                    caption="Nazwisko"
-                    value={surname}
-                    setValue={setSurname}
-                  />
-                  <SingleProfileItem
-                    caption="Numer telefonu"
-                    value={phone}
-                    setValue={setPhone}
-                  />
-                  <SingleProfileItem
-                    caption="Adres email"
-                    value={email}
-                    setValue={setEmail}
-                  />
+      <div className={classes.panel}>
+        <Container className={classes.reservation}>
+          {!!loggedUser && (
+            <>
+              <Typography variant="h5">Edycja profilu</Typography>
+              <Grid container spacing={4}>
+                <Grid item md={6} xs={12}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} className={classes.center}>
+                      <Typography variant="h6">Dane osobowe</Typography>
+                    </Grid>
+                    <SingleProfileItem
+                      caption="Imię"
+                      value={name}
+                      setValue={setName}
+                    />
+                    <SingleProfileItem
+                      caption="Nazwisko"
+                      value={surname}
+                      setValue={setSurname}
+                    />
+                    <SingleProfileItem
+                      caption="Numer telefonu"
+                      value={phone}
+                      setValue={setPhone}
+                    />
+                    <SingleProfileItem
+                      caption="Adres email"
+                      value={email}
+                      setValue={setEmail}
+                    />
 
-                  <Grid item xs={12}>
-                    <Button variant="contained" fullWidth onClick={onUpdate}>
-                      aktualizuj
-                    </Button>
-                  </Grid>
-                  {updateDataSuccesful === true && (
                     <Grid item xs={12}>
-                      <Alert severity="success">
-                        Dane zostały zaktualizowane!
-                      </Alert>
+                      <Button variant="contained" fullWidth onClick={onUpdate}>
+                        aktualizuj
+                      </Button>
                     </Grid>
-                  )}
-                  {updateDataSuccesful === false && (
-                    <Grid item xs={12}>
-                      <Alert severity="error">
-                        Wystąpił błąd i nie udało się zaktualizować danych.
-                      </Alert>
-                    </Grid>
-                  )}
-                </Grid>
-              </Grid>
-              <Grid item md={6} xs={12}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} className={classes.center}>
-                    <Typography variant="h6">Zmiana hasła</Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      label="Obecne hasło"
-                      variant="outlined"
-                      fullWidth
-                      type="password"
-                      value={""}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      label="Nowe hasło"
-                      variant="outlined"
-                      fullWidth
-                      type="password"
-                      value={""}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      label="Powtórz hasło"
-                      variant="outlined"
-                      fullWidth
-                      type="password"
-                      value={""}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Button variant="contained" fullWidth>
-                      Zmień hasło
-                    </Button>
+                    {updateDataSuccesful === true && (
+                      <Grid item xs={12}>
+                        <Alert severity="success">
+                          <AlertTitle>Suckes!</AlertTitle>
+                          Dane zostały zaktualizowane!
+                        </Alert>
+                      </Grid>
+                    )}
+                    {updateDataSuccesful === false && (
+                      <Grid item xs={12}>
+                        <Alert severity="error">
+                          <AlertTitle>Wystąpił błąd!</AlertTitle>
+                          Nie udało się zaktualizować danych. Sprawdź połączenie z Internetem lub skontakuj się z pracownikiem wypożyczalni.
+                        </Alert>
+                      </Grid>
+                    )}
                   </Grid>
                 </Grid>
+                <Grid item md={6} xs={12}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} className={classes.center}>
+                      <Typography variant="h6">Zmiana hasła</Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        label="Obecne hasło"
+                        variant="outlined"
+                        fullWidth
+                        type="password"
+                        value={""}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        label="Nowe hasło"
+                        variant="outlined"
+                        fullWidth
+                        type="password"
+                        value={""}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        label="Powtórz hasło"
+                        variant="outlined"
+                        fullWidth
+                        type="password"
+                        value={""}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Button variant="contained" fullWidth>
+                        Zmień hasło
+                      </Button>
+                    </Grid>
+                    {!!showDeletePasswordConfirmation && (
+                      <>
+                        <Grid item xs={12} className={classes.center}>
+                          <Typography color="error">Jesteś pewien?</Typography>
+                        </Grid>
+                      </>
+                    )}
+                    <Grid item xs={12}>
+                      <Button
+                        fullWidth
+                        variant={
+                          showDeletePasswordConfirmation
+                            ? "contained"
+                            : "outlined"
+                        }
+                        color="error"
+                        onClick={
+                          showDeletePasswordConfirmation
+                            ? onDeleteUser
+                            : () => setShowDeletePasswordConfirmation(true)
+                        }
+                      >
+                        Usuń konto
+                      </Button>
+                    </Grid>
+                    {deleteUserSuccessful === false && (
+                      <Grid item xs={12}>
+                        <Alert severity="error">
+                          <AlertTitle>Błąd!</AlertTitle>
+                          Nie udało się usunąć konta. Skontaktuj się z
+                          pracownikiem wypożyczalni lub sprawdź połączenie z Internetem.
+                        </Alert>
+                      </Grid>
+                    )}
+                  </Grid>
+                </Grid>
               </Grid>
-            </Grid>
-          </Container>
-        </div>
-      )}
+            </>
+          )}
+          {deleteUserSuccessful === true && (
+            <Alert severity="success">
+              Konto zostało usunięte. Zostaniesz przeniesiony do głównej strony.
+            </Alert>
+          )}
+        </Container>
+      </div>
     </>
   );
 };

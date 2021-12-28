@@ -1,4 +1,4 @@
-import { Typography, Container, Alert } from "@mui/material";
+import { Typography, Container, Alert, AlertTitle } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 import SingleReservation from "./SingleReservation";
@@ -20,7 +20,7 @@ const useStyles = makeStyles({
   alert: {
     paddingTop: "15px",
     paddingBottom: "5px",
-  }
+  },
 });
 
 interface MyReservationsProps {
@@ -42,7 +42,8 @@ const MyReservations = ({
           <div className={classes.alert}>
             {newReservationSuccess === true && (
               <Alert severity="success">
-                Rezerwacja została dokonana pomyślnie!
+                <AlertTitle>Rezerwacja została dokonana pomyślnie!</AlertTitle>
+                Dziękujemy za zaufanie.
               </Alert>
             )}
           </div>

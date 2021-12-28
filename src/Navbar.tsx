@@ -98,6 +98,9 @@ const Navbar = ({
         ) : (
           <>
             <Typography>{`Cześć ${loggedUser.name}!`}</Typography>
+            <Button color="primary" onClick={goToHome}>
+              Nowa rezerwacja
+            </Button>
             <Button color="primary" onClick={goToReservations}>
               Zarządzaj rezerwacjami
             </Button>
