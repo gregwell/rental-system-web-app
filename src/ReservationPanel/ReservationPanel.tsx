@@ -55,6 +55,7 @@ const useStyles = makeStyles({
 
 interface ReservationPanelProps {
   users: User[] | null;
+  items: Item[] | null;
   loggedUser: User | null;
   setLoggedUser: (value: User | null) => void;
   reservations: Reservation[] | null;
@@ -71,13 +72,11 @@ const ReservationPanel = ({
   setNewReservationSuccess,
   newReservationSuccess,
   setReservations,
+  items,
 }: ReservationPanelProps) => {
   const classes = useStyles();
 
-  const [itemsInitialized, setItemsInitialized] = useState<boolean>(false);
-  const [items, setItems] = useState<Item[]>([]);
-
-  const uniqueTypes = itemsInitialized
+  const uniqueTypes = items
     ? new Set(items.map((item) => item.type as string))
     : [];
 
@@ -97,20 +96,6 @@ const ReservationPanel = ({
   const [choosenItem, setChoosenItem] = useState<Item | null>(null);
 
   useEffect(() => {
-    const prepareItemsState = async () => {
-      const fetchedItems = await sendApiRequest({
-        collection: Collection.items,
-        operation: CrudOperation.READ,
-      });
-      setItems(fetchedItems as Item[]);
-      setItemsInitialized(true);
-    };
-    if (!itemsInitialized) {
-      prepareItemsState();
-    }
-  }, [itemsInitialized]);
-
-  useEffect(() => {
     setPricesTable(
       calculateReservationPriceForEachType(prices, startDate, finishDate)
     );
@@ -128,7 +113,7 @@ const ReservationPanel = ({
     if (!pricesInitialized) {
       preparePricesState();
     }
-  }, [itemsInitialized, pricesInitialized]);
+  }, [pricesInitialized]);
 
   let selectedTimeAvailableItems: Item[] = [];
 

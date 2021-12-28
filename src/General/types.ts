@@ -34,6 +34,7 @@ export interface Item {
   photo: string;
   productId: string;
   price?: ItemPrice;
+  size?: string;
 }
 
 export interface ItemPrice {

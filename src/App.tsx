@@ -3,10 +3,17 @@ import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
 
 import ReservationPanel from "./ReservationPanel/ReservationPanel";
 import Navbar from "./Navbar";
-import { User, Reservation, CrudOperation, Collection } from "./general/types";
+import {
+  User,
+  Reservation,
+  CrudOperation,
+  Collection,
+  Item,
+} from "./general/types";
 import { sendApiRequest } from "./async/sendApiRequest";
 import MyReservations from "./MyReservations/MyReservations";
 import MyProfile from "./MyProfile/MyProfile";
+import { ReservationFocus } from "./ReservationFocus";
 
 function App() {
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
@@ -16,6 +23,9 @@ function App() {
   const [reservationsInitialized, setReservationsInitialized] =
     useState<boolean>(false);
   const [reservations, setReservations] = useState<Reservation[]>([]);
+
+  const [itemsInitialized, setItemsInitialized] = useState<boolean>(false);
+  const [items, setItems] = useState<Item[]>([]);
 
   const [newReservationSuccess, setNewReservationSuccess] = useState<
     boolean | null
@@ -49,6 +59,20 @@ function App() {
     }
   }, [isUsersInitialized]);
 
+  useEffect(() => {
+    const prepareItemsState = async () => {
+      const fetchedItems = await sendApiRequest({
+        collection: Collection.items,
+        operation: CrudOperation.READ,
+      });
+      setItems(fetchedItems as Item[]);
+      setItemsInitialized(true);
+    };
+    if (!itemsInitialized) {
+      prepareItemsState();
+    }
+  }, [itemsInitialized]);
+
   return (
     <>
       <Router>
@@ -70,6 +94,7 @@ function App() {
                 setNewReservationSuccess={setNewReservationSuccess}
                 newReservationSuccess={newReservationSuccess}
                 setReservations={setReservations}
+                items={items}
               />
             }
           />
@@ -80,6 +105,7 @@ function App() {
                 reservations={reservations}
                 newReservationSuccess={newReservationSuccess}
                 loggedUser={loggedUser}
+                items={items}
               />
             }
           />
@@ -93,6 +119,10 @@ function App() {
                 setLoggedUser={setLoggedUser}
               />
             }
+          />
+          <Route
+            path="/reservation/:_id"
+            element={<ReservationFocus reservations={reservations} />}
           />
         </Routes>
       </Router>
