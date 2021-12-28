@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid, Typography, Container } from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
+import EditIcon from "@mui/icons-material/Edit";
+import ManageSearchIcon from "@mui/icons-material/ManageSearch";
+import BookIcon from "@mui/icons-material/Book";
+import LoginIcon from "@mui/icons-material/Login";
 
 import Auth from "./Auth";
 import { User } from "./general/types";
@@ -15,12 +20,14 @@ const useStyles = makeStyles({
     paddingTop: "15px",
     paddingBottom: "15px",
     paddingRight: "15px",
-    textAlign: "right",
+  },
+  item2: {
+    width: "100%",
+    height: "0",
   },
   main: {
     paddingTop: "15px",
     paddingBottom: "15px",
-    textAlign: "right",
   },
   auth: {
     paddingBottom: "60px",
@@ -32,6 +39,15 @@ const useStyles = makeStyles({
     height: "3px",
     backgroundColor: "#1B72CE",
     width: "100%",
+  },
+  margin: {
+    padding: "20px 0",
+  },
+  paddingBottom: {
+    paddingBottom: "10px",
+  },
+  paddingRight: {
+    paddingRight: "7px",
   },
 });
 
@@ -85,34 +101,56 @@ const Navbar = ({
 
   return (
     <Grid container className={classes.root}>
-      <Grid item className={classes.main} md={7} xs={12}>
+      <Grid item className={classes.item2} md={1.5} xs={12} />
+      <Grid item className={classes.main} md={9} xs={12}>
         <div onClick={goToHome}>
           <Typography variant="h5">System rezerwacji on-line</Typography>
         </div>
       </Grid>
-      <Grid item className={classes.item} md={5} xs={12}>
+      <Grid item className={classes.item} md={1.5} xs={12}>
         {!loggedUser ? (
           <Button variant="contained" color="primary" onClick={onButtonClick}>
+            <LoginIcon className={classes.paddingRight} />
             {showAuth ? "Ukryj" : "Zaloguj się"}
           </Button>
         ) : (
           <>
             <Typography>{`Cześć ${loggedUser.name}!`}</Typography>
-            <Button color="primary" onClick={goToHome}>
-              Nowa rezerwacja
-            </Button>
-            <Button color="primary" onClick={goToReservations}>
-              Zarządzaj rezerwacjami
-            </Button>
-            <Button color="primary" onClick={goToProfile}>
-              Edytuj profil
-            </Button>
-            <Button color="primary" onClick={signOut}>
-              Wyloguj
-            </Button>
           </>
         )}
       </Grid>
+      {!!loggedUser && (
+        <Container className={classes.paddingBottom}>
+          <Grid container>
+            <Grid item xs={12} sm={6} md={3}>
+              <Button onClick={goToHome} fullWidth variant="text">
+                <BookIcon className={classes.paddingRight} />
+                Nowa rezerwacja
+              </Button>
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={3}>
+              <Button onClick={goToReservations} fullWidth variant="text">
+                <ManageSearchIcon className={classes.paddingRight} />
+                Zarządzaj rezerwacjami
+              </Button>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Button onClick={goToProfile} fullWidth variant="text">
+                <EditIcon className={classes.paddingRight} />
+                Edytuj profil
+              </Button>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Button onClick={signOut} fullWidth variant="text">
+                <LogoutIcon className={classes.paddingRight} />
+                Wyloguj
+              </Button>
+            </Grid>
+          </Grid>
+        </Container>
+      )}
+
       {!!showAuth && (
         <>
           <div className={classes.topBar} />

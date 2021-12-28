@@ -21,6 +21,9 @@ const useStyles = makeStyles({
   zalogujButton: {
     paddingTop: "20px",
   },
+  paddingRight: {
+    paddingRight: "7px",
+  },
 });
 
 interface AuthProps {
@@ -234,7 +237,7 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
                   disabled={renderProps.disabled}
                   variant="contained"
                 >
-                  <GoogleIcon />
+                  <GoogleIcon className={classes.paddingRight} />
                   {` Kontynuuj z użyciem konta Google`}
                 </Button>
               )}
