@@ -10,7 +10,7 @@ import GoogleIcon from "@mui/icons-material/Google";
 
 import { User, CrudOperation, Collection } from "./general/types";
 import { sendApiRequest } from "./async/sendApiRequest";
-import { encrypt, decrypt } from "./utils";
+import { decrypt, encryptObject, decryptObject } from "./utils";
 
 const useStyles = makeStyles({
   login: {
@@ -67,16 +67,10 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
       googleId: "",
       phone: phone,
       password: password,
+      idCard: "",
     };
 
-    const encryptedPostBody: User = {
-      name: encrypt(name),
-      surname: encrypt(surname),
-      email: encrypt(email),
-      googleId: "",
-      phone: encrypt(phone),
-      password: encrypt(password),
-    };
+    const encryptedPostBody = encryptObject(postBody);
 
     const insertedId: string = (await sendApiRequest({
       collection: Collection.users,
@@ -112,22 +106,12 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
       return;
     }
 
-    if (decrypt(userFound?.password as string) !== loginPassword) {
+    const decryptedUserFound: User = decryptObject(userFound);
+
+    if (decryptedUserFound.password !== loginPassword) {
       setWrongLoginPassword(true);
       return;
     }
-
-    const decryptedUserFound: User = {
-      name: decrypt(userFound.name),
-      surname: decrypt(userFound.surname),
-      email: decrypt(userFound.email),
-      googleId:
-        userFound?.googleId && userFound?.googleId.length > 0
-          ? decrypt(userFound.googleId)
-          : "",
-      phone: decrypt(userFound.phone),
-      password: decrypt(userFound.password),
-    };
 
     decryptedUserFound._id = userFound._id;
     setLoggedUser(decryptedUserFound);
@@ -146,16 +130,10 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
       googleId: googleId,
       phone: phone,
       password: "",
+      idCard: "",
     };
 
-    const encryptedPostBody: User = {
-      name: encrypt(name),
-      surname: encrypt(surname),
-      email: encrypt(email),
-      googleId: encrypt(googleId),
-      phone: encrypt(phone),
-      password: "",
-    };
+    const encryptedPostBody: User = encryptObject(postBody);
 
     const insertedId: string = (await sendApiRequest({
       collection: Collection.users,
@@ -193,19 +171,10 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
       );
     });
 
-    console.log(users);
-    console.log(userFound);
-
     if (userFound) {
-      const decryptedUserFound: User = {
-        _id: userFound._id,
-        name: decrypt(userFound.name),
-        surname: decrypt(userFound.surname as string),
-        email: decrypt(userFound.email),
-        googleId: decrypt(userFound.googleId as string),
-        phone: decrypt(userFound.phone as string),
-        password: "",
-      };
+      console.log(userFound);
+      const decryptedUserFound: User = decryptObject(userFound);
+      console.log(decryptedUserFound);
 
       setLoggedUser(decryptedUserFound);
       return;
