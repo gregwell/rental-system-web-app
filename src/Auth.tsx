@@ -163,7 +163,10 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
       return;
     }
 
+    console.log("INSIDE!");
+
     const userFound: User | undefined = users?.find((user) => {
+      console.log(decrypt(user?.googleId));
       return (
         user?.googleId &&
         user?.googleId.length > 0 &&

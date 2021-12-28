@@ -6,7 +6,7 @@ export const encrypt = (str: string | undefined): string => {
   }
 
   const encrypted = crypto.AES.encrypt(
-    JSON.stringify({ str }),
+    str,
     process.env.REACT_APP_HASH_KEY as string
   ).toString();
 
@@ -23,9 +23,7 @@ export const decrypt = (encryptedText: string | undefined): string => {
     process.env.REACT_APP_HASH_KEY as string
   ).toString(crypto.enc.Utf8);
 
-  const decryptedParsed = JSON.parse(decrypted);
-
-  return { str: decryptedParsed.str }.str;
+  return decrypted;
 };
 
 export const encryptObject = (object: any): any =>
