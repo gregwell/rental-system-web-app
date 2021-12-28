@@ -132,7 +132,7 @@ const Navbar = ({
             <Grid item xs={12} sm={6} md={3}>
               <Button onClick={goToReservations} fullWidth variant="text">
                 <ManageSearchIcon className={classes.paddingRight} />
-                Zarządzaj rezerwacjami
+                Zarządzaj i historia
               </Button>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
