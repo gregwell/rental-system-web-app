@@ -39,3 +39,22 @@ export const decryptObject = (object: any): any =>
       return [obj[0], obj[0] === "_id" ? obj[1] : decrypt(obj[1] as string)];
     })
   );
+
+  export const formatDate = (date?: string): string => {
+    const d = new Date(parseInt(date as string));
+  
+    return (
+      ("0" + d.getDate()).slice(-2) +
+      "." +
+      ("0" + (d.getMonth() + 1)).slice(-2) +
+      "." +
+      d.getFullYear() +
+      " " +
+      "(" +
+      ("0" + d.getHours()).slice(-2) +
+      ":" +
+      ("0" + d.getMinutes()).slice(-2) +
+      ")"
+    );
+  };
+  

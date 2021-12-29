@@ -9,7 +9,8 @@ const useStyles = makeStyles({
     paddingRight: "20px",
   },
   reservation: {
-    backgroundColor: "white",
+    background: (makeStylesProps: { backgroundColor: string }) =>
+      makeStylesProps.backgroundColor,
     padding: "20px 0",
     borderRadius: "10px",
     paddingBottom: "25px",
@@ -18,10 +19,20 @@ const useStyles = makeStyles({
 
 interface CustomContainerProps {
   children: React.ReactNode;
+  backgroundColor?: string;
 }
 
-export const CustomContainer = ({ children }: CustomContainerProps) => {
-  const classes = useStyles();
+export const CustomContainer = ({
+  children,
+  backgroundColor,
+}: CustomContainerProps) => {
+  const makeStylesProps = {
+    backgroundColor: backgroundColor ? backgroundColor : "white",
+  };
+
+  console.log(backgroundColor);
+
+  const classes = useStyles(makeStylesProps);
 
   return (
     <>

@@ -5,11 +5,12 @@ import Countdown from "react-countdown";
 
 import { useNavigate } from "react-router-dom";
 
-import { formatDate } from "./utils";
+import { formatDate } from "../utils";
 import { Reservation, Item, ItemType, Status } from "../general/types";
 import CustomIcon from "../general/CustomIcon";
 import ReservationFocus from "../ReservationFocus";
 import { useEffect } from "react";
+import { colors } from "../general/colors";
 
 const useStyles = makeStyles({
   singlePanel: {
@@ -22,12 +23,12 @@ const useStyles = makeStyles({
       isArchived: boolean;
     }) => {
       if (makeStylesProps.isCancelled) {
-        return "#bebebe";
+        return colors.cancelled;
       }
       if (makeStylesProps.isArchived) {
-        return "black";
+        return colors.confirmedArchived;
       }
-      return "linear-gradient(to right, #0575e6, #1F38A1)";
+      return colors.confirmed;
     },
     paddingTop: "30px",
     borderRadius: "5px",
@@ -74,13 +75,8 @@ const SingleReservation = ({
 }: SingleReservationProps) => {
   const isTitle = title ? true : false;
 
-  const startDateFormatted = formatDate(
-    new Date(parseInt(reservation?.startDate as string))
-  );
-
-  const finishDateFormatted = formatDate(
-    new Date(parseInt(reservation?.finishDate as string))
-  );
+  const startDateFormatted = formatDate(reservation?.startDate);
+  const finishDateFormatted = formatDate(reservation?.finishDate);
 
   const navigate = useNavigate();
 
@@ -93,23 +89,12 @@ const SingleReservation = ({
     isArchived: parseInt(reservation?.startDate as string) < Date.now(),
   };
 
-  const difference = new Date(
+  const diff = new Date(
     parseInt(reservation?.startDate as string) - Date.now()
-  ); //in mins
+  );
 
-  /*
-  const hours = Math.floor(difference / 60);
-  const minutesLeft = difference % 60;
-  const days = Math.floor(hours / 60);
-  const hoursLeft = hours % 60;
-
-  console.log(days);
-  console.log(hoursLeft);
-  console.log(minutesLeft);
-  */
-
-  var months = difference.getUTCMonth(); // Gives month count of difference
-  var days = difference.getUTCDate() - 1;
+  var months = diff.getUTCMonth();
+  var days = diff.getUTCDate() - 1;
 
   const classes = useStyles(makeStylesProps);
   return (
@@ -168,7 +153,7 @@ const SingleReservation = ({
               parseInt(reservation?.startDate as string) > Date.now() && (
                 <Grid item xs={12} sm={6} md={5} className={classes.lastItem}>
                   <Typography className={classes.reservationText}>
-                  <Typography display="inline" variant="h6">
+                    <Typography display="inline" variant="h6">
                       za{" "}
                     </Typography>
                     <Typography display="inline" variant="h3">

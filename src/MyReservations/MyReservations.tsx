@@ -26,7 +26,7 @@ const useStyles = makeStyles({
   justPadding: {
     paddingTop: "50px",
     paddingBottom: "30px",
-  }
+  },
 });
 
 interface MyReservationsProps {
@@ -47,6 +47,7 @@ const MyReservations = ({
 
   if (!loggedUser) {
     navigate("/");
+    return null;
   }
 
   reservations?.push(
@@ -61,7 +62,9 @@ const MyReservations = ({
       <>
         <div className={classes.panel}>
           <Container className={classes.reservation}>
-            <Typography variant="h5">Aktualne rezerwacje i wypożyczenia:</Typography>
+            <Typography variant="h5">
+              Aktualne rezerwacje i wypożyczenia:
+            </Typography>
             <div className={classes.alert}>
               {newReservationSuccess === true && (
                 <Alert severity="success">
@@ -92,8 +95,10 @@ const MyReservations = ({
                     )
                   );
                 })}
-                <div className={classes.justPadding}/>
-                <Typography variant="h5" className={classes.alert}>Rezerwacje i wypożyczenia archiwalne:</Typography>
+            <div className={classes.justPadding} />
+            <Typography variant="h5" className={classes.alert}>
+              Rezerwacje i wypożyczenia archiwalne:
+            </Typography>
             {!!reservations &&
               reservations
                 .filter(

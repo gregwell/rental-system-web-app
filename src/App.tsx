@@ -122,7 +122,13 @@ function App() {
           />
           <Route
             path="/reservation/:_id"
-            element={<ReservationFocus reservations={reservations} />}
+            element={
+              <ReservationFocus
+                reservations={reservations}
+                items={items}
+                loggedUser={loggedUser}
+              />
+            }
           />
         </Routes>
       </Router>
