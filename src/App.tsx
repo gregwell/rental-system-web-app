@@ -14,6 +14,7 @@ import { sendApiRequest } from "./async/sendApiRequest";
 import MyReservations from "./MyReservations/MyReservations";
 import MyProfile from "./MyProfile/MyProfile";
 import { ReservationFocus } from "./ReservationFocus";
+import NotFound from "./general/NotFound";
 
 function App() {
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
@@ -130,6 +131,7 @@ function App() {
               />
             }
           />
+          <Route path="*" element={<NotFound />}></Route>
         </Routes>
       </Router>
     </>

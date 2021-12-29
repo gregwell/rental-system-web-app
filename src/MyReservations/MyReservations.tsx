@@ -46,12 +46,15 @@ const MyReservations = ({
   const classes = useStyles();
   const navigate = useNavigate();
 
-  reservations?.push(
-    reservations.splice(
-      reservations.findIndex((v) => v.status === Status.anulowana),
-      1
-    )[0]
-  );
+  console.log(reservations);
+  if (reservations && reservations.length > 0) {
+    reservations?.push(
+      reservations.splice(
+        reservations.findIndex((v) => v?.status === Status.anulowana),
+        1
+      )[0]
+    );
+  }
 
   return (
     items && (

@@ -96,6 +96,8 @@ const SingleReservation = ({
   var months = diff.getUTCMonth();
   var days = diff.getUTCDate() - 1;
 
+  console.log(reservation);
+
   const classes = useStyles(makeStylesProps);
   return (
     <>

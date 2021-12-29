@@ -116,13 +116,15 @@ export const ReservationConfirmation = ({
       };
 
       setCurrentReservation(reservationPostData);
-
-      await sendApiRequest({
+      const insertedId = (await sendApiRequest({
         collection: Collection.reservations,
         operation: CrudOperation.CREATE,
         body: reservationPostData,
         setState: setNewReservationSuccess,
-      });
+      })) as string;
+      
+      reservationPostData._id = insertedId;
+      setCurrentReservation(reservationPostData);
     }
   }, [
     choosenItem,
