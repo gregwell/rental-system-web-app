@@ -3,14 +3,19 @@ import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles({
   panel: {
-    textAlign: "center",
+    textAlign: (makeStylesProps: {
+      backgroundColor: string;
+      textAlign: "center" | "left";
+    }) => makeStylesProps.textAlign,
     paddingTop: "20px",
     paddingLeft: "20px",
     paddingRight: "20px",
   },
   reservation: {
-    background: (makeStylesProps: { backgroundColor: string }) =>
-      makeStylesProps.backgroundColor,
+    background: (makeStylesProps: {
+      backgroundColor: string;
+      textAlign: string;
+    }) => makeStylesProps.backgroundColor,
     padding: "20px 0",
     borderRadius: "10px",
     paddingBottom: "25px",
@@ -20,17 +25,18 @@ const useStyles = makeStyles({
 interface CustomContainerProps {
   children: React.ReactNode;
   backgroundColor?: string;
+  textAlign?: "center" | "left";
 }
 
 export const CustomContainer = ({
   children,
   backgroundColor,
+  textAlign,
 }: CustomContainerProps) => {
   const makeStylesProps = {
     backgroundColor: backgroundColor ? backgroundColor : "white",
+    textAlign: textAlign ? textAlign : "center",
   };
-
-  console.log(backgroundColor);
 
   const classes = useStyles(makeStylesProps);
 

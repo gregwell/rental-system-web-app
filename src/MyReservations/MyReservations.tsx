@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import SingleReservation from "./SingleReservation";
 import { Reservation, User, Item, Status } from "../general/types";
 import CollapsibleTable from "./CollapsibleTable";
+import AccessGuard from "../general/AccessGuard";
 
 const useStyles = makeStyles({
   panel: {
@@ -45,11 +46,6 @@ const MyReservations = ({
   const classes = useStyles();
   const navigate = useNavigate();
 
-  if (!loggedUser) {
-    navigate("/");
-    return null;
-  }
-
   reservations?.push(
     reservations.splice(
       reservations.findIndex((v) => v.status === Status.anulowana),
@@ -59,7 +55,7 @@ const MyReservations = ({
 
   return (
     items && (
-      <>
+      <AccessGuard deny={!loggedUser}>
         <div className={classes.panel}>
           <Container className={classes.reservation}>
             <Typography variant="h5">
@@ -123,7 +119,7 @@ const MyReservations = ({
                 })}
           </Container>
         </div>
-      </>
+      </AccessGuard>
     )
   );
 };

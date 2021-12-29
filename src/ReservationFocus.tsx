@@ -8,6 +8,7 @@ import { formatDate } from "./utils";
 import { colors } from "./general/colors";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import AccessGuard from "./general/AccessGuard";
 
 const useStyles = makeStyles({
   focus: {
@@ -80,7 +81,6 @@ export const ReservationFocus = ({
   loggedUser,
 }: ReservationFocusProps) => {
   const { _id } = useParams();
-  const navigate = useNavigate();
 
   const reservation = reservations?.find((r) => r._id === _id);
   const item = items?.find((i) => i.productId === reservation?.productId);
@@ -90,20 +90,7 @@ export const ReservationFocus = ({
     isArchived: parseInt(reservation?.startDate as string) < Date.now(),
   };
 
-  console.log(reservations);
-  console.log(reservation);
-  console.log(item);
-
   const classes = useStyles(makeStylesProps);
-
-  useEffect(() => {
-    if (!loggedUser) {
-      const timer = setTimeout(() => {
-        navigate("/");
-      }, 2500);
-      return () => clearTimeout(timer);
-    }
-  }, [loggedUser, navigate]);
 
   const startDateFormatted = formatDate(reservation?.startDate);
   const finishDateFormatted = formatDate(reservation?.finishDate);
@@ -122,87 +109,61 @@ export const ReservationFocus = ({
   };
 
   return (
-    <>
+    <AccessGuard deny={!loggedUser}>
       <CustomContainer
         backgroundColor={loggedUser ? getBgColor(reservation?.status) : "white"}
       >
-        {!!loggedUser ? (
-          <>
-            <Grid container spacing={2}>
-              <Grid item xs={3} sm={3} md={2} lg={1.5}>
-                <div className={classes.reservationText}>
-                  <div className={classes.icon}>
-                    <CustomIcon type={item?.type as ItemType} scale={"3.5"} />
-                  </div>
-                </div>
-              </Grid>
-              <Grid item xs={9}>
-                <Typography variant="h3" className={classes.reservationText}>
-                  {item && `${item.producer} ${item.model}`}
+        <Grid container spacing={2}>
+          <Grid item xs={3} sm={3} md={2} lg={1.5}>
+            <div className={classes.reservationText}>
+              <div className={classes.icon}>
+                <CustomIcon type={item?.type as ItemType} scale={"3.5"} />
+              </div>
+            </div>
+          </Grid>
+          <Grid item xs={9}>
+            <Typography variant="h3" className={classes.reservationText}>
+              {item && `${item.producer} ${item.model}`}
+            </Typography>
+          </Grid>
+          <Grid item xs={8} sm={5} md={6} lg={5.5}>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Typography variant="h5" className={classes.reservationText}>
+                  {item && `Rozmiar: ${item.size}`}
                 </Typography>
               </Grid>
-              <Grid item xs={8} sm={5} md={6} lg={5.5}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <Typography
-                      variant="h5"
-                      className={classes.reservationText}
-                    >
-                      {item && `Rozmiar: ${item.size}`}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={12}>
-                    <Typography
-                      variant="h5"
-                      className={classes.reservationText}
-                    >
-                      {`Data odbioru: ${startDateFormatted}`}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={12}>
-                    <Typography
-                      variant="h5"
-                      className={classes.reservationText}
-                    >
-                      {`Data zwrotu: ${finishDateFormatted}`}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={12}>
-                    <Typography
-                      variant="h5"
-                      className={classes.reservationText}
-                    >
-                      {`Cena: ${reservation?.price as string} zł`}
-                    </Typography>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={12}
-                    className={classes.reservationText}
-                  >
-                    <Typography
-                      variant="h5"
-                      className={classes.reservationText}
-                    >
-                      {`Status: ${reservation?.status}`}
-                    </Typography>
-                  </Grid>
-                </Grid>
+              <Grid item xs={12} sm={6} md={12}>
+                <Typography variant="h5" className={classes.reservationText}>
+                  {`Data odbioru: ${startDateFormatted}`}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={12}>
+                <Typography variant="h5" className={classes.reservationText}>
+                  {`Data zwrotu: ${finishDateFormatted}`}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={12}>
+                <Typography variant="h5" className={classes.reservationText}>
+                  {`Cena: ${reservation?.price as string} zł`}
+                </Typography>
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={12}
+                className={classes.reservationText}
+              >
+                <Typography variant="h5" className={classes.reservationText}>
+                  {`Status: ${reservation?.status}`}
+                </Typography>
               </Grid>
             </Grid>
-          </>
-        ) : (
-          <>
-            <Alert severity="warning" className={classes.alert}>
-              <AlertTitle>Brak dostępu!</AlertTitle>Zostaniesz przeniesiony na
-              główną stronę
-            </Alert>
-          </>
-        )}
+          </Grid>
+        </Grid>
       </CustomContainer>
-    </>
+    </AccessGuard>
   );
 };
 

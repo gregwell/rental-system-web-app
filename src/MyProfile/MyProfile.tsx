@@ -15,6 +15,7 @@ import { CrudOperation, User, Collection } from "../general/types";
 import SingleProfileItem from "./SingleProfileItem";
 import { sendApiRequest } from "../async/sendApiRequest";
 import { encrypt } from "../utils";
+import AccessGuard from "../general/AccessGuard";
 
 const useStyles = makeStyles({
   panel: {
@@ -59,13 +60,6 @@ const MyProfile = ({
 }: MyProfileProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
-
-  console.log("NEW RERENDER ..");
-  console.log(loggedUser);
-  console.log(users);
-  console.log(setUsers);
-  console.log(setLoggedUser);
-  console.log("^^ NEW RERENDER");
 
   const [name, setName] = useState<string>(
     loggedUser !== null ? loggedUser.name : ""
@@ -157,8 +151,6 @@ const MyProfile = ({
       setState: setUpdateDataSuccesful,
     });
 
-    console.log(updateDataSuccesful);
-
     if (updateDataSuccesful === false) {
       return;
     }
@@ -201,7 +193,7 @@ const MyProfile = ({
     }
   };
   return (
-    <>
+    <AccessGuard deny={!loggedUser}>
       <div className={classes.panel}>
         <Container className={classes.reservation}>
           {!!loggedUser && (
@@ -341,7 +333,7 @@ const MyProfile = ({
           )}
         </Container>
       </div>
-    </>
+    </AccessGuard>
   );
 };
 
