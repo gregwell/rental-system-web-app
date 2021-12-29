@@ -56,8 +56,8 @@ export enum ItemType {
 }
 
 export enum Status {
-  potwierdzona = "confirmed",
-  anulowana = "canceled",
+  potwierdzona = "potwierdzona",
+  anulowana = "cancelled",
 }
 
 export interface Price {

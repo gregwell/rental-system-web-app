@@ -5,15 +5,23 @@ import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import ElectricScooterIcon from "@mui/icons-material/ElectricScooter";
 import PedalBikeIcon from "@mui/icons-material/PedalBike";
 import ElectricBikeIcon from "@mui/icons-material/ElectricBike";
-import KayakingIcon from '@mui/icons-material/Kayaking';
-
+import KayakingIcon from "@mui/icons-material/Kayaking";
+import { makeStyles } from "@mui/styles";
 import { ItemType } from "./types";
+
+const useStyles = makeStyles({
+  icon: {
+    transform: (makeStylesProps: { scale: string }) =>
+      `scale(${makeStylesProps.scale})`,
+  },
+});
 
 interface CustomIconProps {
   type: ItemType;
+  scale?: string;
 }
 
-export const CustomIcon = ({ type }: CustomIconProps) => {
+function getComponent(type: ItemType) {
   switch (type) {
     case ItemType.ski:
       return <DownhillSkiingIcon />;
@@ -28,9 +36,38 @@ export const CustomIcon = ({ type }: CustomIconProps) => {
     case ItemType.electricBike:
       return <ElectricBikeIcon />;
     case ItemType.kayak:
-      return <KayakingIcon/>;
+      return <KayakingIcon />;
     default:
       return <DevicesOtherIcon />;
+  }
+}
+
+export const CustomIcon = ({ type, scale }: CustomIconProps) => {
+  const makeStylesProps = {
+    scale: scale ? scale : "",
+  };
+
+  const classes = useStyles(makeStylesProps);
+
+  const className = scale ? classes.icon : undefined;
+
+  switch (type) {
+    case ItemType.ski:
+      return <DownhillSkiingIcon className={className} />;
+    case ItemType.snowboard:
+      return <SnowboardingIcon className={className} />;
+    case ItemType.car:
+      return <DirectionsCarIcon className={className} />;
+    case ItemType.scooter:
+      return <ElectricScooterIcon className={className} />;
+    case ItemType.bike:
+      return <PedalBikeIcon className={className} />;
+    case ItemType.electricBike:
+      return <ElectricBikeIcon className={className} />;
+    case ItemType.kayak:
+      return <KayakingIcon className={className} />;
+    default:
+      return <DevicesOtherIcon className={className} />;
   }
 };
 

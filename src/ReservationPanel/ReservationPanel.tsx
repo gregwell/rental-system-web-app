@@ -164,7 +164,7 @@ const ReservationPanel = ({
       <div className={classes.panel}>
         <Container className={classes.reservation}>
           <div className={classes.title}>
-            <Typography>{searchPanelText}</Typography>
+            <Typography variant="h5">{searchPanelText}</Typography>
           </div>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={6}>
