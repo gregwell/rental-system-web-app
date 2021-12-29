@@ -1,5 +1,13 @@
-import { Typography, Grid, Alert, AlertTitle } from "@mui/material";
-import { Reservation, Item, ItemType, Status, User } from "./general/types";
+import { Typography, Grid, Alert, AlertTitle, Button } from "@mui/material";
+import {
+  Reservation,
+  Item,
+  ItemType,
+  Status,
+  User,
+  Collection,
+  CrudOperation,
+} from "./general/types";
 import { makeStyles } from "@mui/styles";
 import { useParams } from "react-router-dom";
 import CustomContainer from "./general/CustomContainer";
@@ -7,8 +15,9 @@ import CustomIcon from "./general/CustomIcon";
 import { formatDate } from "./utils";
 import { colors } from "./general/colors";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import AccessGuard from "./general/AccessGuard";
+import { sendApiRequest } from "./async/sendApiRequest";
 
 const useStyles = makeStyles({
   focus: {
@@ -73,16 +82,25 @@ interface ReservationFocusProps {
   reservations: Reservation[] | null;
   items: Item[] | null;
   loggedUser: User | null;
+  setReservations: React.Dispatch<React.SetStateAction<Reservation[]>>;
 }
 
 export const ReservationFocus = ({
   reservations,
   items,
   loggedUser,
+  setReservations,
 }: ReservationFocusProps) => {
   const { _id } = useParams();
 
+  const [updateDataSuccesful, setUpdateDataSuccesful] = useState<
+    boolean | null
+  >(null);
+
   const reservation = reservations?.find((r) => r._id === _id);
+  console.log(reservations);
+  console.log(reservation);
+
   const item = items?.find((i) => i.productId === reservation?.productId);
 
   const makeStylesProps = {
@@ -108,9 +126,56 @@ export const ReservationFocus = ({
     }
   };
 
+  const onCancelReservation = () => {
+    if (!loggedUser) {
+      return;
+    }
+
+    const updated: any = {};
+    updated.status = Status.anulowana;
+
+    sendApiRequest({
+      collection: Collection.reservations,
+      operation: CrudOperation.UPDATE,
+      filter: { _id: { $oid: reservation?._id } },
+      update: {
+        $set: updated,
+      },
+      setState: setUpdateDataSuccesful,
+    });
+
+    if (updateDataSuccesful === false) {
+      return;
+    }
+
+    const updatedReservation = {
+      _id: _id as string,
+      productId: reservation?.productId as string,
+      userId: reservation?.productId as string,
+      startDate: reservation?.startDate as string,
+      finishDate: reservation?.finishDate as string,
+      price: reservation?.price as string,
+      status: Status.anulowana as Status,
+    };
+
+    if (reservations) {
+      let newReservations = reservations;
+      newReservations.forEach((reservation, index) => {
+        if (reservation._id === _id) {
+          reservations[index] = updatedReservation;
+        }
+      });
+
+      console.log(newReservations);
+
+      setReservations(newReservations);
+    }
+  };
+
   return (
     <AccessGuard deny={!loggedUser}>
       <CustomContainer
+        textAlign="left"
         backgroundColor={loggedUser ? getBgColor(reservation?.status) : "white"}
       >
         <Grid container spacing={2}>
@@ -158,6 +223,18 @@ export const ReservationFocus = ({
                 <Typography variant="h5" className={classes.reservationText}>
                   {`Status: ${reservation?.status}`}
                 </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={12}>
+                {reservation?.status !== Status.anulowana &&
+                  parseInt(reservation?.startDate as string) > Date.now() && (
+                    <Button
+                      color="error"
+                      variant="contained"
+                      onClick={onCancelReservation}
+                    >
+                      Anuluj rezerwację
+                    </Button>
+                  )}
               </Grid>
             </Grid>
           </Grid>

@@ -128,6 +128,7 @@ function App() {
                 reservations={reservations}
                 items={items}
                 loggedUser={loggedUser}
+                setReservations={setReservations}
               />
             }
           />

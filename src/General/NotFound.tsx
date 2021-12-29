@@ -6,7 +6,7 @@ export const NotFound = () => {
   const navigate = useNavigate();
   setTimeout(() => {
     navigate("/");
-  }, 2500);
+  }, 4000);
 
   return (
     <div>

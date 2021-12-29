@@ -13,7 +13,7 @@ const AccessGuard = ({ deny, children }: AccessGuardProps) => {
   if (deny) {
     setTimeout(() => {
       navigate("/");
-    }, 2500);
+    }, 3000);
   }
 
   return deny ? (

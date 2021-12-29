@@ -80,6 +80,9 @@ const MyReservations = ({
                 .filter(
                   (reservation) => parseInt(reservation.startDate) > Date.now()
                 )
+                .sort(function (a, b) {
+                  return parseInt(a.startDate) - parseInt(b.startDate);
+                })
                 .map((reservation) => {
                   return (
                     loggedUser &&

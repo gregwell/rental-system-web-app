@@ -24,6 +24,9 @@ const useStyles = makeStyles({
   paddingRight: {
     paddingRight: "7px",
   },
+  codeLogin: {
+    paddingTop: "30px",
+  }
 });
 
 interface AuthProps {
@@ -334,6 +337,18 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
                       </Typography>
                     </Grid>
                   )}
+                  <Grid item xs={12} sm={12} md={12} className={classes.codeLogin}>
+                    <Typography variant="h6">Zaloguj kodem z wypożyczalni</Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={12}>
+                    <TextField
+                      label="24-cyfrowy unikalny kod z wypożyczalni"
+                      variant="outlined"
+                      fullWidth
+                      value={null}
+                      onChange={(event) => setLoginEmail(event.target.value)}
+                    />
+                  </Grid>
                   <Grid item xs={12} sm={12} md={12}>
                     <Button variant="contained" fullWidth onClick={handleLogin}>
                       Zaloguj
