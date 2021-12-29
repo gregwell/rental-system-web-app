@@ -113,7 +113,6 @@ const MyProfile = ({
     }
 
     if (users) {
-      console.log("THERE ARE USERS!");
       setUsers(
         users.filter((user) => {
           return !(user?._id === loggedUser._id);

@@ -86,10 +86,8 @@ export async function sendApiRequest({
       : response.data.documents;
   } catch (error) {
     console.log(error);
-    console.log(setState);
     if (setState) {
       setState(false);
-      console.log('setState to false');
     }
   }
   return [];

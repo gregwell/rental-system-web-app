@@ -94,7 +94,6 @@ export const ReservationConfirmation = ({
     if (newReservationSuccess === true) {
       navigate("/reservations");
 
-      console.log("ss");
       setReservations((prevState) => {
         const arr = [...prevState, currentReservation] as Reservation[];
         return arr;
@@ -104,7 +103,6 @@ export const ReservationConfirmation = ({
 
   const onSendReservation = useCallback(async () => {
     if (choosenItem && startDate && finishDate && loggedUser) {
-      console.log("IM IN");
 
       const reservationPostData: Reservation = {
         productId: choosenItem.productId,
@@ -122,7 +120,7 @@ export const ReservationConfirmation = ({
         body: reservationPostData,
         setState: setNewReservationSuccess,
       })) as string;
-      
+
       reservationPostData._id = insertedId;
       setCurrentReservation(reservationPostData);
     }

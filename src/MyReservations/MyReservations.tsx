@@ -1,10 +1,8 @@
-import { Typography, Container, Alert, AlertTitle, Grid } from "@mui/material";
+import { Typography, Container, Alert, AlertTitle } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { useNavigate } from "react-router-dom";
 
 import SingleReservation from "./SingleReservation";
 import { Reservation, User, Item, Status } from "../general/types";
-import CollapsibleTable from "./CollapsibleTable";
 import AccessGuard from "../general/AccessGuard";
 
 const useStyles = makeStyles({
@@ -44,9 +42,7 @@ const MyReservations = ({
   items,
 }: MyReservationsProps) => {
   const classes = useStyles();
-  const navigate = useNavigate();
 
-  console.log(reservations);
   if (reservations && reservations.length > 0) {
     reservations?.push(
       reservations.splice(

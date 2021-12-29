@@ -1,4 +1,4 @@
-import { Typography, Grid, Alert, AlertTitle, Button } from "@mui/material";
+import { Typography, Grid, Button } from "@mui/material";
 import {
   Reservation,
   Item,
@@ -14,8 +14,7 @@ import CustomContainer from "./general/CustomContainer";
 import CustomIcon from "./general/CustomIcon";
 import { formatDate } from "./utils";
 import { colors } from "./general/colors";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AccessGuard from "./general/AccessGuard";
 import { sendApiRequest } from "./async/sendApiRequest";
 
@@ -98,8 +97,6 @@ export const ReservationFocus = ({
   >(null);
 
   const reservation = reservations?.find((r) => r._id === _id);
-  console.log(reservations);
-  console.log(reservation);
 
   const item = items?.find((i) => i.productId === reservation?.productId);
 

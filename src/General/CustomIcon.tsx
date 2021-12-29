@@ -21,27 +21,6 @@ interface CustomIconProps {
   scale?: string;
 }
 
-function getComponent(type: ItemType) {
-  switch (type) {
-    case ItemType.ski:
-      return <DownhillSkiingIcon />;
-    case ItemType.snowboard:
-      return <SnowboardingIcon />;
-    case ItemType.car:
-      return <DirectionsCarIcon />;
-    case ItemType.scooter:
-      return <ElectricScooterIcon />;
-    case ItemType.bike:
-      return <PedalBikeIcon />;
-    case ItemType.electricBike:
-      return <ElectricBikeIcon />;
-    case ItemType.kayak:
-      return <KayakingIcon />;
-    default:
-      return <DevicesOtherIcon />;
-  }
-}
-
 export const CustomIcon = ({ type, scale }: CustomIconProps) => {
   const makeStylesProps = {
     scale: scale ? scale : "",

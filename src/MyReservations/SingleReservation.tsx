@@ -1,15 +1,11 @@
 import { Typography, Grid, Container } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { Route, Routes } from "react-router-dom";
-import Countdown from "react-countdown";
 
 import { useNavigate } from "react-router-dom";
 
 import { formatDate } from "../utils";
 import { Reservation, Item, ItemType, Status } from "../general/types";
 import CustomIcon from "../general/CustomIcon";
-import ReservationFocus from "../ReservationFocus";
-import { useEffect } from "react";
 import { colors } from "../general/colors";
 
 const useStyles = makeStyles({
@@ -73,8 +69,6 @@ const SingleReservation = ({
   reservation,
   item,
 }: SingleReservationProps) => {
-  const isTitle = title ? true : false;
-
   const startDateFormatted = formatDate(reservation?.startDate);
   const finishDateFormatted = formatDate(reservation?.finishDate);
 
@@ -95,8 +89,6 @@ const SingleReservation = ({
 
   var months = diff.getUTCMonth();
   var days = diff.getUTCDate() - 1;
-
-  console.log(reservation);
 
   const classes = useStyles(makeStylesProps);
   return (
