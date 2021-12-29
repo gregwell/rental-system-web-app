@@ -11,7 +11,8 @@ import ReservationFocus from "../ReservationFocus";
 
 const useStyles = makeStyles({
   singlePanel: {
-    paddingTop: "10px",
+    paddingTop: "12px",
+    cursor: "pointer",
   },
   singleReservation: {
     background: (makeStylesProps: { isCancelled: boolean }) =>
@@ -21,6 +22,8 @@ const useStyles = makeStyles({
     paddingTop: "30px",
     borderRadius: "5px",
     paddingBottom: "30px",
+
+    boxShadow: "rgba(0, 0, 0, 0.15) 0px 5px 15px 0px",
   },
   reservationText: {
     color: (makeStylesProps: { isCancelled: boolean }) =>
@@ -72,8 +75,8 @@ const SingleReservation = ({
   const classes = useStyles(makeStylesProps);
   return (
     <>
-      <div className={classes.singlePanel}>
-        <Container className={classes.singleReservation} onClick={onClick}>
+      <div className={classes.singlePanel} onClick={onClick}>
+        <Container className={classes.singleReservation}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Typography variant="h5" className={classes.reservationText}>
