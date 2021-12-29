@@ -5,7 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 import { formatDate } from "./utils";
-import { Reservation, Item, ItemType } from "../general/types";
+import { Reservation, Item, ItemType, Status } from "../general/types";
 import CustomIcon from "../general/CustomIcon";
 import ReservationFocus from "../ReservationFocus";
 
@@ -14,16 +14,17 @@ const useStyles = makeStyles({
     paddingTop: "10px",
   },
   singleReservation: {
-    /*backgroundColor: (makeStylesProps: { isTitle: boolean }) =>
-      makeStylesProps.isTitle ? "white" : "green",*/
-    background: "linear-gradient(to right, #0575e6, #1F38A1)",
+    background: (makeStylesProps: { isCancelled: boolean }) =>
+      makeStylesProps.isCancelled
+        ? "#bebebe"
+        : "linear-gradient(to right, #0575e6, #1F38A1)",
     paddingTop: "30px",
     borderRadius: "5px",
     paddingBottom: "30px",
   },
   reservationText: {
-    color: (makeStylesProps: { isTitle: boolean }) =>
-      makeStylesProps.isTitle ? "black" : "white",
+    color: (makeStylesProps: { isCancelled: boolean }) =>
+      makeStylesProps.isCancelled ? "#787878" : "white",
   },
   singleReservationItem: {
     backgroundColor: "#001428",
@@ -65,7 +66,9 @@ const SingleReservation = ({
     navigate(`/reservation/${reservation?._id}`);
   };
 
-  const makeStylesProps = { isTitle: isTitle };
+  const makeStylesProps = {
+    isCancelled: reservation?.status === Status.anulowana ? true : false,
+  };
   const classes = useStyles(makeStylesProps);
   return (
     <>
@@ -73,13 +76,13 @@ const SingleReservation = ({
         <Container className={classes.singleReservation} onClick={onClick}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Typography variant="h5" className={classes.white}>
+              <Typography variant="h5" className={classes.reservationText}>
                 {item &&
                   `${item.producer} ${item.model} (rozmiar: ${item.size})`}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6} md={1}>
-              <div className={classes.white}>
+              <div className={classes.reservationText}>
                 <CustomIcon type={item?.type as ItemType} />
               </div>
             </Grid>
