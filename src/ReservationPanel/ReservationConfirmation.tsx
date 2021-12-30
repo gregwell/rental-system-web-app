@@ -59,8 +59,8 @@ interface ReservationConfirmationProps {
   isUserLogged: boolean;
   users: User[] | null;
   setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
-  loggedUser: User | null;
-  setLoggedUser: (value: User | null) => void;
+  loggedUser: User | null | undefined;
+  setLoggedUser: (value: User | null | undefined) => void;
   pricesTable: ItemPrice[] | null;
   setIsShowingReservationForm: (value: boolean) => void;
   setNewReservationSuccess: (newValue: boolean | null) => void;

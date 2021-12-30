@@ -31,9 +31,8 @@ const useStyles = makeStyles({
 interface MyReservationsProps {
   reservations: Reservation[] | null;
   newReservationSuccess: boolean | null;
-  loggedUser: User | null;
+  loggedUser: User | null | undefined;
   items: Item[] | null;
-  loggedUserPrepared: boolean;
 }
 
 const MyReservations = ({
@@ -41,7 +40,6 @@ const MyReservations = ({
   reservations,
   newReservationSuccess,
   items,
-  loggedUserPrepared,
 }: MyReservationsProps) => {
   const classes = useStyles();
 
@@ -56,7 +54,7 @@ const MyReservations = ({
 
   return (
     items && (
-      <AccessGuard deny={!loggedUser} loggedUserPrepared={loggedUserPrepared}>
+      <AccessGuard wait={loggedUser === undefined} deny={loggedUser === null}>
         <div className={classes.panel}>
           <Container className={classes.reservation}>
             <Typography variant="h5">

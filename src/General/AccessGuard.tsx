@@ -1,40 +1,52 @@
-import { Alert, AlertTitle, CircularProgress } from "@mui/material";
+import { Alert, AlertTitle, CircularProgress, Container } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import CustomContainer from "./CustomContainer";
 import { useNavigate } from "react-router-dom";
 
+const useStyles = makeStyles({
+  progressContainer: {
+    textAlign: "center",
+    paddingTop: "100px",
+    transform: "scale(1.5)",
+  },
+});
+
 interface AccessGuardProps {
   deny: boolean;
-  loggedUserPrepared: boolean;
   children: React.ReactNode;
+  wait?: boolean;
 }
 
-const AccessGuard = ({
-  deny,
-  children,
-  loggedUserPrepared,
-}: AccessGuardProps) => {
+const AccessGuard = ({ deny, wait, children }: AccessGuardProps) => {
   const navigate = useNavigate();
+  const classes = useStyles();
 
-  if (loggedUserPrepared && deny) {
+  if (!wait && deny) {
     setTimeout(() => {
       navigate("/");
     }, 2500);
   }
 
-  return deny ? (
-    <>
-      {!loggedUserPrepared ? (
-        <CustomContainer textAlign="left">
-          <Alert severity="warning">
-            <AlertTitle>Brak dostępu!</AlertTitle>Zostaniesz przeniesiony na
-            główną stronę
-          </Alert>
-        </CustomContainer>
-      ) : null}
-    </>
-  ) : (
-    <> {children}</>
-  );
+  if (wait) {
+    return (
+      <Container className={classes.progressContainer}>
+        <CircularProgress />
+      </Container>
+    );
+  }
+
+  if (deny) {
+    return (
+      <CustomContainer textAlign="left">
+        <Alert severity="warning">
+          <AlertTitle>Brak dostępu!</AlertTitle>Zostaniesz przeniesiony na
+          główną stronę
+        </Alert>
+      </CustomContainer>
+    );
+  }
+
+  return <>{children}</>;
 };
 
 export default AccessGuard;

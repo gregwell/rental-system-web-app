@@ -80,10 +80,8 @@ const useStyles = makeStyles({
 interface ReservationFocusProps {
   reservations: Reservation[] | null;
   items: Item[] | null;
-  loggedUser: User | null;
+  loggedUser: User | null | undefined;
   setReservations: React.Dispatch<React.SetStateAction<Reservation[]>>;
-  loggedUserPrepared: boolean;
-
 }
 
 export const ReservationFocus = ({
@@ -91,7 +89,6 @@ export const ReservationFocus = ({
   items,
   loggedUser,
   setReservations,
-  loggedUserPrepared,
 }: ReservationFocusProps) => {
   const { _id } = useParams();
 
@@ -172,8 +169,19 @@ export const ReservationFocus = ({
     }
   };
 
+  console.log("logged user");
+  console.log(loggedUser);
+  console.log("reserv");
+  console.log(reservation);
+  console.log("WAIT, DENY pair");
+  console.log(loggedUser === undefined);
+  console.log(!!loggedUser && reservation?.userId !== loggedUser._id);
+
   return (
-    <AccessGuard deny={!loggedUser} loggedUserPrepared={loggedUserPrepared}>
+    <AccessGuard
+      wait={loggedUser === undefined || reservation === undefined}
+      deny={!!loggedUser && reservation?.userId !== loggedUser._id}
+    >
       <CustomContainer
         textAlign="left"
         backgroundColor={loggedUser ? getBgColor(reservation?.status) : "white"}

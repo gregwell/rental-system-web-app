@@ -46,11 +46,10 @@ const useStyles = makeStyles({
 });
 
 interface MyProfileProps {
-  loggedUser: User | null;
+  loggedUser: User | null | undefined;
   users: User[] | null;
   setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
-  setLoggedUser: React.Dispatch<React.SetStateAction<User | null>>;
-  loggedUserPrepared: boolean;
+  setLoggedUser: React.Dispatch<React.SetStateAction<User | null | undefined>>;
 }
 
 const MyProfile = ({
@@ -58,7 +57,6 @@ const MyProfile = ({
   users,
   setUsers,
   setLoggedUser,
-  loggedUserPrepared,
 }: MyProfileProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -188,12 +186,10 @@ const MyProfile = ({
           ? [...prevState, newUserEncrypted(loggedUser)]
           : [newUserEncrypted(loggedUser)];
       });
-
-      setLoggedUser((prevState) => newUser(prevState));
     }
   };
   return (
-    <AccessGuard deny={!loggedUser} loggedUserPrepared={loggedUserPrepared}>
+    <AccessGuard wait={loggedUser === undefined} deny={loggedUser === null}>
       <div className={classes.panel}>
         <Container className={classes.reservation}>
           {!!loggedUser && (

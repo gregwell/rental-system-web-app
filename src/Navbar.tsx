@@ -59,11 +59,10 @@ const useStyles = makeStyles({
 
 interface NavbarProps {
   users: User[] | null;
-  loggedUser: User | null;
-  setLoggedUser: (value: User | null) => void;
+  loggedUser: User | null | undefined;
+  setLoggedUser: (value: User | null | undefined) => void;
   setNewReservationSuccess: (newVal: boolean | null) => void;
   setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
-  loggedUserPrepared: boolean;
 }
 
 const Navbar = ({
@@ -72,7 +71,6 @@ const Navbar = ({
   setLoggedUser,
   setNewReservationSuccess,
   setUsers,
-  loggedUserPrepared,
 }: NavbarProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -85,7 +83,7 @@ const Navbar = ({
 
   const signOut = () => {
     setLoggedUser(null);
-    localStorage.setItem("_id", "");
+    localStorage.setItem("user", "");
     navigate("/");
   };
 

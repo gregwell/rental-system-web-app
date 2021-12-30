@@ -48,8 +48,8 @@ const useStyles = makeStyles({
 
 interface AuthProps {
   users: User[] | null;
-  loggedUser: User | null;
-  setLoggedUser: (value: User | null) => void;
+  loggedUser: User | null | undefined;
+  setLoggedUser: (value: User | null | undefined) => void;
   setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
 }
 
@@ -206,7 +206,6 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
       const decryptedUserFound: User = decryptObject(userFound);
 
       setLoggedUser(decryptedUserFound);
-      localStorage.setItem("_id", userFound?._id as string);
       return;
     }
 

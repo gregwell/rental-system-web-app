@@ -18,15 +18,13 @@ import NotFound from "./general/NotFound";
 import { decryptObject, encryptObject } from "./utils";
 
 function App() {
-  const [loggedUser, setLoggedUser] = useState<User | null>(null);
-  const [users, setUsers] = useState<User[] | null>(null);
-  const [isUsersInitialized, setIsUsersInitialized] = useState<boolean>(false);
+  const [loggedUser, setLoggedUser] = useState<User | null | undefined>(undefined);
   const [loggedUserPrepared, setLoggedUserPrepared] = useState<boolean>(false);
-  const [reservationsInitialized, setReservationsInitialized] =
-    useState<boolean>(false);
-  const [reservations, setReservations] = useState<Reservation[]>([]);
 
-  const [itemsInitialized, setItemsInitialized] = useState<boolean>(false);
+  const [apiDataInitialized, setApiDataInitialized] = useState<boolean>(false);
+
+  const [users, setUsers] = useState<User[] | null>(null);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
   const [items, setItems] = useState<Item[]>([]);
 
   const [newReservationSuccess, setNewReservationSuccess] = useState<
@@ -37,8 +35,12 @@ function App() {
     const prepareLoggedUserState = () => {
       const localStorageItem = localStorage.getItem("user");
 
-      if (localStorageItem) {
+      if (localStorageItem && localStorageItem !== "") {
         setLoggedUser(decryptObject(JSON.parse(localStorageItem)));
+      } 
+
+      if(!localStorageItem) {
+        setLoggedUser(null);
       }
       setLoggedUserPrepared(true);
     };
@@ -48,47 +50,36 @@ function App() {
   }, [loggedUserPrepared]);
 
   useEffect(() => {
-    const prepareReservationsState = async () => {
+    if (loggedUser) {
+      localStorage.setItem("user", JSON.stringify(encryptObject(loggedUser)));
+    }
+  }, [loggedUser]);
+
+  useEffect(() => {
+    const prepareApiData = async () => {
       const fetchedReservations = await sendApiRequest({
         collection: Collection.reservations,
         operation: CrudOperation.READ,
       });
-      setReservations(fetchedReservations as Reservation[]);
-      setReservationsInitialized(true);
-    };
-    if (!reservationsInitialized) {
-      prepareReservationsState();
-    }
-  }, [reservationsInitialized]);
-
-  useEffect(() => {
-    const prepareUsersState = async () => {
       const fetchedUsers = await sendApiRequest({
         collection: Collection.users,
         operation: CrudOperation.READ,
       });
-
-      setUsers(fetchedUsers as User[]);
-    };
-
-    if (!isUsersInitialized) {
-      prepareUsersState();
-    }
-  }, [isUsersInitialized, users]);
-
-  useEffect(() => {
-    const prepareItemsState = async () => {
       const fetchedItems = await sendApiRequest({
         collection: Collection.items,
         operation: CrudOperation.READ,
       });
+
       setItems(fetchedItems as Item[]);
-      setItemsInitialized(true);
+      setUsers(fetchedUsers as User[]);
+      setReservations(fetchedReservations as Reservation[]);
+
+      setApiDataInitialized(true);
     };
-    if (!itemsInitialized) {
-      prepareItemsState();
+    if (!apiDataInitialized) {
+      prepareApiData();
     }
-  }, [itemsInitialized]);
+  }, [apiDataInitialized]);
 
   return (
     <>
@@ -99,7 +90,6 @@ function App() {
           setLoggedUser={setLoggedUser}
           setNewReservationSuccess={setNewReservationSuccess}
           setUsers={setUsers}
-          loggedUserPrepared={loggedUserPrepared}
         />
         <Routes>
           <Route
@@ -126,7 +116,6 @@ function App() {
                 newReservationSuccess={newReservationSuccess}
                 loggedUser={loggedUser}
                 items={items}
-                loggedUserPrepared={loggedUserPrepared}
               />
             }
           />
@@ -138,7 +127,6 @@ function App() {
                 users={users}
                 setUsers={setUsers}
                 setLoggedUser={setLoggedUser}
-                loggedUserPrepared={loggedUserPrepared}
               />
             }
           />
@@ -150,7 +138,6 @@ function App() {
                 items={items}
                 loggedUser={loggedUser}
                 setReservations={setReservations}
-                loggedUserPrepared={loggedUserPrepared}
               />
             }
           />
