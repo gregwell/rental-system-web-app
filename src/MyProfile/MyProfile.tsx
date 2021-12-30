@@ -153,16 +153,6 @@ const MyProfile = ({
       return;
     }
 
-    const newUser = (prevState: User | null): User => {
-      return {
-        ...prevState,
-        name: name,
-        surname: surname,
-        phone: phone,
-        email: email,
-      };
-    };
-
     const newUserEncrypted = (prevState: User | null): User => {
       return {
         ...prevState,

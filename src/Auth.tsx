@@ -233,8 +233,6 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
       return user?._id === removeDashes(codeInput);
     });
 
-    console.log(userFound);
-
     if (!userFound || userFound?.password !== "") {
       setNoSuchCode(true);
       return;

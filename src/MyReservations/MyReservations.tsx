@@ -1,4 +1,9 @@
-import { Typography, Container, Alert, AlertTitle } from "@mui/material";
+import {
+  Typography,
+  Container,
+  Alert,
+  AlertTitle,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 import SingleReservation from "./SingleReservation";
@@ -33,6 +38,7 @@ interface MyReservationsProps {
   newReservationSuccess: boolean | null;
   loggedUser: User | null | undefined;
   items: Item[] | null;
+  apiDataInitialized: boolean;
 }
 
 const MyReservations = ({
@@ -40,6 +46,7 @@ const MyReservations = ({
   reservations,
   newReservationSuccess,
   items,
+  apiDataInitialized,
 }: MyReservationsProps) => {
   const classes = useStyles();
 
@@ -53,8 +60,8 @@ const MyReservations = ({
   }
 
   return (
-    items && (
-      <AccessGuard wait={loggedUser === undefined} deny={loggedUser === null}>
+    <AccessGuard wait={loggedUser === undefined} deny={loggedUser === null}>
+      <AccessGuard wait={!apiDataInitialized}>
         <div className={classes.panel}>
           <Container className={classes.reservation}>
             <Typography variant="h5">
@@ -86,7 +93,7 @@ const MyReservations = ({
                       <SingleReservation
                         key={reservation._id}
                         reservation={reservation}
-                        item={items.find(
+                        item={items?.find(
                           (item) => item.productId === reservation.productId
                         )}
                       />
@@ -112,7 +119,7 @@ const MyReservations = ({
                       <SingleReservation
                         key={reservation._id}
                         reservation={reservation}
-                        item={items.find(
+                        item={items?.find(
                           (item) => item.productId === reservation.productId
                         )}
                       />
@@ -122,7 +129,7 @@ const MyReservations = ({
           </Container>
         </div>
       </AccessGuard>
-    )
+    </AccessGuard>
   );
 };
 

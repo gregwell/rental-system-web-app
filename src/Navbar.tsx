@@ -6,7 +6,6 @@ import {
   Grid,
   Typography,
   Container,
-  LinearProgress,
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import EditIcon from "@mui/icons-material/Edit";

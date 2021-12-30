@@ -12,7 +12,7 @@ const useStyles = makeStyles({
 });
 
 interface AccessGuardProps {
-  deny: boolean;
+  deny?: boolean;
   children: React.ReactNode;
   wait?: boolean;
 }
@@ -39,8 +39,8 @@ const AccessGuard = ({ deny, wait, children }: AccessGuardProps) => {
     return (
       <CustomContainer textAlign="left">
         <Alert severity="warning">
-          <AlertTitle>Brak dostępu!</AlertTitle>Zostaniesz przeniesiony na
-          główną stronę
+          <AlertTitle>Brak dostępu!</AlertTitle> 
+          Zostaniesz przeniesieony do głównej strony.
         </Alert>
       </CustomContainer>
     );

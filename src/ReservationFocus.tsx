@@ -9,12 +9,12 @@ import {
   CrudOperation,
 } from "./general/types";
 import { makeStyles } from "@mui/styles";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import CustomContainer from "./general/CustomContainer";
 import CustomIcon from "./general/CustomIcon";
 import { formatDate } from "./utils";
 import { colors } from "./general/colors";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AccessGuard from "./general/AccessGuard";
 import { sendApiRequest } from "./async/sendApiRequest";
 
@@ -82,6 +82,7 @@ interface ReservationFocusProps {
   items: Item[] | null;
   loggedUser: User | null | undefined;
   setReservations: React.Dispatch<React.SetStateAction<Reservation[]>>;
+  apiDataInitialized: boolean;
 }
 
 export const ReservationFocus = ({
@@ -89,14 +90,45 @@ export const ReservationFocus = ({
   items,
   loggedUser,
   setReservations,
+  apiDataInitialized,
 }: ReservationFocusProps) => {
   const { _id } = useParams();
+  const navigate = useNavigate();
 
   const [updateDataSuccesful, setUpdateDataSuccesful] = useState<
     boolean | null
   >(null);
 
-  const reservation = reservations?.find((r) => r._id === _id);
+  const [reservation, setReservation] = useState<
+    Reservation | undefined | null
+  >(undefined);
+  const [reservationPrepared, setReservationPrepared] =
+    useState<boolean>(false);
+
+  useEffect(() => {
+    const prepareReservationState = () => {
+      const foundReservation = reservations?.find((r) => r._id === _id);
+
+      if (!foundReservation) {
+        navigate("*");
+        return;
+      }
+
+      const userHasPermission = loggedUser?._id === foundReservation?.userId;
+
+      if (userHasPermission) {
+        setReservation(foundReservation);
+      }
+
+      if (!userHasPermission) {
+        setReservation(null);
+      }
+    };
+    if (apiDataInitialized) {
+      prepareReservationState();
+      setReservationPrepared(true);
+    }
+  }, [_id, apiDataInitialized, loggedUser?._id, navigate, reservations]);
 
   const item = items?.find((i) => i.productId === reservation?.productId);
 
@@ -148,7 +180,7 @@ export const ReservationFocus = ({
     const updatedReservation = {
       _id: _id as string,
       productId: reservation?.productId as string,
-      userId: reservation?.productId as string,
+      userId: reservation?.userId as string,
       startDate: reservation?.startDate as string,
       finishDate: reservation?.finishDate as string,
       price: reservation?.price as string,
@@ -157,30 +189,21 @@ export const ReservationFocus = ({
 
     if (reservations) {
       let newReservations = reservations;
+
       newReservations.forEach((reservation, index) => {
         if (reservation._id === _id) {
           reservations[index] = updatedReservation;
         }
       });
 
-      console.log(newReservations);
-
       setReservations(newReservations);
     }
   };
 
-  console.log("logged user");
-  console.log(loggedUser);
-  console.log("reserv");
-  console.log(reservation);
-  console.log("WAIT, DENY pair");
-  console.log(loggedUser === undefined);
-  console.log(!!loggedUser && reservation?.userId !== loggedUser._id);
-
   return (
     <AccessGuard
-      wait={loggedUser === undefined || reservation === undefined}
-      deny={!!loggedUser && reservation?.userId !== loggedUser._id}
+      wait={loggedUser === undefined || !reservationPrepared}
+      deny={reservation === null}
     >
       <CustomContainer
         textAlign="left"

@@ -18,7 +18,9 @@ import NotFound from "./general/NotFound";
 import { decryptObject, encryptObject } from "./utils";
 
 function App() {
-  const [loggedUser, setLoggedUser] = useState<User | null | undefined>(undefined);
+  const [loggedUser, setLoggedUser] = useState<User | null | undefined>(
+    undefined
+  );
   const [loggedUserPrepared, setLoggedUserPrepared] = useState<boolean>(false);
 
   const [apiDataInitialized, setApiDataInitialized] = useState<boolean>(false);
@@ -37,9 +39,9 @@ function App() {
 
       if (localStorageItem && localStorageItem !== "") {
         setLoggedUser(decryptObject(JSON.parse(localStorageItem)));
-      } 
+      }
 
-      if(!localStorageItem) {
+      if (!localStorageItem) {
         setLoggedUser(null);
       }
       setLoggedUserPrepared(true);
@@ -116,6 +118,7 @@ function App() {
                 newReservationSuccess={newReservationSuccess}
                 loggedUser={loggedUser}
                 items={items}
+                apiDataInitialized={apiDataInitialized}
               />
             }
           />
@@ -138,10 +141,11 @@ function App() {
                 items={items}
                 loggedUser={loggedUser}
                 setReservations={setReservations}
+                apiDataInitialized={apiDataInitialized}
               />
             }
           />
-          <Route path="*" element={<NotFound />}></Route>
+          <Route path="*" element={<NotFound />}/>
         </Routes>
       </Router>
     </>
