@@ -4,18 +4,18 @@ import { useNavigate } from "react-router-dom";
 
 interface AccessGuardProps {
   deny: boolean;
-  usersInitialized: boolean;
+  loggedUserPrepared: boolean;
   children: React.ReactNode;
 }
 
 const AccessGuard = ({
   deny,
   children,
-  usersInitialized,
+  loggedUserPrepared,
 }: AccessGuardProps) => {
   const navigate = useNavigate();
 
-  if (usersInitialized && deny) {
+  if (loggedUserPrepared && deny) {
     setTimeout(() => {
       navigate("/");
     }, 2500);
@@ -23,7 +23,7 @@ const AccessGuard = ({
 
   return deny ? (
     <>
-      {!!usersInitialized ? (
+      {!loggedUserPrepared ? (
         <CustomContainer textAlign="left">
           <Alert severity="warning">
             <AlertTitle>Brak dostępu!</AlertTitle>Zostaniesz przeniesiony na

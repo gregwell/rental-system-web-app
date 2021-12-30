@@ -63,7 +63,7 @@ interface NavbarProps {
   setLoggedUser: (value: User | null) => void;
   setNewReservationSuccess: (newVal: boolean | null) => void;
   setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
-  usersInitialized: boolean;
+  loggedUserPrepared: boolean;
 }
 
 const Navbar = ({
@@ -72,7 +72,7 @@ const Navbar = ({
   setLoggedUser,
   setNewReservationSuccess,
   setUsers,
-  usersInitialized,
+  loggedUserPrepared,
 }: NavbarProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -159,11 +159,6 @@ const Navbar = ({
               </Button>
             </Grid>
           </Grid>
-        </Container>
-      )}
-      {!usersInitialized && !loggedUser && (
-        <Container className={classes.paddingBottom}>
-          <LinearProgress />
         </Container>
       )}
 

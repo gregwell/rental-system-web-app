@@ -50,7 +50,7 @@ interface MyProfileProps {
   users: User[] | null;
   setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
   setLoggedUser: React.Dispatch<React.SetStateAction<User | null>>;
-  usersInitialized: boolean;
+  loggedUserPrepared: boolean;
 }
 
 const MyProfile = ({
@@ -58,7 +58,7 @@ const MyProfile = ({
   users,
   setUsers,
   setLoggedUser,
-  usersInitialized,
+  loggedUserPrepared,
 }: MyProfileProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -193,7 +193,7 @@ const MyProfile = ({
     }
   };
   return (
-    <AccessGuard deny={!loggedUser} usersInitialized={usersInitialized}>
+    <AccessGuard deny={!loggedUser} loggedUserPrepared={loggedUserPrepared}>
       <div className={classes.panel}>
         <Container className={classes.reservation}>
           {!!loggedUser && (

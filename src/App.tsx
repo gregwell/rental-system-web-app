@@ -15,13 +15,13 @@ import MyReservations from "./MyReservations/MyReservations";
 import MyProfile from "./MyProfile/MyProfile";
 import { ReservationFocus } from "./ReservationFocus";
 import NotFound from "./general/NotFound";
-import { decryptObject } from "./utils";
+import { decryptObject, encryptObject } from "./utils";
 
 function App() {
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[] | null>(null);
   const [isUsersInitialized, setIsUsersInitialized] = useState<boolean>(false);
-
+  const [loggedUserPrepared, setLoggedUserPrepared] = useState<boolean>(false);
   const [reservationsInitialized, setReservationsInitialized] =
     useState<boolean>(false);
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -32,6 +32,20 @@ function App() {
   const [newReservationSuccess, setNewReservationSuccess] = useState<
     boolean | null
   >(null);
+
+  useEffect(() => {
+    const prepareLoggedUserState = () => {
+      const localStorageItem = localStorage.getItem("user");
+
+      if (localStorageItem) {
+        setLoggedUser(decryptObject(JSON.parse(localStorageItem)));
+      }
+      setLoggedUserPrepared(true);
+    };
+    if (!loggedUserPrepared) {
+      prepareLoggedUserState();
+    }
+  }, [loggedUserPrepared]);
 
   useEffect(() => {
     const prepareReservationsState = async () => {
@@ -53,20 +67,10 @@ function App() {
         collection: Collection.users,
         operation: CrudOperation.READ,
       });
-      setUsers(fetchedUsers as User[]);
 
-      const _id = localStorage.getItem("_id");
-      const userFound: User | undefined = users?.find((user) => {
-        return user?._id === _id;
-      });
-      if (userFound) {
-        setLoggedUser(decryptObject(userFound));
-      }
-      setTimeout(() => {
-        setIsUsersInitialized(true);
-      }, 2000);
-      
+      setUsers(fetchedUsers as User[]);
     };
+
     if (!isUsersInitialized) {
       prepareUsersState();
     }
@@ -95,7 +99,7 @@ function App() {
           setLoggedUser={setLoggedUser}
           setNewReservationSuccess={setNewReservationSuccess}
           setUsers={setUsers}
-          usersInitialized={isUsersInitialized}
+          loggedUserPrepared={loggedUserPrepared}
         />
         <Routes>
           <Route
@@ -122,7 +126,7 @@ function App() {
                 newReservationSuccess={newReservationSuccess}
                 loggedUser={loggedUser}
                 items={items}
-                usersInitialized={isUsersInitialized}
+                loggedUserPrepared={loggedUserPrepared}
               />
             }
           />
@@ -134,7 +138,7 @@ function App() {
                 users={users}
                 setUsers={setUsers}
                 setLoggedUser={setLoggedUser}
-                usersInitialized={isUsersInitialized}
+                loggedUserPrepared={loggedUserPrepared}
               />
             }
           />
@@ -146,7 +150,7 @@ function App() {
                 items={items}
                 loggedUser={loggedUser}
                 setReservations={setReservations}
-                usersInitialized={isUsersInitialized}
+                loggedUserPrepared={loggedUserPrepared}
               />
             }
           />
