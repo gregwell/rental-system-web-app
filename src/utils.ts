@@ -40,21 +40,38 @@ export const decryptObject = (object: any): any =>
     })
   );
 
-  export const formatDate = (date?: string): string => {
-    const d = new Date(parseInt(date as string));
-  
-    return (
-      ("0" + d.getDate()).slice(-2) +
-      "." +
-      ("0" + (d.getMonth() + 1)).slice(-2) +
-      "." +
-      d.getFullYear() +
-      " " +
-      "(" +
-      ("0" + d.getHours()).slice(-2) +
-      ":" +
-      ("0" + d.getMinutes()).slice(-2) +
-      ")"
-    );
-  };
-  
+export const formatDate = (date?: string): string => {
+  const d = new Date(parseInt(date as string));
+
+  return (
+    ("0" + d.getDate()).slice(-2) +
+    "." +
+    ("0" + (d.getMonth() + 1)).slice(-2) +
+    "." +
+    d.getFullYear() +
+    " " +
+    "(" +
+    ("0" + d.getHours()).slice(-2) +
+    ":" +
+    ("0" + d.getMinutes()).slice(-2) +
+    ")"
+  );
+};
+
+export const formatCode = (code: string): string => {
+  const newCode = code.replace(/-/g, "").slice(0, 24);
+  const length = newCode.length;
+
+  if (length > 6 && length <= 12)
+    return newCode.replace(/^(.{6})(.{1,6})$/, "$1-$2");
+  if (length > 12 && length <= 18)
+    return newCode.replace(/^(.{6})(.{6})(.{1,6})$/, "$1-$2-$3");
+  if (length > 18)
+    return newCode.replace(/^(.{6})(.{6})(.{6})(.{1,6})$/, "$1-$2-$3-$4");
+
+  return newCode;
+};
+
+export const removeDashes = (code: string):string => {
+  return code.replace(/-/g, "");
+}

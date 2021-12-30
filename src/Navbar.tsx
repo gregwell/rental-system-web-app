@@ -56,6 +56,7 @@ interface NavbarProps {
   loggedUser: User | null;
   setLoggedUser: (value: User | null) => void;
   setNewReservationSuccess: (newVal: boolean | null) => void;
+  setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
 }
 
 const Navbar = ({
@@ -63,6 +64,7 @@ const Navbar = ({
   loggedUser,
   setLoggedUser,
   setNewReservationSuccess,
+  setUsers,
 }: NavbarProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -159,6 +161,7 @@ const Navbar = ({
               users={users}
               loggedUser={loggedUser}
               setLoggedUser={setLoggedUser}
+              setUsers={setUsers}
             />
           </div>
         </>

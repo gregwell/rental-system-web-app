@@ -82,6 +82,7 @@ function App() {
           loggedUser={loggedUser}
           setLoggedUser={setLoggedUser}
           setNewReservationSuccess={setNewReservationSuccess}
+          setUsers={setUsers}
         />
         <Routes>
           <Route
@@ -89,6 +90,7 @@ function App() {
             element={
               <ReservationPanel
                 users={users}
+                setUsers={setUsers}
                 loggedUser={loggedUser}
                 setLoggedUser={setLoggedUser}
                 reservations={reservations}

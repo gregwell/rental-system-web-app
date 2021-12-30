@@ -55,6 +55,7 @@ const useStyles = makeStyles({
 
 interface ReservationPanelProps {
   users: User[] | null;
+  setUsers:  React.Dispatch<React.SetStateAction<User[] | null>>;
   items: Item[] | null;
   loggedUser: User | null;
   setLoggedUser: (value: User | null) => void;
@@ -66,6 +67,7 @@ interface ReservationPanelProps {
 
 const ReservationPanel = ({
   users,
+  setUsers,
   loggedUser,
   setLoggedUser,
   reservations,
@@ -153,6 +155,7 @@ const ReservationPanel = ({
           finishDate={finishDate}
           isUserLogged={false}
           users={users}
+          setUsers={setUsers}
           loggedUser={loggedUser}
           setLoggedUser={setLoggedUser}
           pricesTable={pricesTable}

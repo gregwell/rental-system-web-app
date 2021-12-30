@@ -58,6 +58,7 @@ interface ReservationConfirmationProps {
   finishDate: Date | null;
   isUserLogged: boolean;
   users: User[] | null;
+  setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
   loggedUser: User | null;
   setLoggedUser: (value: User | null) => void;
   pricesTable: ItemPrice[] | null;
@@ -73,6 +74,7 @@ export const ReservationConfirmation = ({
   finishDate,
   isUserLogged,
   users,
+  setUsers,
   loggedUser,
   setLoggedUser,
   setIsShowingReservationForm,
@@ -103,7 +105,6 @@ export const ReservationConfirmation = ({
 
   const onSendReservation = useCallback(async () => {
     if (choosenItem && startDate && finishDate && loggedUser) {
-
       const reservationPostData: Reservation = {
         productId: choosenItem.productId,
         userId: loggedUser._id as string,
@@ -177,6 +178,7 @@ export const ReservationConfirmation = ({
                     users={users}
                     loggedUser={loggedUser}
                     setLoggedUser={setLoggedUser}
+                    setUsers={setUsers}
                   />
                 </>
               )}

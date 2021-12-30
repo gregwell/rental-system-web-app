@@ -1,5 +1,13 @@
 import { useState, useCallback } from "react";
-import { Grid, TextField, Button, Typography, Container } from "@mui/material";
+import {
+  Grid,
+  TextField,
+  Button,
+  Typography,
+  Container,
+  Alert,
+  AlertTitle,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import {
   GoogleLogin,
@@ -10,7 +18,13 @@ import GoogleIcon from "@mui/icons-material/Google";
 
 import { User, CrudOperation, Collection } from "./general/types";
 import { sendApiRequest } from "./async/sendApiRequest";
-import { decrypt, encryptObject, decryptObject } from "./utils";
+import {
+  decrypt,
+  encryptObject,
+  decryptObject,
+  formatCode,
+  removeDashes,
+} from "./utils";
 
 const useStyles = makeStyles({
   login: {
@@ -25,26 +39,33 @@ const useStyles = makeStyles({
     paddingRight: "7px",
   },
   codeLogin: {
-    paddingTop: "30px",
-  }
+    paddingTop: "27px",
+  },
+  left: {
+    textAlign: "left",
+  },
 });
 
 interface AuthProps {
   users: User[] | null;
   loggedUser: User | null;
   setLoggedUser: (value: User | null) => void;
+  setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
 }
 
-const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
+const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
   const classes = useStyles();
 
   const [showGoogleRegisterForm, setShowGoogleRegisterForm] =
+    useState<boolean>(false);
+  const [showCodeRegisterForm, setShowCodeRegisterForm] =
     useState<boolean>(false);
 
   const [name, setName] = useState<string>("");
   const [surname, setSurname] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
+  const [idCard, setIdCard] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordSecond, setPasswordSecond] = useState<string>("");
   const [showPasswordAlert, setShowPasswordAlert] = useState<boolean>(false);
@@ -55,7 +76,14 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
   const [wrongLoginPassword, setWrongLoginPassword] = useState<boolean>(false);
   const [wrongLoginEmail, setWrongLoginEmail] = useState<boolean>(false);
 
+  const [noSuchCode, setNoSuchCode] = useState<boolean>(false);
+  const [updateDataSuccesful, setUpdateDataSuccesful] = useState<
+    boolean | null
+  >(null);
+
   const [googleId, setGoogleId] = useState<string | null>(null);
+
+  const [codeInput, setCodeInput] = useState<string>("");
 
   const handleRegister = useCallback(async () => {
     if (password !== passwordSecond) {
@@ -194,10 +222,83 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
     console.log(res);
   };
 
+  const handleCodeRegisterCheck = useCallback(() => {
+    if (removeDashes(codeInput).length !== 24) {
+      setNoSuchCode(true);
+      return;
+    }
+    setNoSuchCode(false);
+
+    const userFound: User | undefined = users?.find((user) => {
+      return user?._id === removeDashes(codeInput);
+    });
+
+    console.log(userFound);
+
+    if (!userFound || userFound?.password !== "") {
+      setNoSuchCode(true);
+      return;
+    }
+
+    setEmail(userFound?.email);
+    setName(userFound?.name);
+    setSurname(userFound?.surname);
+    setPhone(userFound?.phone);
+    setPassword("");
+    setPasswordSecond("");
+    setIdCard(userFound?.idCard as string);
+    setShowCodeRegisterForm(true);
+  }, [codeInput, users]);
+
+  const handleCodeRegister = async () => {
+    if (!codeInput) {
+      return;
+    }
+
+    const postBody: User = {
+      name: name,
+      surname: surname,
+      email: email,
+      googleId: "",
+      phone: phone,
+      password: password,
+      idCard: idCard,
+    };
+
+    const updated: User = encryptObject(postBody);
+
+    sendApiRequest({
+      collection: Collection.users,
+      operation: CrudOperation.UPDATE,
+      filter: { _id: { $oid: removeDashes(codeInput) } },
+      update: {
+        $set: updated,
+      },
+      setState: setUpdateDataSuccesful,
+    });
+
+    if (updateDataSuccesful === false) {
+      return;
+    }
+
+    if (users) {
+      setUsers(
+        users.filter((user) => {
+          return !(user?._id === removeDashes(codeInput));
+        })
+      );
+      setUsers((prevState) => {
+        return prevState !== null ? [...prevState, updated] : [updated];
+      });
+
+      setLoggedUser(postBody);
+    }
+  };
+
   return (
     <>
       <div className={classes.login}>
-        {!showGoogleRegisterForm && (
+        {!showGoogleRegisterForm && !showCodeRegisterForm && (
           <>
             <GoogleLogin
               clientId="700980121685-uvjv9maee07tcoek4b16p1mr6v10b65q.apps.googleusercontent.com"
@@ -284,8 +385,11 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
                     />
                   </Grid>
                   {!!showPasswordAlert && (
-                    <Grid item xs={12} sm={12} md={12}>
-                      <Typography color="error">Hasła są różne!</Typography>
+                    <Grid item xs={12} sm={12} md={12} className={classes.left}>
+                      <Alert severity="info">
+                        <AlertTitle>Wpisane hasła są różne.</AlertTitle>Popraw
+                        hasła, aby były takie same.
+                      </Alert>
                     </Grid>
                   )}
                   <Grid item xs={12} sm={12} md={12}>
@@ -324,31 +428,63 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
                     />
                   </Grid>
                   {(wrongLoginPassword || wrongLoginEmail) && (
-                    <Grid item xs={12} sm={12} md={12}>
-                      <Typography color="error">
+                    <Grid item xs={12} sm={12} md={12} className={classes.left}>
+                      <Alert severity="info">
+                        <AlertTitle>Logowanie nieudane!</AlertTitle>
                         {wrongLoginPassword
-                          ? "Złe hasło"
-                          : "Ten email nie został jeszcze zarejrestrowany"}
-                      </Typography>
+                          ? "Wpisane hasło jest niepoprawne"
+                          : "Ten email nie jest zarejestrowany w naszej bazie."}
+                      </Alert>
                     </Grid>
                   )}
-                  <Grid item xs={12} sm={12} md={12} className={classes.codeLogin}>
-                    <Typography variant="h6">Zaloguj kodem z wypożyczalni</Typography>
+                  <Grid item xs={12} sm={12} md={12}>
+                    <Button variant="contained" fullWidth onClick={handleLogin}>
+                      Zaloguj
+                    </Button>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <div className={classes.codeLogin} />
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={12}>
+                    <Typography variant="h6">
+                      Zaloguj kodem z wypożyczalni
+                    </Typography>
                   </Grid>
                   <Grid item xs={12} sm={12} md={12}>
                     <TextField
                       label="24-cyfrowy unikalny kod z wypożyczalni"
                       variant="outlined"
                       fullWidth
-                      value={null}
-                      onChange={(event) => setLoginEmail(event.target.value)}
+                      value={codeInput}
+                      onChange={(event) => {
+                        setNoSuchCode(false);
+                        setCodeInput(formatCode(event.target.value));
+                      }}
                     />
                   </Grid>
                   <Grid item xs={12} sm={12} md={12}>
-                    <Button variant="contained" fullWidth onClick={handleLogin}>
-                      Zaloguj
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      onClick={handleCodeRegisterCheck}
+                    >
+                      Wykorzystaj kod
                     </Button>
                   </Grid>
+                  {!!noSuchCode && (
+                    <Grid item xs={12} sm={12} md={12} className={classes.left}>
+                      <Alert severity="info">
+                        <AlertTitle>
+                          {removeDashes(codeInput).length !== 24
+                            ? "Niepoprawny kod!"
+                            : "Nie ma takiego kodu!"}
+                        </AlertTitle>
+                        {removeDashes(codeInput).length !== 24
+                          ? "Wpisany kod jest za krótki. Prawidłowy kod zawiera dokładnie 24 znaki."
+                          : "Skontakuj się z pracownikiem wypożyczalni (numer telefonu: +48500600700)"}
+                      </Alert>
+                    </Grid>
+                  )}
                 </Grid>
               </Grid>
             </Grid>
@@ -403,9 +539,58 @@ const Auth = ({ users, loggedUser, setLoggedUser }: AuthProps) => {
                 <Button
                   variant="contained"
                   fullWidth
-                  onClick={googleId ? handleGoogleRegister : handleRegister}
+                  onClick={handleGoogleRegister}
                 >
                   Utwórz konto
+                </Button>
+              </Grid>
+            </Grid>
+          </Container>
+        )}
+        {!!showCodeRegisterForm && (
+          <Container>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={12} md={12}>
+                <Typography>
+                  {`Hej ${name} ${surname} ! Utwórz hasło do konta aby kontynuować!`}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <TextField
+                  label="Adres email"
+                  variant="outlined"
+                  fullWidth
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <TextField
+                  label="Hasło"
+                  variant="outlined"
+                  fullWidth
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <TextField
+                  label="Powtórz hasło"
+                  variant="outlined"
+                  fullWidth
+                  type="password"
+                  value={passwordSecond}
+                  onChange={(event) => setPasswordSecond(event.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12}>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  onClick={handleCodeRegister}
+                >
+                  Utwórz konto powiązane z wypożyczeniem
                 </Button>
               </Grid>
             </Grid>
