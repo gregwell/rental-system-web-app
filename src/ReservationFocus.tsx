@@ -82,6 +82,8 @@ interface ReservationFocusProps {
   items: Item[] | null;
   loggedUser: User | null;
   setReservations: React.Dispatch<React.SetStateAction<Reservation[]>>;
+  usersInitialized: boolean;
+
 }
 
 export const ReservationFocus = ({
@@ -89,6 +91,7 @@ export const ReservationFocus = ({
   items,
   loggedUser,
   setReservations,
+  usersInitialized,
 }: ReservationFocusProps) => {
   const { _id } = useParams();
 
@@ -170,7 +173,7 @@ export const ReservationFocus = ({
   };
 
   return (
-    <AccessGuard deny={!loggedUser}>
+    <AccessGuard deny={!loggedUser} usersInitialized={usersInitialized}>
       <CustomContainer
         textAlign="left"
         backgroundColor={loggedUser ? getBgColor(reservation?.status) : "white"}

@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
-import { Button, Grid, Typography, Container } from "@mui/material";
+import {
+  Button,
+  Grid,
+  Typography,
+  Container,
+  LinearProgress,
+} from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import EditIcon from "@mui/icons-material/Edit";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
@@ -57,6 +63,7 @@ interface NavbarProps {
   setLoggedUser: (value: User | null) => void;
   setNewReservationSuccess: (newVal: boolean | null) => void;
   setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
+  usersInitialized: boolean;
 }
 
 const Navbar = ({
@@ -65,6 +72,7 @@ const Navbar = ({
   setLoggedUser,
   setNewReservationSuccess,
   setUsers,
+  usersInitialized,
 }: NavbarProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -77,6 +85,7 @@ const Navbar = ({
 
   const signOut = () => {
     setLoggedUser(null);
+    localStorage.setItem("_id", "");
     navigate("/");
   };
 
@@ -150,6 +159,11 @@ const Navbar = ({
               </Button>
             </Grid>
           </Grid>
+        </Container>
+      )}
+      {!usersInitialized && !loggedUser && (
+        <Container className={classes.paddingBottom}>
+          <LinearProgress />
         </Container>
       )}
 

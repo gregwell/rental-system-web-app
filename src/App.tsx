@@ -15,6 +15,7 @@ import MyReservations from "./MyReservations/MyReservations";
 import MyProfile from "./MyProfile/MyProfile";
 import { ReservationFocus } from "./ReservationFocus";
 import NotFound from "./general/NotFound";
+import { decryptObject } from "./utils";
 
 function App() {
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
@@ -53,12 +54,23 @@ function App() {
         operation: CrudOperation.READ,
       });
       setUsers(fetchedUsers as User[]);
-      setIsUsersInitialized(true);
+
+      const _id = localStorage.getItem("_id");
+      const userFound: User | undefined = users?.find((user) => {
+        return user?._id === _id;
+      });
+      if (userFound) {
+        setLoggedUser(decryptObject(userFound));
+      }
+      setTimeout(() => {
+        setIsUsersInitialized(true);
+      }, 2000);
+      
     };
     if (!isUsersInitialized) {
       prepareUsersState();
     }
-  }, [isUsersInitialized]);
+  }, [isUsersInitialized, users]);
 
   useEffect(() => {
     const prepareItemsState = async () => {
@@ -83,6 +95,7 @@ function App() {
           setLoggedUser={setLoggedUser}
           setNewReservationSuccess={setNewReservationSuccess}
           setUsers={setUsers}
+          usersInitialized={isUsersInitialized}
         />
         <Routes>
           <Route
@@ -109,6 +122,7 @@ function App() {
                 newReservationSuccess={newReservationSuccess}
                 loggedUser={loggedUser}
                 items={items}
+                usersInitialized={isUsersInitialized}
               />
             }
           />
@@ -120,6 +134,7 @@ function App() {
                 users={users}
                 setUsers={setUsers}
                 setLoggedUser={setLoggedUser}
+                usersInitialized={isUsersInitialized}
               />
             }
           />
@@ -131,6 +146,7 @@ function App() {
                 items={items}
                 loggedUser={loggedUser}
                 setReservations={setReservations}
+                usersInitialized={isUsersInitialized}
               />
             }
           />

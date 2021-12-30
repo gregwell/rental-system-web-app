@@ -206,6 +206,7 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
       const decryptedUserFound: User = decryptObject(userFound);
 
       setLoggedUser(decryptedUserFound);
+      localStorage.setItem("_id", userFound?._id as string);
       return;
     }
 
@@ -447,7 +448,7 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
                   </Grid>
                   <Grid item xs={12} sm={12} md={12}>
                     <Typography variant="h6">
-                      Zaloguj kodem z wypożyczalni
+                      Zarejestruj kodem z wypożyczalni
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm={12} md={12}>

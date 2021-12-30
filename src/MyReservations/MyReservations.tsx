@@ -33,6 +33,7 @@ interface MyReservationsProps {
   newReservationSuccess: boolean | null;
   loggedUser: User | null;
   items: Item[] | null;
+  usersInitialized: boolean;
 }
 
 const MyReservations = ({
@@ -40,6 +41,7 @@ const MyReservations = ({
   reservations,
   newReservationSuccess,
   items,
+  usersInitialized,
 }: MyReservationsProps) => {
   const classes = useStyles();
 
@@ -54,7 +56,7 @@ const MyReservations = ({
 
   return (
     items && (
-      <AccessGuard deny={!loggedUser}>
+      <AccessGuard deny={!loggedUser} usersInitialized={usersInitialized}>
         <div className={classes.panel}>
           <Container className={classes.reservation}>
             <Typography variant="h5">

@@ -50,6 +50,7 @@ interface MyProfileProps {
   users: User[] | null;
   setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
   setLoggedUser: React.Dispatch<React.SetStateAction<User | null>>;
+  usersInitialized: boolean;
 }
 
 const MyProfile = ({
@@ -57,22 +58,22 @@ const MyProfile = ({
   users,
   setUsers,
   setLoggedUser,
+  usersInitialized,
 }: MyProfileProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
 
-  const [name, setName] = useState<string>(
-    loggedUser !== null ? loggedUser.name : ""
-  );
-  const [surname, setSurname] = useState<string>(
-    loggedUser !== null ? loggedUser.surname : ""
-  );
-  const [phone, setPhone] = useState<string>(
-    loggedUser !== null ? loggedUser.phone : ""
-  );
-  const [email, setEmail] = useState<string>(
-    loggedUser !== null ? loggedUser.email : ""
-  );
+  const [name, setName] = useState<string>("");
+  const [surname, setSurname] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+
+  useEffect(() => {
+    setName(loggedUser?.name as string);
+    setSurname(loggedUser?.surname as string);
+    setPhone(loggedUser?.phone as string);
+    setEmail(loggedUser?.email as string);
+  }, [loggedUser]);
 
   const [updateDataSuccesful, setUpdateDataSuccesful] = useState<
     boolean | null
@@ -192,7 +193,7 @@ const MyProfile = ({
     }
   };
   return (
-    <AccessGuard deny={!loggedUser}>
+    <AccessGuard deny={!loggedUser} usersInitialized={usersInitialized}>
       <div className={classes.panel}>
         <Container className={classes.reservation}>
           {!!loggedUser && (
@@ -242,7 +243,9 @@ const MyProfile = ({
                       <Grid item xs={12}>
                         <Alert severity="error">
                           <AlertTitle>Wystąpił błąd!</AlertTitle>
-                          Nie udało się zaktualizować danych. Sprawdź połączenie z Internetem lub skontakuj się z pracownikiem wypożyczalni.
+                          Nie udało się zaktualizować danych. Sprawdź połączenie
+                          z Internetem lub skontakuj się z pracownikiem
+                          wypożyczalni.
                         </Alert>
                       </Grid>
                     )}
@@ -288,7 +291,9 @@ const MyProfile = ({
                     {!!showDeletePasswordConfirmation && (
                       <>
                         <Grid item xs={12} className={classes.center}>
-                          <Typography color="error">Tej akcji nie możesz cofnąć. Jesteś pewny/na?</Typography>
+                          <Typography color="error">
+                            Tej akcji nie możesz cofnąć. Jesteś pewny/na?
+                          </Typography>
                         </Grid>
                       </>
                     )}
@@ -316,7 +321,8 @@ const MyProfile = ({
                         <Alert severity="error">
                           <AlertTitle>Błąd!</AlertTitle>
                           Nie udało się usunąć konta. Skontaktuj się z
-                          pracownikiem wypożyczalni lub sprawdź połączenie z Internetem.
+                          pracownikiem wypożyczalni lub sprawdź połączenie z
+                          Internetem.
                         </Alert>
                       </Grid>
                     )}
