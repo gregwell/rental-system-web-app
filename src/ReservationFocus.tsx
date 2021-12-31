@@ -155,7 +155,7 @@ export const ReservationFocus = ({
     }
   };
 
-  const onCancelReservation = () => {
+  const onCancelReservation = async () => {
     if (!loggedUser) {
       return;
     }
@@ -163,7 +163,7 @@ export const ReservationFocus = ({
     const updated: any = {};
     updated.status = Status.anulowana;
 
-    sendApiRequest({
+    await sendApiRequest({
       collection: Collection.reservations,
       operation: CrudOperation.UPDATE,
       filter: { _id: { $oid: reservation?._id } },
@@ -186,6 +186,8 @@ export const ReservationFocus = ({
       price: reservation?.price as string,
       status: Status.anulowana as Status,
     };
+
+    setReservation(updatedReservation);
 
     if (reservations) {
       let newReservations = reservations;
