@@ -40,7 +40,10 @@ export const decryptObject = (object: any): any =>
     })
   );
 
-export const formatDate = (date?: string): string => {
+export const formatDate = (date: string | undefined): string => {
+  if (date === undefined) {
+    return "";
+  }
   const d = new Date(parseInt(date as string));
 
   return (
@@ -72,6 +75,6 @@ export const formatCode = (code: string): string => {
   return newCode;
 };
 
-export const removeDashes = (code: string):string => {
+export const removeDashes = (code: string): string => {
   return code.replace(/-/g, "");
-}
+};

@@ -73,7 +73,7 @@ const MyReservations = ({
                   <AlertTitle>
                     Rezerwacja została dokonana pomyślnie!
                   </AlertTitle>
-                  Dziękujemy za zaufanie.
+                  Potwierdzenie możesz znaleźć w swojej skrzynce email.
                 </Alert>
               )}
             </div>

@@ -21,6 +21,11 @@ import {
 import { sendApiRequest } from "../async/sendApiRequest";
 import Auth from "../Auth";
 import CustomIcon from "../general/CustomIcon";
+import { init } from "@emailjs/browser";
+import emailjs from "@emailjs/browser";
+import { formatDate } from "../utils";
+
+init(process.env.REACT_APP_EMAILJS as string);
 
 const useStyles = makeStyles({
   root: {
@@ -96,12 +101,32 @@ export const ReservationConfirmation = ({
     if (newReservationSuccess === true) {
       navigate("/reservations");
 
+      emailjs.send("service_s5znq5v", "template_wwn9abw", {
+        id: currentReservation?._id,
+        displayName: `${loggedUser?.name} ${loggedUser?.surname}`,
+        startDate: formatDate(startDate?.getTime().toString()),
+        finishDate: formatDate(finishDate?.getTime().toString()),
+        item: `${choosenItem.producer} ${choosenItem.model} (rozmiar: ${choosenItem.size})`,
+      });
+
       setReservations((prevState) => {
         const arr = [...prevState, currentReservation] as Reservation[];
         return arr;
       });
     }
-  }, [currentReservation, navigate, newReservationSuccess, setReservations]);
+  }, [
+    choosenItem.model,
+    choosenItem.producer,
+    choosenItem.size,
+    currentReservation,
+    finishDate,
+    loggedUser?.name,
+    loggedUser?.surname,
+    navigate,
+    newReservationSuccess,
+    setReservations,
+    startDate,
+  ]);
 
   const onSendReservation = useCallback(async () => {
     if (choosenItem && startDate && finishDate && loggedUser) {
