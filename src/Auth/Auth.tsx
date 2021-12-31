@@ -16,15 +16,16 @@ import {
 } from "react-google-login";
 import GoogleIcon from "@mui/icons-material/Google";
 
-import { User, CrudOperation, Collection } from "./general/types";
-import { sendApiRequest } from "./async/sendApiRequest";
+import { User, CrudOperation, Collection } from "../general/types";
+import { sendApiRequest } from "../async/sendApiRequest";
 import {
   decrypt,
   encryptObject,
   decryptObject,
   formatCode,
   removeDashes,
-} from "./utils";
+} from "../utils";
+import { alerts, alertTitles, buttonLabels, sectionLabels } from "./constants";
 
 const useStyles = makeStyles({
   login: {
@@ -48,12 +49,11 @@ const useStyles = makeStyles({
 
 interface AuthProps {
   users: User[] | null;
-  loggedUser: User | null | undefined;
   setLoggedUser: (value: User | null | undefined) => void;
   setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
 }
 
-const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
+const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
   const classes = useStyles();
 
   const [showGoogleRegisterForm, setShowGoogleRegisterForm] =
@@ -299,7 +299,7 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
         {!showGoogleRegisterForm && !showCodeRegisterForm && (
           <>
             <GoogleLogin
-              clientId="700980121685-uvjv9maee07tcoek4b16p1mr6v10b65q.apps.googleusercontent.com"
+              clientId={process.env.REACT_APP_GOOGLE_ID as string}
               render={(renderProps) => (
                 <Button
                   onClick={renderProps.onClick}
@@ -307,7 +307,7 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
                   variant="contained"
                 >
                   <GoogleIcon className={classes.paddingRight} />
-                  {` Kontynuuj z użyciem konta Google`}
+                  {buttonLabels.proceedWithGoogle}
                 </Button>
               )}
               onSuccess={googleSuccess}
@@ -321,7 +321,7 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={12} md={12}>
                     <Typography variant="h6">
-                      Uzupełnij dane aby utworzyć nowe konto
+                      {sectionLabels.register}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm={12} md={6}>
@@ -385,8 +385,8 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
                   {!!showPasswordAlert && (
                     <Grid item xs={12} sm={12} md={12} className={classes.left}>
                       <Alert severity="info">
-                        <AlertTitle>Wpisane hasła są różne.</AlertTitle>Popraw
-                        hasła, aby były takie same.
+                        <AlertTitle>{alertTitles.registerFailed}</AlertTitle>
+                        {alerts.differentPasswords}
                       </Alert>
                     </Grid>
                   )}
@@ -396,7 +396,7 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
                       fullWidth
                       onClick={handleRegister}
                     >
-                      Zarejestruj
+                      {buttonLabels.register}
                     </Button>
                   </Grid>
                 </Grid>
@@ -404,7 +404,7 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
               <Grid item xs={12} sm={12} md={6}>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={12} md={12}>
-                    <Typography variant="h6">Masz już konto?</Typography>
+                    <Typography variant="h6">{sectionLabels.login}</Typography>
                   </Grid>
                   <Grid item xs={12} sm={12} md={12}>
                     <TextField
@@ -428,16 +428,16 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
                   {(wrongLoginPassword || wrongLoginEmail) && (
                     <Grid item xs={12} sm={12} md={12} className={classes.left}>
                       <Alert severity="info">
-                        <AlertTitle>Logowanie nieudane!</AlertTitle>
+                        <AlertTitle>{alertTitles.loginFailed}</AlertTitle>
                         {wrongLoginPassword
-                          ? "Wpisane hasło jest niepoprawne"
-                          : "Ten email nie jest zarejestrowany w naszej bazie."}
+                          ? alerts.wrongPassword
+                          : alerts.wrongEmail}
                       </Alert>
                     </Grid>
                   )}
                   <Grid item xs={12} sm={12} md={12}>
                     <Button variant="contained" fullWidth onClick={handleLogin}>
-                      Zaloguj
+                      {buttonLabels.login}
                     </Button>
                   </Grid>
                   <Grid item xs={12}>
@@ -445,7 +445,7 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
                   </Grid>
                   <Grid item xs={12} sm={12} md={12}>
                     <Typography variant="h6">
-                      Zarejestruj kodem z wypożyczalni
+                      {sectionLabels.registerWithCode}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm={12} md={12}>
@@ -466,7 +466,7 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
                       fullWidth
                       onClick={handleCodeRegisterCheck}
                     >
-                      Wykorzystaj kod
+                      {buttonLabels.registerWithCode}
                     </Button>
                   </Grid>
                   {!!noSuchCode && (
@@ -474,12 +474,12 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
                       <Alert severity="info">
                         <AlertTitle>
                           {removeDashes(codeInput).length !== 24
-                            ? "Niepoprawny kod!"
-                            : "Nie ma takiego kodu!"}
+                            ? alertTitles.codeTooShort
+                            : alertTitles.noSuchCode}
                         </AlertTitle>
                         {removeDashes(codeInput).length !== 24
-                          ? "Wpisany kod jest za krótki. Prawidłowy kod zawiera dokładnie 24 znaki."
-                          : "Skontakuj się z pracownikiem wypożyczalni (numer telefonu: +48500600700)"}
+                          ? alerts.codeTooShort
+                          : alerts.noSuchCode}
                       </Alert>
                     </Grid>
                   )}
@@ -492,10 +492,7 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
           <Container>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={12}>
-                <Typography>
-                  Wygląda na to, że to Twoje pierwsze logowanie przy pomocy
-                  Google. Uzupełnij poniższe dane by kontynuować!
-                </Typography>
+                <Typography>{sectionLabels.firstGoogleLogin}</Typography>
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
                 <TextField
@@ -539,7 +536,7 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
                   fullWidth
                   onClick={handleGoogleRegister}
                 >
-                  Utwórz konto
+                  {buttonLabels.register}
                 </Button>
               </Grid>
             </Grid>
@@ -588,7 +585,7 @@ const Auth = ({ users, loggedUser, setLoggedUser, setUsers }: AuthProps) => {
                   fullWidth
                   onClick={handleCodeRegister}
                 >
-                  Utwórz konto powiązane z wypożyczeniem
+                  {buttonLabels.registerWithCode}
                 </Button>
               </Grid>
             </Grid>

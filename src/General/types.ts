@@ -68,10 +68,10 @@ export interface Price {
 }
 
 export enum CrudOperation {
-  CREATE,
-  READ,
-  UPDATE,
-  DELETE,
+  CREATE = "insertOne",
+  READ = "find",
+  UPDATE = "updateOne",
+  DELETE = "deleteOne",
 }
 
 export interface RequestData {

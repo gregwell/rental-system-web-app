@@ -19,7 +19,7 @@ import {
   Collection,
 } from "../general/types";
 import { sendApiRequest } from "../async/sendApiRequest";
-import Auth from "../Auth";
+import Auth from "../Auth/Auth";
 import CustomIcon from "../general/CustomIcon";
 import { init } from "@emailjs/browser";
 import emailjs from "@emailjs/browser";
@@ -201,7 +201,6 @@ export const ReservationConfirmation = ({
                 <>
                   <Auth
                     users={users}
-                    loggedUser={loggedUser}
                     setLoggedUser={setLoggedUser}
                     setUsers={setUsers}
                   />

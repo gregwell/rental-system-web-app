@@ -18,19 +18,6 @@ interface SendApiRequestProps {
   setState?: (newState: any) => void;
 }
 
-const crudActionName = (crud: CrudOperation): string => {
-  switch (crud) {
-    case CrudOperation.CREATE:
-      return "insertOne";
-    case CrudOperation.READ:
-      return "find";
-    case CrudOperation.UPDATE:
-      return "updateOne";
-    case CrudOperation.DELETE:
-      return "deleteOne";
-  }
-};
-
 export async function sendApiRequest({
   collection,
   operation,
@@ -57,20 +44,20 @@ export async function sendApiRequest({
   }
 
   if (operation === CrudOperation.UPDATE) {
-    requestData.filter = filter;
     requestData.update = update;
   }
 
-  if (operation === CrudOperation.DELETE) {
+  if (
+    operation === CrudOperation.UPDATE ||
+    operation === CrudOperation.DELETE
+  ) {
     requestData.filter = filter;
   }
 
   try {
     const response = await axios({
       method: "POST",
-      url: `https://data.mongodb-api.com/app/data-lasjp/endpoint/data/beta/action/${crudActionName(
-        operation
-      )}`,
+      url: `https://data.mongodb-api.com/app/data-lasjp/endpoint/data/beta/action/${operation}`,
       headers: {
         "Content-Type": "application/json",
         "api-key": apiKey,

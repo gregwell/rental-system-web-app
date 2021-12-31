@@ -13,7 +13,7 @@ import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import BookIcon from "@mui/icons-material/Book";
 import LoginIcon from "@mui/icons-material/Login";
 
-import Auth from "./Auth";
+import Auth from "./Auth/Auth";
 import { User } from "./general/types";
 
 const useStyles = makeStyles({
@@ -165,7 +165,6 @@ const Navbar = ({
           <div className={classes.auth}>
             <Auth
               users={users}
-              loggedUser={loggedUser}
               setLoggedUser={setLoggedUser}
               setUsers={setUsers}
             />
