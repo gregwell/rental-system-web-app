@@ -189,17 +189,18 @@ export const ReservationFocus = ({
 
     setReservation(updatedReservation);
 
-    if (reservations) {
-      let newReservations = reservations;
-
-      newReservations.forEach((reservation, index) => {
-        if (reservation._id === _id) {
-          reservations[index] = updatedReservation;
-        }
-      });
-
-      setReservations(newReservations);
+    if (!reservations) {
+      setReservations([updatedReservation]);
+      return;
     }
+
+    const updatedReservations = reservations.reduce((acc, curr) => {
+      const reservation = curr._id === _id ? updatedReservation : curr;
+      acc.push(reservation);
+      return acc;
+    }, [] as Reservation[]);
+
+    setReservations(updatedReservations);
   };
 
   return (

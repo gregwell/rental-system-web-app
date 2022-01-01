@@ -14,7 +14,7 @@ import { useState, useEffect } from "react";
 import { CrudOperation, User, Collection } from "../general/types";
 import SingleProfileItem from "./SingleProfileItem";
 import { sendApiRequest } from "../async/sendApiRequest";
-import { encrypt } from "../utils";
+import { encrypt, encryptObject } from "../utils";
 import AccessGuard from "../general/AccessGuard";
 
 const useStyles = makeStyles({
@@ -126,17 +126,26 @@ const MyProfile = ({
     }
 
     const updated: any = {};
+    let updatedLoggedUser = loggedUser;
+
     if (name !== loggedUser.name) {
       updated.name = encrypt(name);
+      updatedLoggedUser.name = name;
     }
+
     if (surname !== loggedUser.surname) {
       updated.surname = encrypt(surname);
+      updatedLoggedUser.surname = surname;
     }
+
     if (phone !== loggedUser.phone) {
       updated.phone = encrypt(phone);
+      updatedLoggedUser.phone = phone;
     }
+
     if (email !== loggedUser.email) {
       updated.email = encrypt(email);
+      updatedLoggedUser.email = email;
     }
 
     sendApiRequest({
@@ -153,30 +162,21 @@ const MyProfile = ({
       return;
     }
 
-    const newUserEncrypted = (prevState: User | null): User => {
-      return {
-        ...prevState,
-        name: encrypt(name),
-        surname: encrypt(surname),
-        phone: encrypt(phone),
-        email: encrypt(email),
-        googleId: encrypt(loggedUser?.googleId),
-        password: encrypt(loggedUser?.password),
-      };
-    };
+    setLoggedUser(updatedLoggedUser);
 
-    if (users) {
-      setUsers(
-        users.filter((user) => {
-          return !(user?._id === loggedUser._id);
-        })
-      );
-      setUsers((prevState) => {
-        return prevState !== null
-          ? [...prevState, newUserEncrypted(loggedUser)]
-          : [newUserEncrypted(loggedUser)];
-      });
+
+    if (!users) {
+      setUsers([updated]);
+      return;
     }
+
+    const updatedUsers = users.reduce((acc, curr) => {
+      const user = curr._id === loggedUser._id ? encryptObject(updatedLoggedUser) : curr;
+      acc.push(user);
+      return acc;
+    }, [] as User[]);
+
+    setUsers(updatedUsers);
   };
   return (
     <AccessGuard wait={loggedUser === undefined} deny={loggedUser === null}>

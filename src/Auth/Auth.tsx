@@ -116,6 +116,7 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
 
     postBody._id = insertedId;
     setLoggedUser(postBody);
+
   }, [
     password,
     passwordSecond,
@@ -279,18 +280,20 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
       return;
     }
 
-    if (users) {
-      setUsers(
-        users.filter((user) => {
-          return !(user?._id === removeDashes(codeInput));
-        })
-      );
-      setUsers((prevState) => {
-        return prevState !== null ? [...prevState, updated] : [updated];
-      });
+    setLoggedUser(postBody);
 
-      setLoggedUser(postBody);
+    if (!users) {
+      setUsers([updated]);
+      return;
     }
+
+    const updatedUsers = users.reduce((acc, curr) => {
+      const user = curr._id === removeDashes(codeInput) ? updated : curr;
+      acc.push(user);
+      return acc;
+    }, [] as User[]);
+
+    setUsers(updatedUsers);
   };
 
   return (
