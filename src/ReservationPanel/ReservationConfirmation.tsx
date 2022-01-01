@@ -21,11 +21,8 @@ import {
 import { sendApiRequest } from "../async/sendApiRequest";
 import Auth from "../Auth/Auth";
 import CustomIcon from "../general/CustomIcon";
-import { init } from "@emailjs/browser";
 import emailjs from "@emailjs/browser";
 import { formatDate } from "../utils";
-
-init(process.env.REACT_APP_EMAILJS as string);
 
 const useStyles = makeStyles({
   root: {

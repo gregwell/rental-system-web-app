@@ -16,6 +16,9 @@ import MyProfile from "./MyProfile/MyProfile";
 import { ReservationFocus } from "./ReservationFocus";
 import NotFound from "./general/NotFound";
 import { decryptObject, encryptObject } from "./utils";
+import { init } from "@emailjs/browser";
+
+init(process.env.REACT_APP_EMAILJS as string);
 
 function App() {
   const [loggedUser, setLoggedUser] = useState<User | null | undefined>(

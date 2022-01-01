@@ -1,4 +1,11 @@
-import { Typography, Grid, Button } from "@mui/material";
+import {
+  Typography,
+  Grid,
+  Button,
+  TextField,
+  Alert,
+  AlertTitle,
+} from "@mui/material";
 import {
   Reservation,
   Item,
@@ -8,6 +15,7 @@ import {
   Collection,
   CrudOperation,
 } from "./general/types";
+import emailjs from "@emailjs/browser";
 import { makeStyles } from "@mui/styles";
 import { useParams, useNavigate } from "react-router-dom";
 import CustomContainer from "./general/CustomContainer";
@@ -75,6 +83,12 @@ const useStyles = makeStyles({
   alert: {
     textAlign: "left",
   },
+  textField: {
+    width: "100%",
+    backgroundColor: "white",
+    borderRadius: "10px",
+    marginLeft: "10px",
+  },
 });
 
 interface ReservationFocusProps {
@@ -94,6 +108,9 @@ export const ReservationFocus = ({
 }: ReservationFocusProps) => {
   const { _id } = useParams();
   const navigate = useNavigate();
+
+  const [query, setQuery] = useState<string>("");
+  const [querySent, setQuerySent] = useState<boolean>(false);
 
   const [updateDataSuccesful, setUpdateDataSuccesful] = useState<
     boolean | null
@@ -203,6 +220,19 @@ export const ReservationFocus = ({
     setReservations(updatedReservations);
   };
 
+  const handleEmailSend = () => {
+    emailjs.send("service_s5znq5v", "template_fcjt8zo", {
+      startDate: startDateFormatted,
+      queryText: query,
+      reservationId: reservation?._id,
+      itemFullName: `${item?.producer} ${item?.model} (rozmiar: ${item?.size})`,
+      finishDate: finishDateFormatted,
+      clientFullName: `${loggedUser?.name} ${loggedUser?.surname}`,
+      clientId: reservation?.userId,
+    });
+    setQuerySent(true);
+  };
+
   return (
     <AccessGuard
       wait={loggedUser === undefined || !reservationPrepared}
@@ -225,53 +255,74 @@ export const ReservationFocus = ({
               {item && `${item.producer} ${item.model}`}
             </Typography>
           </Grid>
-          <Grid item xs={8} sm={5} md={6} lg={5.5}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Typography variant="h5" className={classes.reservationText}>
-                  {item && `Rozmiar: ${item.size}`}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6} md={12}>
-                <Typography variant="h5" className={classes.reservationText}>
-                  {`Data odbioru: ${startDateFormatted}`}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6} md={12}>
-                <Typography variant="h5" className={classes.reservationText}>
-                  {`Data zwrotu: ${finishDateFormatted}`}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6} md={12}>
-                <Typography variant="h5" className={classes.reservationText}>
-                  {`Cena: ${reservation?.price as string} zł`}
-                </Typography>
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={12}
-                className={classes.reservationText}
-              >
-                <Typography variant="h5" className={classes.reservationText}>
-                  {`Status: ${reservation?.status}`}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6} md={12}>
-                {reservation?.status !== Status.anulowana &&
-                  parseInt(reservation?.startDate as string) > Date.now() && (
-                    <Button
-                      color="error"
-                      variant="contained"
-                      onClick={onCancelReservation}
-                    >
-                      Anuluj rezerwację
-                    </Button>
-                  )}
-              </Grid>
-            </Grid>
+          <Grid item xs={12}>
+            <Typography variant="h5" className={classes.reservationText}>
+              {item && `Rozmiar: ${item.size}`}
+            </Typography>
           </Grid>
+          <Grid item xs={12} sm={6} md={12}>
+            <Typography variant="h5" className={classes.reservationText}>
+              {`Data odbioru: ${startDateFormatted}`}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={6} md={12}>
+            <Typography variant="h5" className={classes.reservationText}>
+              {`Data zwrotu: ${finishDateFormatted}`}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={6} md={12}>
+            <Typography variant="h5" className={classes.reservationText}>
+              {`Cena: ${reservation?.price as string} zł`}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={6} md={12} className={classes.reservationText}>
+            <Typography variant="h5" className={classes.reservationText}>
+              {`Status: ${reservation?.status}`}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={6} md={12}>
+            {reservation?.status !== Status.anulowana &&
+              parseInt(reservation?.startDate as string) > Date.now() && (
+                <Button
+                  color="error"
+                  variant="contained"
+                  onClick={onCancelReservation}
+                >
+                  Anuluj rezerwację
+                </Button>
+              )}
+          </Grid>
+          {querySent ? (
+            <Grid item xs={12}>
+              <Alert severity="info">
+                <AlertTitle>Zapytanie zostało wysłane.</AlertTitle>Odpowiedź
+                dostaniesz na email zarejestrowany w serwisie.
+              </Alert>
+            </Grid>
+          ) : (
+            <>
+              <Grid item xs={12} sm={6} md={12}>
+                <TextField
+                  multiline
+                  rows={4}
+                  placeholder="Tutaj wpisz treść swojego zapytania do tej rezerwacji..."
+                  variant="standard"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  className={classes.textField}
+                />
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={handleEmailSend}
+                >
+                  Wyślij zapytanie
+                </Button>
+              </Grid>
+            </>
+          )}
         </Grid>
       </CustomContainer>
     </AccessGuard>
