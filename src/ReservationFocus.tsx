@@ -113,7 +113,7 @@ export const ReservationFocus = ({
   const navigate = useNavigate();
 
   const [query, setQuery] = useState<string>("");
-  const [querySent, setQuerySent] = useState<boolean>(false);
+  const [querySuccess, setQuerySuccess] = useState<boolean | null>(null);
 
   const [updateDataSuccesful, setUpdateDataSuccesful] = useState<
     boolean | null
@@ -223,25 +223,29 @@ export const ReservationFocus = ({
     setReservations(updatedReservations);
   };
 
-  const handleEmailSend = () => {
+  const handleEmailSend = async () => {
     if (!companyInfo) {
       return;
     }
 
-    emailjs.send("service_s5znq5v", "clientQuery", {
-      startDate: startDateFormatted,
-      queryText: query,
-      reservationId: reservation?._id,
-      itemFullName: `${item?.producer} ${item?.model} (rozmiar: ${item?.size})`,
-      finishDate: finishDateFormatted,
-      clientFullName: `${loggedUser?.name} ${loggedUser?.surname}`,
-      clientId: reservation?.userId,
-      companyEmail: companyInfo?.email,
-      clientEmail: loggedUser?.email,
-    });
-    console.log(companyInfo?.email);
-
-    setQuerySent(true);
+    try {
+      await emailjs.send("service_s5znq5v", "clientQuery", {
+        startDate: startDateFormatted,
+        queryText: query,
+        reservationId: reservation?._id,
+        itemFullName: `${item?.producer} ${item?.model} (rozmiar: ${item?.size})`,
+        finishDate: finishDateFormatted,
+        clientFullName: `${loggedUser?.name} ${loggedUser?.surname}`,
+        clientId: reservation?.userId,
+        companyEmail: companyInfo?.email,
+        clientEmail: loggedUser?.email,
+      });
+      console.log("success");
+      setQuerySuccess(true);
+    } catch (error) {
+      console.log("failed");
+      setQuerySuccess(false);
+    }
   };
 
   return (
@@ -312,12 +316,19 @@ export const ReservationFocus = ({
               {`Pamiętaj, że w nagłych przypadkach możesz skontaktować się z nami pod numerem telefonu ${companyInfo?.phone}`}
             </Alert>
           </Grid>
-          {querySent ? (
+          {querySuccess !== null ? (
             <Grid item xs={12}>
-              <Alert severity="success">
-                <AlertTitle>Zapytanie zostało wysłane.</AlertTitle>Odpowiedź
-                dostaniesz na email zarejestrowany w serwisie.
-              </Alert>
+              {querySuccess === true ? (
+                <Alert severity="success">
+                  <AlertTitle>Zapytanie zostało wysłane.</AlertTitle>Odpowiedź
+                  dostaniesz na email zarejestrowany w serwisie.
+                </Alert>
+              ) : (
+                <Alert severity="error">
+                  <AlertTitle>Wystąpił błąd!</AlertTitle>
+                  {`Skontakuj się z wypożyczalnią pod numerem telefonu ${companyInfo?.phone} aby uzyskać informacje.`}
+                </Alert>
+              )}
             </Grid>
           ) : (
             <>
