@@ -18,6 +18,8 @@ import { ReservationFocus } from "./ReservationFocus";
 import NotFound from "./general/NotFound";
 import { decryptObject, encryptObject } from "./utils";
 import { init } from "@emailjs/browser";
+import Footer from "./Footer";
+import Contact from "./Contact";
 
 init(process.env.REACT_APP_EMAILJS as string);
 
@@ -126,6 +128,8 @@ function App() {
                 newReservationSuccess={newReservationSuccess}
                 setReservations={setReservations}
                 items={items}
+                companyInfo={companyInfo}
+                apiDataInitialized={apiDataInitialized}
               />
             }
           />
@@ -165,8 +169,13 @@ function App() {
               />
             }
           />
+          <Route
+            path="/contact"
+            element={<Contact companyInfo={companyInfo} />}
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <Footer />
       </Router>
     </>
   );

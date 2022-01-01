@@ -1,9 +1,4 @@
-import {
-  Typography,
-  Container,
-  Alert,
-  AlertTitle,
-} from "@mui/material";
+import { Typography, Container, Alert, AlertTitle } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 import SingleReservation from "./SingleReservation";
@@ -16,6 +11,7 @@ const useStyles = makeStyles({
     paddingTop: "20px",
     paddingLeft: "20px",
     paddingRight: "20px",
+    paddingBottom: "80px",
   },
   reservation: {
     backgroundColor: "white",

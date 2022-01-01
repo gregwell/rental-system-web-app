@@ -10,6 +10,7 @@ const useStyles = makeStyles({
     paddingTop: "20px",
     paddingLeft: "20px",
     paddingRight: "20px",
+    paddingBottom: "80px",
   },
   reservation: {
     background: (makeStylesProps: {

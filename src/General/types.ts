@@ -88,4 +88,7 @@ export interface CompanyInfo {
   phone?: string;
   email?: string;
   title?: string;
+  open?: string;
+  close?: string;
+  address?: string;
 }

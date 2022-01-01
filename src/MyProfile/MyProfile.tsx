@@ -23,6 +23,7 @@ const useStyles = makeStyles({
     paddingTop: "20px",
     paddingLeft: "20px",
     paddingRight: "20px",
+    paddingBottom: "80px",
   },
   reservation: {
     backgroundColor: "white",
@@ -164,14 +165,14 @@ const MyProfile = ({
 
     setLoggedUser(updatedLoggedUser);
 
-
     if (!users) {
       setUsers([updated]);
       return;
     }
 
     const updatedUsers = users.reduce((acc, curr) => {
-      const user = curr._id === loggedUser._id ? encryptObject(updatedLoggedUser) : curr;
+      const user =
+        curr._id === loggedUser._id ? encryptObject(updatedLoggedUser) : curr;
       acc.push(user);
       return acc;
     }, [] as User[]);

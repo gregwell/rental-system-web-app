@@ -7,6 +7,8 @@ import {
   Autocomplete,
   TextField,
   Button,
+  Alert,
+  AlertTitle,
 } from "@mui/material";
 
 import { sendApiRequest } from "../async/sendApiRequest";
@@ -18,6 +20,7 @@ import {
   ItemPrice,
   CrudOperation,
   Collection,
+  CompanyInfo,
 } from "../general/types";
 import AvailableItems from "./AvailableItems/AvailableItems";
 import { ReservationDateTimePicker } from "./ReservationDateTimePicker";
@@ -27,6 +30,7 @@ import {
   getPolishName,
   canWeRentThisProduct,
 } from "./utils";
+import AccessGuard from "../general/AccessGuard";
 
 const useStyles = makeStyles({
   root: {
@@ -37,6 +41,7 @@ const useStyles = makeStyles({
     paddingTop: "20px",
     paddingLeft: "20px",
     paddingRight: "20px",
+    paddingBottom: "80px",
   },
   reservation: {
     backgroundColor: "white",
@@ -63,6 +68,8 @@ interface ReservationPanelProps {
   setNewReservationSuccess: (newValue: boolean | null) => void;
   newReservationSuccess: boolean | null;
   setReservations: React.Dispatch<React.SetStateAction<Reservation[]>>;
+  companyInfo: CompanyInfo;
+  apiDataInitialized: boolean;
 }
 
 const ReservationPanel = ({
@@ -75,6 +82,8 @@ const ReservationPanel = ({
   newReservationSuccess,
   setReservations,
   items,
+  companyInfo,
+  apiDataInitialized,
 }: ReservationPanelProps) => {
   const classes = useStyles();
 
@@ -145,8 +154,45 @@ const ReservationPanel = ({
       ? "... lub wyszukaj ponowie"
       : "Wybierz termin i sprawdź dostępny sprzęt";
 
+  const open = parseInt(companyInfo?.open as string);
+  const close = parseInt(companyInfo?.close as string);
+
+  const showWrongHoursAlert =
+    startDate &&
+    finishDate &&
+    companyInfo &&
+    (startDate.getHours() < open ||
+      startDate.getHours() > close ||
+      finishDate.getHours() < open ||
+      finishDate.getHours() > close);
+
+  const showReturnBeforePickupAlert =
+    startDate && finishDate && startDate > finishDate;
+
+  const ReservationTimeAlert = () => {
+    if (showWrongHoursAlert) {
+      return (
+        <Alert severity="warning">{`Conajmniej jedna wybrana godzina odbioru/zwrotu znajduje się poza godzinami pracy wypożyczalni (${companyInfo?.open} - ${companyInfo?.close}). Wybierz inne godziny.`}</Alert>
+      );
+    }
+
+    if (showReturnBeforePickupAlert) {
+      return (
+        <Alert severity="warning">{`Data zwrotu jest przed godziną odbioru lub wybrany czas wynajmu wynosi mniej niż 1 godzinę`}</Alert>
+      );
+    }
+
+    if (selectedTimeAvailableItems.length > 0) {
+      return null;
+    }
+
+    return (
+      <Alert severity="info">{`Wypożyczalnia czynna w godzinach ${companyInfo?.open} - ${companyInfo?.close}.  Miej to na uwadze wybierając godziny wynajmu. `}</Alert>
+    );
+  };
+
   return (
-    <>
+    <AccessGuard wait={!apiDataInitialized}>
       {!!isShowingReservationForm && choosenItem && (
         <ReservationConfirmation
           choosenItem={choosenItem}
@@ -206,22 +252,27 @@ const ReservationPanel = ({
                 Wyszukaj
               </Button>
             </Grid>
+            <Grid item xs={12}>
+              <ReservationTimeAlert />
+            </Grid>
             {isShowingReservationForm === false && (
               <>
-                {selectedTimeAvailableItems.length > 0 && (
-                  <AvailableItems
-                    items={selectedTimeAvailableItems}
-                    setIsShowingReservationForm={setIsShowingReservationForm}
-                    setChoosenItem={setChoosenItem}
-                    pricesTable={pricesTable}
-                  />
-                )}
+                {selectedTimeAvailableItems.length > 0 &&
+                  !showWrongHoursAlert &&
+                  !showReturnBeforePickupAlert && (
+                    <AvailableItems
+                      items={selectedTimeAvailableItems}
+                      setIsShowingReservationForm={setIsShowingReservationForm}
+                      setChoosenItem={setChoosenItem}
+                      pricesTable={pricesTable}
+                    />
+                  )}
               </>
             )}
           </Grid>
         </Container>
       </div>
-    </>
+    </AccessGuard>
   );
 };
 
