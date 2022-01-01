@@ -20,6 +20,7 @@ import { decryptObject, encryptObject } from "./utils";
 import { init } from "@emailjs/browser";
 import Footer from "./Footer";
 import Contact from "./Contact";
+import AccessGuard from "./general/AccessGuard";
 
 init(process.env.REACT_APP_EMAILJS as string);
 
@@ -114,67 +115,69 @@ function App() {
           setUsers={setUsers}
           companyInfo={companyInfo}
         />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <ReservationPanel
-                users={users}
-                setUsers={setUsers}
-                loggedUser={loggedUser}
-                setLoggedUser={setLoggedUser}
-                reservations={reservations}
-                setNewReservationSuccess={setNewReservationSuccess}
-                newReservationSuccess={newReservationSuccess}
-                setReservations={setReservations}
-                items={items}
-                companyInfo={companyInfo}
-                apiDataInitialized={apiDataInitialized}
-              />
-            }
-          />
-          <Route
-            path="/reservations"
-            element={
-              <MyReservations
-                reservations={reservations}
-                newReservationSuccess={newReservationSuccess}
-                loggedUser={loggedUser}
-                items={items}
-                apiDataInitialized={apiDataInitialized}
-              />
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <MyProfile
-                loggedUser={loggedUser}
-                users={users}
-                setUsers={setUsers}
-                setLoggedUser={setLoggedUser}
-              />
-            }
-          />
-          <Route
-            path="/reservation/:_id"
-            element={
-              <ReservationFocus
-                reservations={reservations}
-                items={items}
-                loggedUser={loggedUser}
-                setReservations={setReservations}
-                apiDataInitialized={apiDataInitialized}
-                companyInfo={companyInfo}
-              />
-            }
-          />
-          <Route
-            path="/contact"
-            element={<Contact companyInfo={companyInfo} />}
-          />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AccessGuard wait={!apiDataInitialized}>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <ReservationPanel
+                  users={users}
+                  setUsers={setUsers}
+                  loggedUser={loggedUser}
+                  setLoggedUser={setLoggedUser}
+                  reservations={reservations}
+                  setNewReservationSuccess={setNewReservationSuccess}
+                  newReservationSuccess={newReservationSuccess}
+                  setReservations={setReservations}
+                  items={items}
+                  companyInfo={companyInfo}
+                  apiDataInitialized={apiDataInitialized}
+                />
+              }
+            />
+            <Route
+              path="/reservations"
+              element={
+                <MyReservations
+                  reservations={reservations}
+                  newReservationSuccess={newReservationSuccess}
+                  loggedUser={loggedUser}
+                  items={items}
+                  apiDataInitialized={apiDataInitialized}
+                />
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <MyProfile
+                  loggedUser={loggedUser}
+                  users={users}
+                  setUsers={setUsers}
+                  setLoggedUser={setLoggedUser}
+                />
+              }
+            />
+            <Route
+              path="/reservation/:_id"
+              element={
+                <ReservationFocus
+                  reservations={reservations}
+                  items={items}
+                  loggedUser={loggedUser}
+                  setReservations={setReservations}
+                  apiDataInitialized={apiDataInitialized}
+                  companyInfo={companyInfo}
+                />
+              }
+            />
+            <Route
+              path="/contact"
+              element={<Contact companyInfo={companyInfo} />}
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AccessGuard>
         <Footer />
       </Router>
     </>

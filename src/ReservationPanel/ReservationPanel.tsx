@@ -192,7 +192,7 @@ const ReservationPanel = ({
   };
 
   return (
-    <AccessGuard wait={!apiDataInitialized}>
+    <>
       {!!isShowingReservationForm && choosenItem && (
         <ReservationConfirmation
           choosenItem={choosenItem}
@@ -272,7 +272,7 @@ const ReservationPanel = ({
           </Grid>
         </Container>
       </div>
-    </AccessGuard>
+    </>
   );
 };
 
