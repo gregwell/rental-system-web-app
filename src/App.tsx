@@ -9,6 +9,7 @@ import {
   CrudOperation,
   Collection,
   Item,
+  CompanyInfo,
 } from "./general/types";
 import { sendApiRequest } from "./async/sendApiRequest";
 import MyReservations from "./MyReservations/MyReservations";
@@ -31,6 +32,9 @@ function App() {
   const [users, setUsers] = useState<User[] | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [items, setItems] = useState<Item[]>([]);
+  const [companyInfo, setCompanyInfo] = useState<CompanyInfo>(
+    {} as CompanyInfo
+  );
 
   const [newReservationSuccess, setNewReservationSuccess] = useState<
     boolean | null
@@ -61,6 +65,12 @@ function App() {
   }, [loggedUser]);
 
   useEffect(() => {
+    if (companyInfo.title) {
+      localStorage.setItem("title", companyInfo.title);
+    }
+  }, [companyInfo.title]);
+
+  useEffect(() => {
     const prepareApiData = async () => {
       const fetchedReservations = await sendApiRequest({
         collection: Collection.reservations,
@@ -74,10 +84,15 @@ function App() {
         collection: Collection.items,
         operation: CrudOperation.READ,
       });
+      const fetchedCompanyInfo = await sendApiRequest({
+        collection: Collection.company,
+        operation: CrudOperation.READ,
+      });
 
       setItems(fetchedItems as Item[]);
       setUsers(fetchedUsers as User[]);
       setReservations(fetchedReservations as Reservation[]);
+      setCompanyInfo(fetchedCompanyInfo[0] as CompanyInfo);
 
       setApiDataInitialized(true);
     };
@@ -95,6 +110,7 @@ function App() {
           setLoggedUser={setLoggedUser}
           setNewReservationSuccess={setNewReservationSuccess}
           setUsers={setUsers}
+          companyInfo={companyInfo}
         />
         <Routes>
           <Route
@@ -145,10 +161,11 @@ function App() {
                 loggedUser={loggedUser}
                 setReservations={setReservations}
                 apiDataInitialized={apiDataInitialized}
+                companyInfo={companyInfo}
               />
             }
           />
-          <Route path="*" element={<NotFound />}/>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </>

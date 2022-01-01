@@ -98,6 +98,7 @@ export const ReservationConfirmation = ({
     if (newReservationSuccess === true) {
       navigate("/reservations");
 
+      /*
       emailjs.send("service_s5znq5v", "template_wwn9abw", {
         id: currentReservation?._id,
         displayName: `${loggedUser?.name} ${loggedUser?.surname}`,
@@ -105,6 +106,7 @@ export const ReservationConfirmation = ({
         finishDate: formatDate(finishDate?.getTime().toString()),
         item: `${choosenItem.producer} ${choosenItem.model} (rozmiar: ${choosenItem.size})`,
       });
+      */
 
       setReservations((prevState) => {
         const arr = [...prevState, currentReservation] as Reservation[];

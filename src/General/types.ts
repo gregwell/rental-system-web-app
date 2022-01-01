@@ -3,6 +3,7 @@ export enum Collection {
   items = "items",
   reservations = "reservations",
   prices = "prices",
+  company = "company",
 }
 
 export interface User {
@@ -83,14 +84,8 @@ export interface RequestData {
   update?: any;
 }
 
-export interface GoogleResponse {
-  googleId: string;
-  profileObj: {
-    googleId: string;
-    imageUrl: string;
-    email: string;
-    name: string;
-    givenName: string;
-    familyName: string;
-  };
+export interface CompanyInfo {
+  phone?: string;
+  email?: string;
+  title?: string;
 }

@@ -1,12 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
-import {
-  Button,
-  Grid,
-  Typography,
-  Container,
-} from "@mui/material";
+import { Button, Grid, Typography, Container } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import EditIcon from "@mui/icons-material/Edit";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
@@ -14,7 +9,7 @@ import BookIcon from "@mui/icons-material/Book";
 import LoginIcon from "@mui/icons-material/Login";
 
 import Auth from "./Auth/Auth";
-import { User } from "./general/types";
+import { User, CompanyInfo } from "./general/types";
 
 const useStyles = makeStyles({
   root: {
@@ -62,6 +57,7 @@ interface NavbarProps {
   setLoggedUser: (value: User | null | undefined) => void;
   setNewReservationSuccess: (newVal: boolean | null) => void;
   setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
+  companyInfo?: CompanyInfo;
 }
 
 const Navbar = ({
@@ -70,6 +66,7 @@ const Navbar = ({
   setLoggedUser,
   setNewReservationSuccess,
   setUsers,
+  companyInfo,
 }: NavbarProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -107,12 +104,15 @@ const Navbar = ({
     }
   }, [loggedUser]);
 
+  const title = localStorage.getItem('title');
+  const pageTitle = title ? title : "System rezerwacji on-line";
+
   return (
     <Grid container className={classes.root}>
       <Grid item className={classes.item2} md={1.5} xs={12} />
       <Grid item className={classes.main} md={9} xs={12}>
         <div onClick={goToHome}>
-          <Typography variant="h5">System rezerwacji on-line</Typography>
+          <Typography variant="h5">{pageTitle}</Typography>
         </div>
       </Grid>
       <Grid item className={classes.item} md={1.5} xs={12}>

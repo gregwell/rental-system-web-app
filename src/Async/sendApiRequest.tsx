@@ -5,6 +5,7 @@ import {
   User,
   Price,
   Reservation,
+  CompanyInfo,
   CrudOperation,
   RequestData,
 } from "../general/types";
@@ -26,7 +27,7 @@ export async function sendApiRequest({
   update,
   setState,
 }: SendApiRequestProps): Promise<
-  Item[] | Reservation[] | User[] | Price[] | string
+  Item[] | Reservation[] | User[] | Price[] | CompanyInfo[] | string
 > {
   const apiKey = process.env.REACT_APP_MONGO_API_KEY;
   if (!apiKey) {

@@ -14,6 +14,7 @@ import {
   User,
   Collection,
   CrudOperation,
+  CompanyInfo,
 } from "./general/types";
 import emailjs from "@emailjs/browser";
 import { makeStyles } from "@mui/styles";
@@ -97,6 +98,7 @@ interface ReservationFocusProps {
   loggedUser: User | null | undefined;
   setReservations: React.Dispatch<React.SetStateAction<Reservation[]>>;
   apiDataInitialized: boolean;
+  companyInfo?: CompanyInfo;
 }
 
 export const ReservationFocus = ({
@@ -105,6 +107,7 @@ export const ReservationFocus = ({
   loggedUser,
   setReservations,
   apiDataInitialized,
+  companyInfo,
 }: ReservationFocusProps) => {
   const { _id } = useParams();
   const navigate = useNavigate();
@@ -221,7 +224,11 @@ export const ReservationFocus = ({
   };
 
   const handleEmailSend = () => {
-    emailjs.send("service_s5znq5v", "template_fcjt8zo", {
+    if (!companyInfo) {
+      return;
+    }
+
+    emailjs.send("service_s5znq5v", "clientQuery", {
       startDate: startDateFormatted,
       queryText: query,
       reservationId: reservation?._id,
@@ -229,7 +236,11 @@ export const ReservationFocus = ({
       finishDate: finishDateFormatted,
       clientFullName: `${loggedUser?.name} ${loggedUser?.surname}`,
       clientId: reservation?.userId,
+      companyEmail: companyInfo?.email,
+      clientEmail: loggedUser?.email,
     });
+    console.log(companyInfo?.email);
+
     setQuerySent(true);
   };
 
@@ -292,9 +303,18 @@ export const ReservationFocus = ({
                 </Button>
               )}
           </Grid>
+          <Grid item xs={12}>
+            <Alert severity="info">
+              <AlertTitle>
+                Na tej stronie możesz wysłać zapytanie e-mail dotyczące tej
+                rezerwacji.
+              </AlertTitle>
+              {`Pamiętaj, że w nagłych przypadkach możesz skontaktować się z nami pod numerem telefonu ${companyInfo?.phone}`}
+            </Alert>
+          </Grid>
           {querySent ? (
             <Grid item xs={12}>
-              <Alert severity="info">
+              <Alert severity="success">
                 <AlertTitle>Zapytanie zostało wysłane.</AlertTitle>Odpowiedź
                 dostaniesz na email zarejestrowany w serwisie.
               </Alert>
