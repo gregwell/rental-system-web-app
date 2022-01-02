@@ -158,7 +158,7 @@ export const ReservationConfirmation = ({
 
   return (
     <>
-      <CustomContainer>
+      <CustomContainer noPaddingBottom>
         {newReservationSuccess === false ? (
           <div className={classes.title}>
             <Alert severity="error">

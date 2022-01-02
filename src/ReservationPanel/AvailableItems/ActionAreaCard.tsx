@@ -11,14 +11,14 @@ const useStyles = makeStyles({
       "rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px",
   },
   dataContainer: {
-    backgroundColor: "black",
+    backgroundColor: "#001327",
     width: "100%",
     color: "white",
   },
   price: {
     paddingTop: "15px",
     color: "white",
-    backgroundColor: "black",
+    backgroundColor: "#001327",
     width: "100%",
     paddingBottom: "20px",
   },
@@ -27,7 +27,7 @@ const useStyles = makeStyles({
     paddingBottom: "10px",
   },
   sizes: {
-    backgroundColor: "#4e4e4e",
+    backgroundColor: "#003a78",
     width: "100%",
     paddingLeft: "15px",
     paddingBottom: "20px",
@@ -46,7 +46,7 @@ const useStyles = makeStyles({
   sizesCaption: {
     paddingTop: "10px",
     paddingBottom: "10px",
-    backgroundColor: "#4e4e4e",
+    backgroundColor: "#003a78",
     color: "white",
   },
 });
