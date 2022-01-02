@@ -6,12 +6,16 @@ interface ReservationDateTimePickerProps {
   value: Date | null;
   setValue: (value: Date) => void;
   label: string;
+  minDate?: Date | null;
+  maxDate?: Date | null;
 }
 
 export const ReservationDateTimePicker = ({
   value,
   setValue,
   label,
+  minDate,
+  maxDate,
 }: ReservationDateTimePickerProps) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -26,6 +30,8 @@ export const ReservationDateTimePicker = ({
         }}
         renderInput={(params) => <TextField {...params} />}
         ampm={false}
+        minDate={minDate ? minDate : undefined}
+        maxDate={maxDate ? maxDate : undefined}
       />
     </LocalizationProvider>
   );

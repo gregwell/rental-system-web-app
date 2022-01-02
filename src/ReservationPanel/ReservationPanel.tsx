@@ -125,17 +125,6 @@ const ReservationPanel = ({
     }
   }, [pricesInitialized]);
 
-  //let selectedTimeAvailableItems: Item[] = [];
-
-  // selectedTimeAvailableItems
-  //what we want
-  //we have an array of items
-  // we need to group them by `Producer Model`
-
-  //1.eliminate items that we have reservation and cant rent in this time
-
-  //1.step group items
-
   const filteredItems = filterOutReservedItems(
     startDate,
     finishDate,
@@ -168,19 +157,10 @@ const ReservationPanel = ({
       finishDate.getHours() < open ||
       finishDate.getHours() >= close);
 
-  const showReturnBeforePickupAlert =
-    startDate && finishDate && startDate > finishDate;
-
   const ReservationTimeAlert = () => {
     if (showWrongHoursAlert) {
       return (
         <Alert severity="warning">{`Conajmniej jedna wybrana godzina odbioru/zwrotu znajduje się poza godzinami pracy wypożyczalni (${companyInfo?.open} - ${companyInfo?.close}). Wybierz inne godziny.`}</Alert>
-      );
-    }
-
-    if (showReturnBeforePickupAlert) {
-      return (
-        <Alert severity="warning">{`Data zwrotu jest przed godziną odbioru lub wybrany czas wynajmu wynosi mniej niż 1 godzinę`}</Alert>
       );
     }
 
@@ -196,8 +176,7 @@ const ReservationPanel = ({
   const showAvailableItems =
     !isShowingReservationForm &&
     Object.keys(groupedFilteredItems).length > 0 &&
-    !showWrongHoursAlert &&
-    !showReturnBeforePickupAlert;
+    !showWrongHoursAlert;
 
   return (
     <>
@@ -241,6 +220,7 @@ const ReservationPanel = ({
                 value={startDate}
                 setValue={setStartDate}
                 label="Data odbioru"
+                maxDate={finishDate}
               />
             </Grid>
             <Grid item xs={6} sm={4} md={2.25}>
@@ -248,6 +228,7 @@ const ReservationPanel = ({
                 value={finishDate}
                 setValue={setFinishDate}
                 label="Data zwrotu"
+                minDate={startDate}
               />
             </Grid>
             <Grid item xs={6} sm={4} md={1.5}>
