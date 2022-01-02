@@ -24,22 +24,11 @@ import CustomIcon from "../general/CustomIcon";
 import emailjs from "@emailjs/browser";
 import { formatDate } from "../utils";
 import { getPolishName } from "./utils";
+import CustomContainer from "../general/CustomContainer";
 
 const useStyles = makeStyles({
   root: {
     textAlign: "center",
-  },
-  panel: {
-    textAlign: "center",
-    paddingTop: "20px",
-    paddingLeft: "20px",
-    paddingRight: "20px",
-  },
-  reservation: {
-    backgroundColor: "white",
-    padding: "20px 0",
-    borderRadius: "10px",
-    paddingBottom: "25px",
   },
   title: {
     textAlign: "left",
@@ -53,15 +42,7 @@ const useStyles = makeStyles({
     paddingTop: "20px",
     paddingBottom: "20px",
   },
-  black: {
-    backgroundColor: "#001327",
-    color: "white",
-    borderRadius: "5px",
-    paddingTop: "10px",
-    paddingBottom: "10px",
-  },
   color: {
-    backgroundColor: "#f3f3f3",
     paddingBottom: "20px",
   },
   goBack: {
@@ -177,79 +158,70 @@ export const ReservationConfirmation = ({
 
   return (
     <>
-      <div className={classes.panel}>
-        <Container className={classes.reservation}>
-          {newReservationSuccess === false ? (
-            <div className={classes.title}>
-              <Alert severity="error">
-                <AlertTitle>Błąd!</AlertTitle>
-                Niestety nie udało się dokonać rezerwacji. Skontakuj się z
-                pracownikiem wypożyczalni lub wybierz inny produkt / termin.
-              </Alert>
-            </div>
-          ) : (
-            <>
-              <div className={classes.color}>
-                <div className={classes.black}>
-                  <Typography variant="h6">Potwierdzenie rezerwacji</Typography>
-                </div>
+      <CustomContainer>
+        {newReservationSuccess === false ? (
+          <div className={classes.title}>
+            <Alert severity="error">
+              <AlertTitle>Błąd!</AlertTitle>
+              Niestety nie udało się dokonać rezerwacji. Skontakuj się z
+              pracownikiem wypożyczalni lub wybierz inny produkt / termin.
+            </Alert>
+          </div>
+        ) : (
+          <>
+            <div className={classes.color}>
+              <Typography variant="h6">Potwierdzenie rezerwacji</Typography>
+              <div className={classes.customIcon}>
+                <CustomIcon type={choosenItem.type} />
+              </div>
+              <Typography>{`${getPolishName(choosenItem.type)}`}</Typography>
 
-                <br />
-                <div className={classes.customIcon}>
-                  <CustomIcon type={choosenItem.type} />
-                </div>
-                <Typography>{`${getPolishName(choosenItem.type)}`}</Typography>
-                <br />
-                <Typography variant="h3">
-                  {`${choosenItem.producer} ${choosenItem.model}`}
-                </Typography>
-                <br />
-                <Typography>{`rozmiar: ${choosenItem.size}`}</Typography>
-                <br />
-                <Typography>{`Odbiór: ${formatDate(
-                  startDate.getTime()
-                )}`}</Typography>
-                <Typography>{`Koniec: ${formatDate(
-                  finishDate.getTime()
-                )}`}</Typography>
-                <br />
-                <Typography variant="h5">
-                  {`${itemPrice?.price} zł` || "cena zł"}
-                </Typography>
-                <Typography variant="caption">
-                  {`Cena za ${itemPrice?.howMuch} ${
-                    itemPrice?.isPerDay ? "dni" : "godzin"
-                  } wynajmu.`}
-                  {`(stawka ${itemPrice?.isPerDay ? "dzienna" : "godzinna"})`}
-                </Typography>
-                <br />
-                <br />
-                {!!loggedUser ? (
-                  <Button onClick={onSendReservation} variant="contained">
-                    Rezerwuję
-                  </Button>
-                ) : (
-                  <>
-                    <Auth
-                      users={users}
-                      setLoggedUser={setLoggedUser}
-                      setUsers={setUsers}
-                    />
-                  </>
-                )}
-                <br />
-                <br />
-              </div>
-              <div className={classes.goBack}>
-                <Button
-                  onClick={() => setIsShowingReservationForm(false)}
-                  children={"wróć do wyników wyszukiwania"}
-                />
-              </div>
-            </>
-          )}
-        </Container>
-      </div>
+              <Typography variant="h3">
+                {`${choosenItem.producer} ${choosenItem.model}`}
+              </Typography>
+
+              <Typography>{`rozmiar: ${choosenItem.size}`}</Typography>
+
+              <Typography>{`Odbiór: ${formatDate(
+                startDate.getTime()
+              )}`}</Typography>
+              <Typography>{`Koniec: ${formatDate(
+                finishDate.getTime()
+              )}`}</Typography>
+
+              <Typography variant="h5">
+                {`${itemPrice?.price} zł` || "cena zł"}
+              </Typography>
+              <Typography variant="caption">
+                {`Cena za ${itemPrice?.howMuch} ${
+                  itemPrice?.isPerDay ? "dni" : "godzin"
+                } wynajmu.`}
+                {`(stawka ${itemPrice?.isPerDay ? "dzienna" : "godzinna"})`}
+              </Typography>
+              <br />
+              {!!loggedUser ? (
+                <Button onClick={onSendReservation} variant="contained">
+                  Rezerwuję
+                </Button>
+              ) : (
+                <>
+                  <Auth
+                    users={users}
+                    setLoggedUser={setLoggedUser}
+                    setUsers={setUsers}
+                  />
+                </>
+              )}
+            </div>
+            <div className={classes.goBack}>
+              <Button
+                onClick={() => setIsShowingReservationForm(false)}
+                children={"wróć do wyników wyszukiwania"}
+              />
+            </div>
+          </>
+        )}
+      </CustomContainer>
     </>
   );
 };

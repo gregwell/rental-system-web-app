@@ -16,6 +16,7 @@ const Contact = ({ companyInfo }: ContactProps) => {
       <Typography variant="h6">{companyInfo.title}</Typography>
       <Typography variant="h6">{companyInfo.address}</Typography>
       <Typography variant="h6">{`tel:  ${companyInfo.phone}`}</Typography>
+      <Typography variant="h6">{`godz. otwarcia: ${companyInfo.open} - ${companyInfo.close}`}</Typography>
       <Typography variant="h6">
         <a href={`mailto:${companyInfo.email}`}>{companyInfo.email}</a>
       </Typography>
