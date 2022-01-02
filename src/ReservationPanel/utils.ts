@@ -50,7 +50,7 @@ export const filterOutReservedItems = (
     const reservation = reservations.find((reservation) => {
       if (
         reservation.productId !== item.productId ||
-        reservation.status === Status.anulowana
+        reservation.status === Status.cancelled
       ) {
         return false;
       }

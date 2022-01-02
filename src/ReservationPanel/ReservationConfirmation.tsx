@@ -1,11 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
-import {
-  Typography,
-  Button,
-  Alert,
-  AlertTitle,
-} from "@mui/material";
+import { Typography, Button, Alert, AlertTitle } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 import {
@@ -128,8 +123,8 @@ export const ReservationConfirmation = ({
         userId: loggedUser._id as string,
         startDate: startDate.getTime().toString(),
         finishDate: finishDate.getTime().toString(),
-        price: "120",
-        status: Status.potwierdzona,
+        price: itemPrice?.price.toString() as string,
+        status: Status.confirmed,
       };
 
       setCurrentReservation(reservationPostData);
@@ -146,6 +141,7 @@ export const ReservationConfirmation = ({
   }, [
     choosenItem,
     finishDate,
+    itemPrice?.price,
     loggedUser,
     setNewReservationSuccess,
     startDate,

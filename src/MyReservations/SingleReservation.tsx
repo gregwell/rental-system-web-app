@@ -79,7 +79,7 @@ const SingleReservation = ({
   };
 
   const makeStylesProps = {
-    isCancelled: reservation?.status === Status.anulowana ? true : false,
+    isCancelled: reservation?.status === Status.cancelled ? true : false,
     isArchived: parseInt(reservation?.startDate as string) < Date.now(),
   };
 

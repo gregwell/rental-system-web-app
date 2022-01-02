@@ -62,8 +62,8 @@ export enum ItemType {
 }
 
 export enum Status {
-  potwierdzona = "confirmed",
-  anulowana = "cancelled",
+  confirmed = "confirmed",
+  cancelled = "cancelled",
 }
 
 export interface Price {
@@ -78,6 +78,7 @@ export enum CrudOperation {
   READ = "find",
   UPDATE = "updateOne",
   DELETE = "deleteOne",
+  DELETE_MANY = "deleteMany",
 }
 
 export interface RequestData {

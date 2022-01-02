@@ -81,6 +81,8 @@ const MyProfile = ({
   const [deleteUserSuccessful, setDeleteUserSuccessful] = useState<
     boolean | null
   >(null);
+  const [deleteUserReservationsSuccesful, setDeleteUserReservationsSuccessful] =
+    useState<boolean | null>(null);
 
   const [showDeletePasswordConfirmation, setShowDeletePasswordConfirmation] =
     useState<boolean>(false);
@@ -108,7 +110,17 @@ const MyProfile = ({
       setState: setDeleteUserSuccessful,
     });
 
-    if (deleteUserSuccessful === false) {
+    await sendApiRequest({
+      collection: Collection.reservations,
+      operation: CrudOperation.DELETE_MANY,
+      filter: { userId: loggedUser._id },
+      setState: setDeleteUserReservationsSuccessful,
+    });
+
+    if (
+      deleteUserSuccessful === false ||
+      deleteUserReservationsSuccesful === false
+    ) {
       return;
     }
 

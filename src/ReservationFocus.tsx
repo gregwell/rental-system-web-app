@@ -153,7 +153,7 @@ export const ReservationFocus = ({
   const item = items?.find((i) => i.productId === reservation?.productId);
 
   const makeStylesProps = {
-    isCancelled: reservation?.status === Status.anulowana ? true : false,
+    isCancelled: reservation?.status === Status.cancelled ? true : false,
     isArchived: parseInt(reservation?.startDate as string) < Date.now(),
   };
 
@@ -164,9 +164,9 @@ export const ReservationFocus = ({
 
   const getBgColor = (status: Status | undefined): string => {
     switch (status) {
-      case Status.anulowana:
+      case Status.cancelled:
         return colors.cancelled;
-      case Status.potwierdzona:
+      case Status.confirmed:
         return parseInt(reservation?.startDate as string) > Date.now()
           ? colors.confirmed
           : colors.confirmedArchived;
@@ -181,7 +181,7 @@ export const ReservationFocus = ({
     }
 
     const updated: any = {};
-    updated.status = Status.anulowana;
+    updated.status = Status.cancelled;
 
     await sendApiRequest({
       collection: Collection.reservations,
@@ -204,7 +204,7 @@ export const ReservationFocus = ({
       startDate: reservation?.startDate as string,
       finishDate: reservation?.finishDate as string,
       price: reservation?.price as string,
-      status: Status.anulowana as Status,
+      status: Status.cancelled as Status,
     };
 
     setReservation(updatedReservation);
@@ -296,7 +296,7 @@ export const ReservationFocus = ({
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6} md={12}>
-            {reservation?.status !== Status.anulowana &&
+            {reservation?.status !== Status.cancelled &&
               parseInt(reservation?.startDate as string) > Date.now() && (
                 <Button
                   color="error"

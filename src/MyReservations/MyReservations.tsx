@@ -49,7 +49,7 @@ const MyReservations = ({
   if (reservations && reservations.length > 0) {
     reservations?.push(
       reservations.splice(
-        reservations.findIndex((v) => v?.status === Status.anulowana),
+        reservations.findIndex((v) => v?.status === Status.cancelled),
         1
       )[0]
     );

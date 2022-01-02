@@ -50,7 +50,8 @@ export async function sendApiRequest({
 
   if (
     operation === CrudOperation.UPDATE ||
-    operation === CrudOperation.DELETE
+    operation === CrudOperation.DELETE ||
+    operation === CrudOperation.DELETE_MANY
   ) {
     requestData.filter = filter;
   }
