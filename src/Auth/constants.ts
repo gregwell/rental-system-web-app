@@ -3,6 +3,9 @@ export const alertTitles = {
   registerFailed: "Rejestracja nieudana!",
   codeTooShort: "Niepoprawny kod!",
   noSuchCode: "Nie ma takiego kodu!",
+  emailSent: "Potwierdź email",
+  wrongCode: "Wpisano niepoprawny kod email.",
+  emailServerError: "Wystąpił błąd w naszym serwerze e-mail!",
 };
 
 export const alerts = {
@@ -13,6 +16,10 @@ export const alerts = {
     "Wpisany kod jest za krótki. Prawidłowy kod zawiera dokładnie 24 znaki.",
   noSuchCode:
     "Skontakuj się z pracownikiem wypożyczalni (numer telefonu: +48500600700)",
+  emailSent: "Wpisz kod otrzymany na swoją skrzynkę email:",
+  wrongCode: "Spróbuj ponownie.",
+  emailServerError:
+    "Spróbuj ponownie później lub  skontaktuj się z wypożyczalnią",
 };
 
 export const sectionLabels = {

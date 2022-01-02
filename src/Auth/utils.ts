@@ -16,6 +16,8 @@ export const getFormFieldName = (field: keyof AuthFormFields): string => {
       return "Hasło";
     case "passwordSecond":
       return "Powtórz hasło";
+    case "emailCode":
+      return "Kod email";
     default:
       return field;
   }

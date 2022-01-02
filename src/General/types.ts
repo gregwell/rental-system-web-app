@@ -21,6 +21,7 @@ export interface AuthFormFields extends User {
   passwordSecond?: string;
   loginEmail?: string;
   loginPassword?: string;
+  emailCode?: string;
 }
 
 export interface Reservation {

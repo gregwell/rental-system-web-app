@@ -9,7 +9,12 @@ interface FormFieldProps {
   narrow?: boolean;
 }
 
-const FormField = ({ field, user, setUser, narrow }: FormFieldProps) => {
+const FormField = ({
+  field,
+  user,
+  setUser,
+  narrow,
+}: FormFieldProps) => {
   return (
     <Grid item xs={12} md={narrow ? (6 as GridSize) : (12 as GridSize)}>
       <TextField

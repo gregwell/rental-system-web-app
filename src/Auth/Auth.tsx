@@ -32,6 +32,7 @@ import {
 } from "../utils";
 import { alerts, alertTitles, buttonLabels, sectionLabels } from "./constants";
 import FormField from "./FormField";
+import emailjs from "@emailjs/browser";
 
 const useStyles = makeStyles({
   login: {
@@ -67,6 +68,9 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
   const [showCodeRegisterForm, setShowCodeRegisterForm] =
     useState<boolean>(false);
 
+  const [emailSent, setEmailSent] = useState<boolean>(false);
+  const [randomEmailCode, setRandomEmailCode] = useState<string>("");
+
   const [user, setUser] = useState<AuthFormFields>({
     name: "",
     surname: "",
@@ -77,11 +81,14 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
     passwordSecond: "",
     loginEmail: "",
     loginPassword: "",
+    emailCode: "",
   });
   const [showPasswordAlert, setShowPasswordAlert] = useState<boolean>(false);
 
   const [wrongLoginPassword, setWrongLoginPassword] = useState<boolean>(false);
   const [wrongLoginEmail, setWrongLoginEmail] = useState<boolean>(false);
+
+  const [emailCodeAlert, setEmailCodeAlert] = useState<boolean | null>(null);
 
   const [noSuchCode, setNoSuchCode] = useState<boolean>(false);
   const [updateDataSuccesful, setUpdateDataSuccesful] = useState<
@@ -95,6 +102,11 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
   const handleRegister = useCallback(async () => {
     if (user.password !== user.passwordSecond) {
       setShowPasswordAlert(true);
+      return;
+    }
+
+    if (user.emailCode !== randomEmailCode) {
+      setEmailCodeAlert(true);
       return;
     }
 
@@ -123,11 +135,25 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
 
     postBody._id = insertedId;
     setLoggedUser(postBody);
-  }, [user, users, setLoggedUser]);
+  }, [
+    user.password,
+    user.passwordSecond,
+    user.emailCode,
+    user.name,
+    user.surname,
+    user.email,
+    user.phone,
+    randomEmailCode,
+    users,
+    setLoggedUser,
+  ]);
 
   const handleLogin = useCallback(() => {
     const userFound: User | undefined = users?.find((currUser) => {
-      return currUser?.email.length > 0 && decrypt(currUser?.email) === user.loginEmail;
+      return (
+        currUser?.email.length > 0 &&
+        decrypt(currUser?.email) === user.loginEmail
+      );
     });
 
     if (!userFound) {
@@ -297,6 +323,27 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
     setUsers(updatedUsers);
   };
 
+  const onSendEmail = async () => {
+    setEmailCodeAlert(null);
+    try {
+      const code = [...Array(6)]
+        .map(() => Math.floor(Math.random() * 16).toString(16))
+        .join("");
+
+      setRandomEmailCode(code);
+
+      await emailjs.send("service_s5znq5v", "confirmEmail", {
+        code: code,
+        enteredEmail: user.email,
+      });
+
+      setEmailSent(true);
+    } catch (error) {
+      console.log("could not send email");
+      setEmailCodeAlert(false);
+    }
+  };
+
   return (
     <>
       <div className={classes.login}>
@@ -357,11 +404,39 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
                       </Alert>
                     </Grid>
                   )}
+                  {!!emailSent && (
+                    <Grid item xs={12} sm={12} md={12} className={classes.left}>
+                      <Alert severity="warning">
+                        <AlertTitle>{alertTitles.emailSent}</AlertTitle>
+                        {alerts.emailSent}{" "}
+                        <FormField
+                          field="emailCode"
+                          setUser={setUser}
+                          user={user}
+                        />
+                      </Alert>
+                    </Grid>
+                  )}
+                  {emailCodeAlert !== null && (
+                    <Grid item xs={12} sm={12} md={12} className={classes.left}>
+                      <Alert severity="error">
+                        <AlertTitle>
+                          {emailCodeAlert === true
+                            ? alertTitles.wrongCode
+                            : alertTitles.emailServerError}
+                        </AlertTitle>
+                        {emailCodeAlert === true
+                          ? alerts.wrongCode
+                          : alerts.emailServerError}
+                      </Alert>
+                    </Grid>
+                  )}
                   <Grid item xs={12} sm={12} md={12}>
                     <Button
                       variant="contained"
                       fullWidth
-                      onClick={handleRegister}
+                      disabled={emailCodeAlert ? true : false}
+                      onClick={emailSent ? handleRegister : onSendEmail}
                     >
                       {buttonLabels.register}
                     </Button>
@@ -374,7 +449,11 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
                     <Typography variant="h6">{sectionLabels.login}</Typography>
                   </Grid>
                   <FormField field="loginEmail" setUser={setUser} user={user} />
-                  <FormField field="loginPassword" setUser={setUser} user={user} />
+                  <FormField
+                    field="loginPassword"
+                    setUser={setUser}
+                    user={user}
+                  />
                   {(wrongLoginPassword || wrongLoginEmail) && (
                     <Grid item xs={12} sm={12} md={12} className={classes.left}>
                       <Alert severity="info">
