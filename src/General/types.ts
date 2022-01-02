@@ -32,9 +32,7 @@ export interface Item {
   type: ItemType;
   producer: string;
   model: string;
-  photo: string;
   productId: string;
-  price?: ItemPrice;
   size?: string;
 }
 
@@ -91,4 +89,8 @@ export interface CompanyInfo {
   open?: string;
   close?: string;
   address?: string;
+}
+
+export interface GroupedItems {
+  [key: string]: Item[];
 }

@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import { makeStyles } from "@mui/styles";
-import { Grid, Typography, Container } from "@mui/material";
+import { Grid, Typography, Container, Button } from "@mui/material";
 
 import ActionAreaCard from "./ActionAreaCard";
-import { Item, ItemPrice } from "../../general/types";
+import { Item, ItemPrice, GroupedItems } from "../../general/types";
 
 const useStyles = makeStyles({
   root: {
@@ -31,7 +31,7 @@ const useStyles = makeStyles({
 });
 
 interface AvailableItemsProps {
-  items: Item[];
+  items: GroupedItems;
   setIsShowingReservationForm: (value: boolean) => void;
   setChoosenItem: (value: Item) => void;
   pricesTable: ItemPrice[] | null;
@@ -45,34 +45,35 @@ const AvailableItems = ({
 }: AvailableItemsProps) => {
   const classes = useStyles();
 
-  const onCardClick = useCallback(
-    (item) => {
-      setIsShowingReservationForm(true);
-      setChoosenItem(item);
-    },
-    [setChoosenItem, setIsShowingReservationForm]
-  );
+  const onSizeClick = (item: Item) => {
+    setIsShowingReservationForm(true);
+    setChoosenItem(item);
+  };
 
   return (
     <>
       <div className={classes.panel}>
         <Container className={classes.reservation}>
-          {items.length > 0 && (
-            <div className={classes.title}>
-              <Typography>Dostępny sprzęt:</Typography>
-            </div>
-          )}
+          <div className={classes.title}>
+            <Typography>{`Dostępny sprzęt: ${
+              Object.keys(items).length
+            }`}</Typography>
+          </div>
+
           <Grid container spacing={2}>
-            {items.map((item) => (
-              <Grid item xs={12} sm={6} md={3} key={item._id}>
-                <div onClick={() => onCardClick(item)}>
-                  <ActionAreaCard
-                    producer={item.producer}
-                    model={item.model}
-                    type={item.type}
-                    pricesTable={pricesTable}
-                  />
-                </div>
+            {Object.entries(items).map(([uniqueModel, concreteItems]) => (
+              <Grid item xs={12} sm={6} md={3} key={uniqueModel}>
+                <ActionAreaCard
+                  producer={concreteItems[0].producer}
+                  model={concreteItems[0].model}
+                  type={concreteItems[0].type}
+                  pricesTable={pricesTable}
+                  differentSizeItems={concreteItems.filter(
+                    (item, index, self) =>
+                      self.findIndex((i) => i.size === item.size) === index
+                  )}
+                  onSizeClick={onSizeClick}
+                />
               </Grid>
             ))}
           </Grid>

@@ -1,7 +1,15 @@
-import { Reservation, Price, ItemPrice , ItemType} from "../general/types";
+import {
+  Reservation,
+  Price,
+  ItemPrice,
+  ItemType,
+  Item,
+  Status,
+  GroupedItems,
+} from "../general/types";
 
-export const getPolishName = (type: string):string => {
-  switch(type) {
+export const getPolishName = (type: string): string => {
+  switch (type) {
     case ItemType.ski:
       return "Narty";
     case ItemType.snowboard:
@@ -16,41 +24,70 @@ export const getPolishName = (type: string):string => {
       return "Rower elektryczny";
     case ItemType.kayak:
       return "Kajak";
-    default: 
+    default:
       return type;
   }
-}
+};
 
-export const canWeRentThisProduct = (
-  productId: string,
-  startDate: Date,
-  finishDate: Date,
-  reservations: Reservation[]
-): boolean => {
-  let result: boolean = true;
+export const filterOutReservedItems = (
+  startDate: Date | null,
+  finishDate: Date | null,
+  reservations: Reservation[] | null,
+  items: Item[] | null
+): Item[] => {
+  if (startDate === null || finishDate === null || !items) {
+    return [];
+  }
 
-  const requestedStartTime = startDate.getTime();
-  const requestedFinishTime = finishDate.getTime();
+  if (!reservations) {
+    return items;
+  }
 
-  reservations.forEach((reservation) => {
-    if (reservation.productId === productId) {
-      const reservationStartTime = Date.parse(reservation.startDate);
-      const reservationFinishTime = Date.parse(reservation.finishDate);
+  const reqStart = startDate.getTime();
+  const reqFinish = finishDate.getTime();
 
-      const variant1 =
-        requestedStartTime < reservationStartTime &&
-        requestedFinishTime > reservationStartTime;
-      const variant2 =
-        requestedFinishTime > reservationFinishTime &&
-        requestedStartTime < reservationFinishTime;
-
-      if (variant2 || variant1) {
-        result = false;
+  const filteredItems = items.filter((item) => {
+    const reservation = reservations.find((reservation) => {
+      if (
+        reservation.productId !== item.productId ||
+        reservation.status === Status.anulowana
+      ) {
+        return false;
       }
+
+      const resStart = parseInt(reservation.startDate);
+      const resFinish = parseInt(reservation.finishDate);
+
+      if (
+        (reqStart < resStart && reqFinish > resStart) ||
+        (reqFinish > resFinish && reqStart < resFinish)
+      ) {
+        return true;
+      }
+      return false;
+    });
+
+    if (reservation) {
+      return false;
     }
+    return true;
   });
 
-  return result;
+  return filteredItems;
+};
+
+export const groupItems = (items: Item[]): GroupedItems => {
+  return items.reduce((acc: GroupedItems, curr: Item) => {
+    const fullName = `${curr.type} ${curr.producer} ${curr.model}`;
+
+    if (acc[fullName]) {
+      acc[fullName].push(curr);
+      return acc;
+    }
+
+    acc[fullName] = [curr];
+    return acc;
+  }, {});
 };
 
 export const calculateReservationPriceForEachType = (
@@ -64,7 +101,7 @@ export const calculateReservationPriceForEachType = (
   const time = finishDate.getTime() - startDate.getTime();
   //1 hour = 3600000 ms
   const hourMs = 3600000;
-  const hours = Math.ceil((time / hourMs));
+  const hours = Math.ceil(time / hourMs);
   const days = Math.ceil(time / hourMs / 24);
 
   const pricesNew: ItemPrice[] = prices.map((price) => {

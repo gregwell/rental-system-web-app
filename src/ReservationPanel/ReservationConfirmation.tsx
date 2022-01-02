@@ -23,6 +23,7 @@ import Auth from "../Auth/Auth";
 import CustomIcon from "../general/CustomIcon";
 import emailjs from "@emailjs/browser";
 import { formatDate } from "../utils";
+import { getPolishName } from "./utils";
 
 const useStyles = makeStyles({
   root: {
@@ -52,6 +53,20 @@ const useStyles = makeStyles({
     paddingTop: "20px",
     paddingBottom: "20px",
   },
+  black: {
+    backgroundColor: "#001327",
+    color: "white",
+    borderRadius: "5px",
+    paddingTop: "10px",
+    paddingBottom: "10px",
+  },
+  color: {
+    backgroundColor: "#f3f3f3",
+    paddingBottom: "20px",
+  },
+  goBack: {
+    paddingTop: "25px",
+  },
 });
 
 interface ReservationConfirmationProps {
@@ -74,7 +89,6 @@ export const ReservationConfirmation = ({
   choosenItem,
   startDate,
   finishDate,
-  isUserLogged,
   users,
   setUsers,
   loggedUser,
@@ -157,6 +171,10 @@ export const ReservationConfirmation = ({
     startDate,
   ]);
 
+  if (!startDate || !finishDate) {
+    return null;
+  }
+
   return (
     <>
       <div className={classes.panel}>
@@ -171,46 +189,63 @@ export const ReservationConfirmation = ({
             </div>
           ) : (
             <>
-              <div className={classes.customIcon}>
-                <CustomIcon type={choosenItem.type} />
+              <div className={classes.color}>
+                <div className={classes.black}>
+                  <Typography variant="h6">Potwierdzenie rezerwacji</Typography>
+                </div>
+
+                <br />
+                <div className={classes.customIcon}>
+                  <CustomIcon type={choosenItem.type} />
+                </div>
+                <Typography>{`${getPolishName(choosenItem.type)}`}</Typography>
+                <br />
+                <Typography variant="h3">
+                  {`${choosenItem.producer} ${choosenItem.model}`}
+                </Typography>
+                <br />
+                <Typography>{`rozmiar: ${choosenItem.size}`}</Typography>
+                <br />
+                <Typography>{`Odbiór: ${formatDate(
+                  startDate.getTime()
+                )}`}</Typography>
+                <Typography>{`Koniec: ${formatDate(
+                  finishDate.getTime()
+                )}`}</Typography>
+                <br />
+                <Typography variant="h5">
+                  {`${itemPrice?.price} zł` || "cena zł"}
+                </Typography>
+                <Typography variant="caption">
+                  {`Cena za ${itemPrice?.howMuch} ${
+                    itemPrice?.isPerDay ? "dni" : "godzin"
+                  } wynajmu.`}
+                  {`(stawka ${itemPrice?.isPerDay ? "dzienna" : "godzinna"})`}
+                </Typography>
+                <br />
+                <br />
+                {!!loggedUser ? (
+                  <Button onClick={onSendReservation} variant="contained">
+                    Rezerwuję
+                  </Button>
+                ) : (
+                  <>
+                    <Auth
+                      users={users}
+                      setLoggedUser={setLoggedUser}
+                      setUsers={setUsers}
+                    />
+                  </>
+                )}
+                <br />
+                <br />
               </div>
-              <Typography variant="h3">
-                {`${choosenItem.producer} ${choosenItem.model}`}
-              </Typography>
-              <br />
-              <Typography>{`Odbiór: ${startDate}`}</Typography>
-              <Typography>{`Koniec: ${finishDate}`}</Typography>
-              <br />
-              <Typography variant="h5">
-                {`${itemPrice?.price} zł` || "cena zł"}
-              </Typography>
-              <Typography variant="caption">
-                {`Cena za ${itemPrice?.howMuch} ${
-                  itemPrice?.isPerDay ? "dni" : "godzin"
-                } wynajmu.`}
-                {`(stawka ${itemPrice?.isPerDay ? "dzienna" : "godzinna"})`}
-              </Typography>
-              <br />
-              <br />
-              {!!loggedUser ? (
-                <Button onClick={onSendReservation} variant="contained">
-                  Rezerwuję
-                </Button>
-              ) : (
-                <>
-                  <Auth
-                    users={users}
-                    setLoggedUser={setLoggedUser}
-                    setUsers={setUsers}
-                  />
-                </>
-              )}
-              <br />
-              <br />
-              <Button
-                onClick={() => setIsShowingReservationForm(false)}
-                children={"wróć do wyników wyszukiwania"}
-              />
+              <div className={classes.goBack}>
+                <Button
+                  onClick={() => setIsShowingReservationForm(false)}
+                  children={"wróć do wyników wyszukiwania"}
+                />
+              </div>
             </>
           )}
         </Container>

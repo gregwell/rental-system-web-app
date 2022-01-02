@@ -20,6 +20,7 @@ import {
   ItemPrice,
   CrudOperation,
   Collection,
+  GroupedItems,
   CompanyInfo,
 } from "../general/types";
 import AvailableItems from "./AvailableItems/AvailableItems";
@@ -28,9 +29,9 @@ import { ReservationConfirmation } from "./ReservationConfirmation";
 import {
   calculateReservationPriceForEachType,
   getPolishName,
-  canWeRentThisProduct,
+  filterOutReservedItems,
+  groupItems,
 } from "./utils";
-import AccessGuard from "../general/AccessGuard";
 
 const useStyles = makeStyles({
   root: {
@@ -126,21 +127,24 @@ const ReservationPanel = ({
     }
   }, [pricesInitialized]);
 
-  let selectedTimeAvailableItems: Item[] = [];
+  //let selectedTimeAvailableItems: Item[] = [];
 
-  if (startDate !== null && finishDate && items && reservations) {
-    selectedTimeAvailableItems = items.filter((item) => {
-      return (
-        canWeRentThisProduct(
-          item.productId,
-          startDate,
-          finishDate,
-          reservations
-        ) &&
-        (!type || getPolishName(item.type) === type)
-      );
-    });
-  }
+  // selectedTimeAvailableItems
+  //what we want
+  //we have an array of items
+  // we need to group them by `Producer Model`
+
+  //1.eliminate items that we have reservation and cant rent in this time
+
+  //1.step group items
+
+  const filteredItems = filterOutReservedItems(
+    startDate,
+    finishDate,
+    reservations,
+    items
+  );
+  const groupedFilteredItems = groupItems(filteredItems);
 
   const onSearchButtonClick = useCallback(() => {
     setIsShowingReservationForm(false);
@@ -162,9 +166,9 @@ const ReservationPanel = ({
     finishDate &&
     companyInfo &&
     (startDate.getHours() < open ||
-      startDate.getHours() > close ||
+      startDate.getHours() >= close ||
       finishDate.getHours() < open ||
-      finishDate.getHours() > close);
+      finishDate.getHours() >= close);
 
   const showReturnBeforePickupAlert =
     startDate && finishDate && startDate > finishDate;
@@ -182,7 +186,7 @@ const ReservationPanel = ({
       );
     }
 
-    if (selectedTimeAvailableItems.length > 0) {
+    if (Object.keys(groupedFilteredItems).length > 0) {
       return null;
     }
 
@@ -190,6 +194,12 @@ const ReservationPanel = ({
       <Alert severity="info">{`Wypożyczalnia czynna w godzinach ${companyInfo?.open} - ${companyInfo?.close}.  Miej to na uwadze wybierając godziny wynajmu. `}</Alert>
     );
   };
+
+  const showAvailableItems =
+    !isShowingReservationForm &&
+    Object.keys(groupedFilteredItems).length > 0 &&
+    !showWrongHoursAlert &&
+    !showReturnBeforePickupAlert;
 
   return (
     <>
@@ -255,19 +265,13 @@ const ReservationPanel = ({
             <Grid item xs={12}>
               <ReservationTimeAlert />
             </Grid>
-            {isShowingReservationForm === false && (
-              <>
-                {selectedTimeAvailableItems.length > 0 &&
-                  !showWrongHoursAlert &&
-                  !showReturnBeforePickupAlert && (
-                    <AvailableItems
-                      items={selectedTimeAvailableItems}
-                      setIsShowingReservationForm={setIsShowingReservationForm}
-                      setChoosenItem={setChoosenItem}
-                      pricesTable={pricesTable}
-                    />
-                  )}
-              </>
+            {showAvailableItems && (
+              <AvailableItems
+                items={groupedFilteredItems}
+                setIsShowingReservationForm={setIsShowingReservationForm}
+                setChoosenItem={setChoosenItem}
+                pricesTable={pricesTable}
+              />
             )}
           </Grid>
         </Container>

@@ -40,7 +40,7 @@ export const decryptObject = (object: any): any =>
     })
   );
 
-export const formatDate = (date: string | undefined): string => {
+export const formatDate = (date: string | number | undefined): string => {
   if (date === undefined) {
     return "";
   }
