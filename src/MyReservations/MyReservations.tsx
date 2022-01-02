@@ -2,7 +2,15 @@ import { Typography, Container, Alert, AlertTitle } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 import SingleReservation from "./SingleReservation";
-import { Reservation, User, Item, Status } from "../general/types";
+import SingleRental from "./SingleRental";
+import {
+  Reservation,
+  User,
+  Item,
+  Status,
+  Rental,
+  Price,
+} from "../general/types";
 import AccessGuard from "../general/AccessGuard";
 
 const useStyles = makeStyles({
@@ -35,6 +43,8 @@ interface MyReservationsProps {
   loggedUser: User | null | undefined;
   items: Item[] | null;
   apiDataInitialized: boolean;
+  rentals: Rental[];
+  prices: Price[];
 }
 
 const MyReservations = ({
@@ -42,6 +52,8 @@ const MyReservations = ({
   reservations,
   newReservationSuccess,
   items,
+  prices,
+  rentals,
   apiDataInitialized,
 }: MyReservationsProps) => {
   const classes = useStyles();
@@ -54,6 +66,10 @@ const MyReservations = ({
       )[0]
     );
   }
+
+  const loggedUserRentals = rentals.filter(
+    (rental) => rental.userId === loggedUser?._id
+  );
 
   return (
     <AccessGuard wait={loggedUser === undefined} deny={loggedUser === null}>
@@ -73,6 +89,17 @@ const MyReservations = ({
                 </Alert>
               )}
             </div>
+
+            {loggedUserRentals.map((rental) => (
+              <SingleRental
+                key={rental._id}
+                rental={rental}
+                item={items?.find(
+                  (item) => item.productId === rental.productId
+                )}
+                prices={prices}
+              />
+            ))}
 
             {!!reservations &&
               reservations

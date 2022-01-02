@@ -4,6 +4,7 @@ export enum Collection {
   reservations = "reservations",
   prices = "prices",
   company = "company",
+  rentals = "rentals",
 }
 
 export interface User {
@@ -15,6 +16,15 @@ export interface User {
   password?: string;
   _id?: string;
   idCard?: string;
+}
+
+export interface Rental {
+  _id: string;
+  productId: string;
+  userId: string;
+  startDate: string;
+  finishDate: string;
+  status: string;
 }
 
 export interface AuthFormFields extends User {

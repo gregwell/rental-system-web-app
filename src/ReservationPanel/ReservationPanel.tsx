@@ -69,6 +69,7 @@ interface ReservationPanelProps {
   setReservations: React.Dispatch<React.SetStateAction<Reservation[]>>;
   companyInfo: CompanyInfo;
   apiDataInitialized: boolean;
+  prices: Price[];
 }
 
 const ReservationPanel = ({
@@ -81,6 +82,7 @@ const ReservationPanel = ({
   newReservationSuccess,
   setReservations,
   items,
+  prices,
   companyInfo,
   apiDataInitialized,
 }: ReservationPanelProps) => {
@@ -91,9 +93,6 @@ const ReservationPanel = ({
     : [];
 
   const types = Array.from(uniqueTypes).map((type) => getPolishName(type));
-
-  const [pricesInitialized, setPricesInitialized] = useState<boolean>(false);
-  const [prices, setPrices] = useState<Price[]>([]);
   const [pricesTable, setPricesTable] = useState<ItemPrice[] | null>(null);
 
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -110,20 +109,6 @@ const ReservationPanel = ({
       calculateReservationPriceForEachType(prices, startDate, finishDate)
     );
   }, [prices, startDate, finishDate]);
-
-  useEffect(() => {
-    const preparePricesState = async () => {
-      const fetchedPrices = await sendApiRequest({
-        collection: Collection.prices,
-        operation: CrudOperation.READ,
-      });
-      setPrices(fetchedPrices as Price[]);
-      setPricesInitialized(true);
-    };
-    if (!pricesInitialized) {
-      preparePricesState();
-    }
-  }, [pricesInitialized]);
 
   const filteredItems = filterOutReservedItems(
     startDate,

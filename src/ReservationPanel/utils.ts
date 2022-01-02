@@ -99,7 +99,7 @@ export const calculateReservationPriceForEachType = (
     return null;
   }
   const time = finishDate.getTime() - startDate.getTime();
-  //1 hour = 3600000 ms
+
   const hourMs = 3600000;
   const hours = Math.ceil(time / hourMs);
   const days = Math.ceil(time / hourMs / 24);

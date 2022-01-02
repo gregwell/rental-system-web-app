@@ -9,6 +9,8 @@ import {
   CrudOperation,
   Collection,
   Item,
+  Rental,
+  Price,
   CompanyInfo,
 } from "./general/types";
 import { sendApiRequest } from "./async/sendApiRequest";
@@ -33,8 +35,10 @@ function App() {
   const [apiDataInitialized, setApiDataInitialized] = useState<boolean>(false);
 
   const [users, setUsers] = useState<User[] | null>(null);
+  const [prices, setPrices] = useState<Price[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [items, setItems] = useState<Item[]>([]);
+  const [rentals, setRentals] = useState<Rental[]>([]);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>(
     {} as CompanyInfo
   );
@@ -91,9 +95,19 @@ function App() {
         collection: Collection.company,
         operation: CrudOperation.READ,
       });
+      const fetchedRentals = await sendApiRequest({
+        collection: Collection.rentals,
+        operation: CrudOperation.READ,
+      });
+      const fetchedPrices = await sendApiRequest({
+        collection: Collection.prices,
+        operation: CrudOperation.READ,
+      });
 
       setItems(fetchedItems as Item[]);
       setUsers(fetchedUsers as User[]);
+      setPrices(fetchedPrices as Price[]);
+      setRentals(fetchedRentals as Rental[]);
       setReservations(fetchedReservations as Reservation[]);
       setCompanyInfo(fetchedCompanyInfo[0] as CompanyInfo);
 
@@ -132,6 +146,7 @@ function App() {
                   items={items}
                   companyInfo={companyInfo}
                   apiDataInitialized={apiDataInitialized}
+                  prices={prices}
                 />
               }
             />
@@ -144,6 +159,8 @@ function App() {
                   loggedUser={loggedUser}
                   items={items}
                   apiDataInitialized={apiDataInitialized}
+                  rentals={rentals}
+                  prices={prices}
                 />
               }
             />

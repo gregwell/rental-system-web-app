@@ -59,16 +59,11 @@ const useStyles = makeStyles({
 });
 
 interface SingleReservationProps {
-  title?: boolean;
   reservation?: Reservation;
   item: Item | undefined;
 }
 
-const SingleReservation = ({
-  title,
-  reservation,
-  item,
-}: SingleReservationProps) => {
+const SingleReservation = ({ reservation, item }: SingleReservationProps) => {
   const startDateFormatted = formatDate(reservation?.startDate);
   const finishDateFormatted = formatDate(reservation?.finishDate);
 
