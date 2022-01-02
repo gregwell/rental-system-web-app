@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
 import { Button } from "@mui/material";
-
-import { CompanyInfo } from "./general/types";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 
 const useStyles = makeStyles({

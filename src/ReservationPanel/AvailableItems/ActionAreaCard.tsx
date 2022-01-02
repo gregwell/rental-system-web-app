@@ -1,4 +1,4 @@
-import { Card, Typography, Grid, Button } from "@mui/material";
+import { Typography, Grid, Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 import CustomIcon from "../../general/CustomIcon";

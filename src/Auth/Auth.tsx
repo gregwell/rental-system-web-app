@@ -16,7 +16,12 @@ import {
 } from "react-google-login";
 import GoogleIcon from "@mui/icons-material/Google";
 
-import { User, CrudOperation, Collection } from "../general/types";
+import {
+  User,
+  CrudOperation,
+  Collection,
+  AuthFormFields,
+} from "../general/types";
 import { sendApiRequest } from "../async/sendApiRequest";
 import {
   decrypt,
@@ -26,6 +31,7 @@ import {
   removeDashes,
 } from "../utils";
 import { alerts, alertTitles, buttonLabels, sectionLabels } from "./constants";
+import FormField from "./FormField";
 
 const useStyles = makeStyles({
   login: {
@@ -61,17 +67,18 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
   const [showCodeRegisterForm, setShowCodeRegisterForm] =
     useState<boolean>(false);
 
-  const [name, setName] = useState<string>("");
-  const [surname, setSurname] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [idCard, setIdCard] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [passwordSecond, setPasswordSecond] = useState<string>("");
+  const [user, setUser] = useState<AuthFormFields>({
+    name: "",
+    surname: "",
+    email: "",
+    phone: "",
+    idCard: "",
+    password: "",
+    passwordSecond: "",
+    loginEmail: "",
+    loginPassword: "",
+  });
   const [showPasswordAlert, setShowPasswordAlert] = useState<boolean>(false);
-
-  const [loginEmail, setLoginEmail] = useState<string>("");
-  const [loginPassword, setLoginPassword] = useState<string>("");
 
   const [wrongLoginPassword, setWrongLoginPassword] = useState<boolean>(false);
   const [wrongLoginEmail, setWrongLoginEmail] = useState<boolean>(false);
@@ -86,18 +93,18 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
   const [codeInput, setCodeInput] = useState<string>("");
 
   const handleRegister = useCallback(async () => {
-    if (password !== passwordSecond) {
+    if (user.password !== user.passwordSecond) {
       setShowPasswordAlert(true);
       return;
     }
 
     const postBody: User = {
-      name: name,
-      surname: surname,
-      email: email,
+      name: user.name,
+      surname: user.surname,
+      email: user.email,
       googleId: "",
-      phone: phone,
-      password: password,
+      phone: user.phone,
+      password: user.password,
       idCard: "",
     };
 
@@ -116,21 +123,11 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
 
     postBody._id = insertedId;
     setLoggedUser(postBody);
-
-  }, [
-    password,
-    passwordSecond,
-    name,
-    surname,
-    email,
-    phone,
-    users,
-    setLoggedUser,
-  ]);
+  }, [user, users, setLoggedUser]);
 
   const handleLogin = useCallback(() => {
-    const userFound: User | undefined = users?.find((user) => {
-      return user?.email.length > 0 && decrypt(user?.email) === loginEmail;
+    const userFound: User | undefined = users?.find((currUser) => {
+      return currUser?.email.length > 0 && decrypt(currUser?.email) === user.loginEmail;
     });
 
     if (!userFound) {
@@ -140,7 +137,7 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
 
     const decryptedUserFound: User = decryptObject(userFound);
 
-    if (decryptedUserFound.password !== loginPassword) {
+    if (decryptedUserFound.password !== user.loginPassword) {
       setWrongLoginPassword(true);
       return;
     }
@@ -148,7 +145,7 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
     decryptedUserFound._id = userFound._id;
     setLoggedUser(decryptedUserFound);
     return;
-  }, [loginEmail, loginPassword, setLoggedUser, users]);
+  }, [users, user.loginPassword, user.loginEmail, setLoggedUser]);
 
   const handleGoogleRegister = async () => {
     if (!googleId) {
@@ -156,11 +153,11 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
     }
 
     const postBody: User = {
-      name: name,
-      surname: surname,
-      email: email,
+      name: user.name,
+      surname: user.surname,
+      email: user.email,
       googleId: googleId,
-      phone: phone,
+      phone: user.phone,
       password: "",
       idCard: "",
     };
@@ -212,9 +209,13 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
 
     if (!userFound) {
       setGoogleId(res.googleId);
-      setEmail(res.profileObj?.email);
-      setName(res.profileObj?.givenName);
-      setSurname(res.profileObj?.familyName);
+
+      const updatedUser = user;
+      updatedUser.email = res.profileObj?.email;
+      updatedUser.name = res.profileObj?.givenName;
+      updatedUser.surname = res.profileObj?.familyName;
+      setUser(updatedUser);
+
       setShowGoogleRegisterForm(true);
     }
   };
@@ -239,15 +240,15 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
       return;
     }
 
-    setEmail(userFound?.email);
-    setName(userFound?.name);
-    setSurname(userFound?.surname);
-    setPhone(userFound?.phone);
-    setPassword("");
-    setPasswordSecond("");
-    setIdCard(userFound?.idCard as string);
+    const updatedUser = user;
+    updatedUser.email = userFound?.email;
+    updatedUser.name = userFound?.name;
+    updatedUser.surname = userFound?.surname;
+    updatedUser.phone = userFound?.phone;
+
+    setUser(userFound);
     setShowCodeRegisterForm(true);
-  }, [codeInput, users]);
+  }, [codeInput, user, users]);
 
   const handleCodeRegister = async () => {
     if (!codeInput) {
@@ -255,13 +256,13 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
     }
 
     const postBody: User = {
-      name: name,
-      surname: surname,
-      email: email,
+      name: user.name,
+      surname: user.surname,
+      email: user.email,
       googleId: "",
-      phone: phone,
-      password: password,
-      idCard: idCard,
+      phone: user.phone,
+      password: user.password,
+      idCard: user.idCard,
     };
 
     const updated: User = encryptObject(postBody);
@@ -327,64 +328,27 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
                       {sectionLabels.register}
                     </Typography>
                   </Grid>
-                  <Grid item xs={12} sm={12} md={6}>
-                    <TextField
-                      label="Imię"
-                      variant="outlined"
-                      fullWidth
-                      value={name}
-                      onChange={(event) => setName(event.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={12} md={6}>
-                    <TextField
-                      label="Nazwisko"
-                      variant="outlined"
-                      fullWidth
-                      value={surname}
-                      onChange={(event) => setSurname(event.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={12} md={12}>
-                    <TextField
-                      label="Adres e-mail"
-                      variant="outlined"
-                      fullWidth
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={12} md={12}>
-                    <TextField
-                      label="Numer telefonu"
-                      variant="outlined"
-                      fullWidth
-                      value={phone}
-                      onChange={(event) => setPhone(event.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={12} md={12}>
-                    <TextField
-                      label="Hasło"
-                      variant="outlined"
-                      fullWidth
-                      type="password"
-                      value={password}
-                      onChange={(event) => setPassword(event.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={12} md={12}>
-                    <TextField
-                      label="Powtórz hasło"
-                      variant="outlined"
-                      fullWidth
-                      type="password"
-                      value={passwordSecond}
-                      onChange={(event) =>
-                        setPasswordSecond(event.target.value)
-                      }
-                    />
-                  </Grid>
+                  <FormField
+                    field="name"
+                    setUser={setUser}
+                    user={user}
+                    narrow
+                  />
+                  <FormField
+                    field="surname"
+                    setUser={setUser}
+                    user={user}
+                    narrow
+                  />
+                  <FormField field="email" setUser={setUser} user={user} />
+                  <FormField field="phone" setUser={setUser} user={user} />
+                  <FormField field="password" setUser={setUser} user={user} />
+                  <FormField
+                    field="passwordSecond"
+                    setUser={setUser}
+                    user={user}
+                  />
+
                   {!!showPasswordAlert && (
                     <Grid item xs={12} sm={12} md={12} className={classes.left}>
                       <Alert severity="info">
@@ -409,25 +373,8 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
                   <Grid item xs={12} sm={12} md={12}>
                     <Typography variant="h6">{sectionLabels.login}</Typography>
                   </Grid>
-                  <Grid item xs={12} sm={12} md={12}>
-                    <TextField
-                      label="Email"
-                      variant="outlined"
-                      fullWidth
-                      value={loginEmail}
-                      onChange={(event) => setLoginEmail(event.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={12} md={12}>
-                    <TextField
-                      label="Hasło"
-                      variant="outlined"
-                      fullWidth
-                      type="password"
-                      value={loginPassword}
-                      onChange={(event) => setLoginPassword(event.target.value)}
-                    />
-                  </Grid>
+                  <FormField field="loginEmail" setUser={setUser} user={user} />
+                  <FormField field="loginPassword" setUser={setUser} user={user} />
                   {(wrongLoginPassword || wrongLoginEmail) && (
                     <Grid item xs={12} sm={12} md={12} className={classes.left}>
                       <Alert severity="info">
@@ -497,42 +444,10 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
               <Grid item xs={12} sm={12} md={12}>
                 <Typography>{sectionLabels.firstGoogleLogin}</Typography>
               </Grid>
-              <Grid item xs={12} sm={12} md={12}>
-                <TextField
-                  label="Adres email"
-                  variant="outlined"
-                  disabled
-                  fullWidth
-                  value={email}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12}>
-                <TextField
-                  label="Imię"
-                  variant="outlined"
-                  fullWidth
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12}>
-                <TextField
-                  label="Nazwisko"
-                  variant="outlined"
-                  fullWidth
-                  value={surname}
-                  onChange={(event) => setSurname(event.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12}>
-                <TextField
-                  label="Numer telefonu"
-                  variant="outlined"
-                  fullWidth
-                  value={phone}
-                  onChange={(event) => setPhone(event.target.value)}
-                />
-              </Grid>
+              <FormField field="email" setUser={setUser} user={user} />
+              <FormField field="name" setUser={setUser} user={user} />
+              <FormField field="surname" setUser={setUser} user={user} />
+              <FormField field="phone" setUser={setUser} user={user} />
               <Grid item xs={12} sm={12} md={12}>
                 <Button
                   variant="contained"
@@ -550,38 +465,12 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={12}>
                 <Typography>
-                  {`Hej ${name} ${surname} ! Utwórz hasło do konta aby kontynuować!`}
+                  {`Hej ${user.name} ${user.surname} ! Utwórz hasło do konta aby kontynuować!`}
                 </Typography>
               </Grid>
-              <Grid item xs={12} sm={12} md={12}>
-                <TextField
-                  label="Adres email"
-                  variant="outlined"
-                  fullWidth
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12}>
-                <TextField
-                  label="Hasło"
-                  variant="outlined"
-                  fullWidth
-                  type="password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12}>
-                <TextField
-                  label="Powtórz hasło"
-                  variant="outlined"
-                  fullWidth
-                  type="password"
-                  value={passwordSecond}
-                  onChange={(event) => setPasswordSecond(event.target.value)}
-                />
-              </Grid>
+              <FormField field="email" setUser={setUser} user={user} />
+              <FormField field="password" setUser={setUser} user={user} />
+              <FormField field="passwordSecond" setUser={setUser} user={user} />
               <Grid item xs={12} sm={12} md={12}>
                 <Button
                   variant="contained"

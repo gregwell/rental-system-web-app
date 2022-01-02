@@ -17,6 +17,12 @@ export interface User {
   idCard?: string;
 }
 
+export interface AuthFormFields extends User {
+  passwordSecond?: string;
+  loginEmail?: string;
+  loginPassword?: string;
+}
+
 export interface Reservation {
   productId: string;
   userId: string;

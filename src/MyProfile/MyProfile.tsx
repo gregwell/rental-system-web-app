@@ -127,7 +127,7 @@ const MyProfile = ({
     }
 
     const updated: any = {};
-    let updatedLoggedUser = loggedUser;
+    let updatedLoggedUser = { ...loggedUser };
 
     if (name !== loggedUser.name) {
       updated.name = encrypt(name);

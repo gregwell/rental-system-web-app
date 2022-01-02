@@ -8,7 +8,6 @@ import {
   TextField,
   Button,
   Alert,
-  AlertTitle,
 } from "@mui/material";
 
 import { sendApiRequest } from "../async/sendApiRequest";
@@ -20,7 +19,6 @@ import {
   ItemPrice,
   CrudOperation,
   Collection,
-  GroupedItems,
   CompanyInfo,
 } from "../general/types";
 import AvailableItems from "./AvailableItems/AvailableItems";
