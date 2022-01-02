@@ -16,6 +16,7 @@ export const ReservationDateTimePicker = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DateTimePicker
+        disablePast
         label={label}
         value={value}
         onChange={(newValue) => {
