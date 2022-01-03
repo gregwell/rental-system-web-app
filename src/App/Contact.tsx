@@ -11,15 +11,19 @@ const Contact = ({ companyInfo }: ContactProps) => {
     return null;
   }
 
+  const things = [
+    companyInfo.title,
+    companyInfo.address,
+    `tel:  ${companyInfo.phone}`,
+    `godz. otwarcia: ${companyInfo.open} - ${companyInfo.close}`,
+    <a href={`mailto:${companyInfo.email}`}>{companyInfo.email}</a>,
+  ];
+
   return (
     <CustomContainer>
-      <Typography variant="h6">{companyInfo.title}</Typography>
-      <Typography variant="h6">{companyInfo.address}</Typography>
-      <Typography variant="h6">{`tel:  ${companyInfo.phone}`}</Typography>
-      <Typography variant="h6">{`godz. otwarcia: ${companyInfo.open} - ${companyInfo.close}`}</Typography>
-      <Typography variant="h6">
-        <a href={`mailto:${companyInfo.email}`}>{companyInfo.email}</a>
-      </Typography>
+      {things.map((thing) => (
+        <Typography variant="h6">{thing}</Typography>
+      ))}
     </CustomContainer>
   );
 };
