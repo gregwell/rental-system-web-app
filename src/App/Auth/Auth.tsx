@@ -21,7 +21,7 @@ import {
   CrudOperation,
   Collection,
   AuthFormFields,
-} from "../general/types";
+} from "../constants/types";
 import { sendApiRequest } from "../async/sendApiRequest";
 import {
   decrypt,

@@ -11,14 +11,14 @@ import {
   ItemPrice,
   CrudOperation,
   Collection,
-} from "../general/types";
+} from "../constants/types";
 import { sendApiRequest } from "../async/sendApiRequest";
 import Auth from "../Auth/Auth";
-import CustomIcon from "../general/CustomIcon";
+import CustomIcon from "../reusable/CustomIcon";
 import emailjs from "@emailjs/browser";
 import { formatDate } from "../utils";
 import { getPolishName } from "./utils";
-import CustomContainer from "../general/CustomContainer";
+import CustomContainer from "../reusable/CustomContainer";
 
 const useStyles = makeStyles({
   root: {

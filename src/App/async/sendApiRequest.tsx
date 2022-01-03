@@ -9,7 +9,7 @@ import {
   CrudOperation,
   Rental,
   RequestData,
-} from "../general/types";
+} from "../constants/types";
 
 interface SendApiRequestProps {
   collection: string;

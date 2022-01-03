@@ -6,7 +6,7 @@ import {
   Item,
   Status,
   GroupedItems,
-} from "../general/types";
+} from "../constants/types";
 
 export const getPolishName = (type: string): string => {
   switch (type) {

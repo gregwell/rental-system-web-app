@@ -8,7 +8,7 @@ import BookIcon from "@mui/icons-material/Book";
 import LoginIcon from "@mui/icons-material/Login";
 
 import Auth from "../Auth/Auth";
-import { User } from "../general/types";
+import { User } from "../constants/types";
 import { useStyles } from "./styles";
 
 interface NavbarProps {

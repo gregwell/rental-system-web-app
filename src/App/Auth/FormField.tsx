@@ -1,4 +1,4 @@
-import { AuthFormFields } from "../general/types";
+import { AuthFormFields } from "../constants/types";
 import { TextField, Grid, GridSize } from "@mui/material";
 import { getFormFieldName } from "./utils";
 

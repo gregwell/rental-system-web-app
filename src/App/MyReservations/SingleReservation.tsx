@@ -4,9 +4,9 @@ import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
 
 import { formatDate } from "../utils";
-import { Reservation, Item, ItemType, Status } from "../general/types";
-import CustomIcon from "../general/CustomIcon";
-import { colors } from "../general/colors";
+import { Reservation, Item, ItemType, Status } from "../constants/types";
+import CustomIcon from "../reusable/CustomIcon";
+import { colors } from "../constants/colors";
 
 const useStyles = makeStyles({
   singlePanel: {

@@ -1,4 +1,4 @@
-import { AuthFormFields } from "../general/types";
+import { AuthFormFields } from "../constants/types";
 
 export const getFormFieldName = (field: keyof AuthFormFields): string => {
   switch (field) {

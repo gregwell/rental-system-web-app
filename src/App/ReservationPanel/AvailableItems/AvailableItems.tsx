@@ -2,7 +2,7 @@ import { makeStyles } from "@mui/styles";
 import { Grid, Typography, Container } from "@mui/material";
 
 import ActionAreaCard from "./ActionAreaCard";
-import { Item, ItemPrice, GroupedItems } from "../../general/types";
+import { Item, ItemPrice, GroupedItems } from "../../constants/types";
 
 const useStyles = makeStyles({
   root: {

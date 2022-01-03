@@ -11,11 +11,11 @@ import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-import { CrudOperation, User, Collection } from "../general/types";
+import { CrudOperation, User, Collection } from "../constants/types";
 import SingleProfileItem from "./SingleProfileItem";
 import { sendApiRequest } from "../async/sendApiRequest";
 import { encrypt, encryptObject } from "../utils";
-import AccessGuard from "../general/AccessGuard";
+import AccessGuard from "../reusable/AccessGuard";
 
 const useStyles = makeStyles({
   panel: {

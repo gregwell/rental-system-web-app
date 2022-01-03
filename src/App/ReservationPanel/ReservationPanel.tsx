@@ -17,7 +17,7 @@ import {
   Price,
   ItemPrice,
   CompanyInfo,
-} from "../general/types";
+} from "../constants/types";
 import AvailableItems from "./AvailableItems/AvailableItems";
 import { ReservationDateTimePicker } from "./ReservationDateTimePicker";
 import { ReservationConfirmation } from "./ReservationConfirmation";
@@ -159,6 +159,8 @@ const ReservationPanel = ({
     !isShowingReservationForm &&
     Object.keys(groupedFilteredItems).length > 0 &&
     !showWrongHoursAlert;
+
+    console.log(groupedFilteredItems);
 
   return (
     <>

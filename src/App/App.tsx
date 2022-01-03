@@ -12,7 +12,7 @@ import {
   Rental,
   Price,
   CompanyInfo,
-} from "./general/types";
+} from "./constants/types";
 import { sendApiRequest } from "./async/sendApiRequest";
 import MyReservations from "./MyReservations/MyReservations";
 import MyProfile from "./MyProfile/MyProfile";
@@ -22,7 +22,7 @@ import { decryptObject, encryptObject } from "./utils";
 import { init } from "@emailjs/browser";
 import Footer from "./Footer";
 import Contact from "./Contact";
-import AccessGuard from "./general/AccessGuard";
+import AccessGuard from "./reusable/AccessGuard";
 import ConfirmEmail from "./ConfirmEmail";
 
 init(process.env.REACT_APP_EMAILJS as string);

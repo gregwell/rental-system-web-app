@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { sendApiRequest } from "./async/sendApiRequest";
-import AccessGuard from "./general/AccessGuard";
-import CustomContainer from "./general/CustomContainer";
-import { Collection, CrudOperation, User } from "./general/types";
+import AccessGuard from "./reusable/AccessGuard";
+import CustomContainer from "./reusable/CustomContainer";
+import { Collection, CrudOperation, User } from "./constants/types";
 import { decrypt, decryptObject } from "./utils";
 import { Alert, AlertTitle } from "@mui/material";
 

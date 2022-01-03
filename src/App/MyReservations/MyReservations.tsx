@@ -10,8 +10,8 @@ import {
   Status,
   Rental,
   Price,
-} from "../general/types";
-import AccessGuard from "../general/AccessGuard";
+} from "../constants/types";
+import AccessGuard from "../reusable/AccessGuard";
 
 const useStyles = makeStyles({
   panel: {

@@ -7,7 +7,7 @@ import PedalBikeIcon from "@mui/icons-material/PedalBike";
 import ElectricBikeIcon from "@mui/icons-material/ElectricBike";
 import KayakingIcon from "@mui/icons-material/Kayaking";
 import { makeStyles } from "@mui/styles";
-import { ItemType } from "./types";
+import { ItemType } from "../constants/types";
 
 const useStyles = makeStyles({
   icon: {

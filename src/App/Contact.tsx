@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
-import CustomContainer from "./general/CustomContainer";
-import { CompanyInfo } from "./general/types";
+import CustomContainer from "./reusable/CustomContainer";
+import { CompanyInfo } from "./constants/types";
 
 interface ContactProps {
   companyInfo?: CompanyInfo;
