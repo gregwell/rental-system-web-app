@@ -29,6 +29,7 @@ import {
   decryptObject,
   formatCode,
   removeDashes,
+  encrypt,
 } from "../utils";
 import { alerts, alertTitles, buttonLabels, sectionLabels } from "./constants";
 import FormField from "./FormField";
@@ -332,11 +333,27 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
 
       setRandomEmailCode(code);
 
+      const link = `http://localhost:3000/confirmEmail/${encrypt(
+        JSON.stringify(
+          encryptObject({
+            name: user.name,
+            surname: user.surname,
+            email: user.email,
+            googleId: "",
+            phone: user.phone,
+            password: user.password,
+            idCard: "",
+          })
+        )
+      ).replace(/\//g, "temporarySolution")}`;
+      console.log(link);
+      /*
       await emailjs.send("service_s5znq5v", "confirmEmail", {
         code: code,
         enteredEmail: user.email,
+        link: link,
       });
-
+*/
       setEmailSent(true);
     } catch (error) {
       console.log("could not send email");

@@ -23,6 +23,7 @@ import { init } from "@emailjs/browser";
 import Footer from "./Footer";
 import Contact from "./Contact";
 import AccessGuard from "./general/AccessGuard";
+import ConfirmEmail from "./ConfirmEmail";
 
 init(process.env.REACT_APP_EMAILJS as string);
 
@@ -185,6 +186,16 @@ function App() {
                   setReservations={setReservations}
                   apiDataInitialized={apiDataInitialized}
                   companyInfo={companyInfo}
+                />
+              }
+            />
+            <Route
+              path="/confirmEmail/:token"
+              element={
+                <ConfirmEmail
+                  setLoggedUser={setLoggedUser}
+                  users={users}
+                  apiDataInitialized={apiDataInitialized}
                 />
               }
             />
