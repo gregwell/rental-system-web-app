@@ -49,7 +49,6 @@ const ConfirmEmail = ({
         body: parsedObj,
       })) as string;
 
-      console.log("true");
       setSuccess(true);
 
       parsedObj._id = insertedId;

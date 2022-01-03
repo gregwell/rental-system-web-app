@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
 
 import ReservationPanel from "./ReservationPanel/ReservationPanel";
-import Navbar from "./Navbar";
+import Navbar from "./Navbar/Navbar";
 import {
   User,
   Reservation,
@@ -120,95 +120,92 @@ function App() {
   }, [apiDataInitialized]);
 
   return (
-    <>
-      <Router>
-        <Navbar
-          users={users}
-          loggedUser={loggedUser}
-          setLoggedUser={setLoggedUser}
-          setNewReservationSuccess={setNewReservationSuccess}
-          setUsers={setUsers}
-          companyInfo={companyInfo}
-        />
-        <AccessGuard wait={!apiDataInitialized}>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <ReservationPanel
-                  users={users}
-                  setUsers={setUsers}
-                  loggedUser={loggedUser}
-                  setLoggedUser={setLoggedUser}
-                  reservations={reservations}
-                  setNewReservationSuccess={setNewReservationSuccess}
-                  newReservationSuccess={newReservationSuccess}
-                  setReservations={setReservations}
-                  items={items}
-                  companyInfo={companyInfo}
-                  apiDataInitialized={apiDataInitialized}
-                  prices={prices}
-                />
-              }
-            />
-            <Route
-              path="/reservations"
-              element={
-                <MyReservations
-                  reservations={reservations}
-                  newReservationSuccess={newReservationSuccess}
-                  loggedUser={loggedUser}
-                  items={items}
-                  apiDataInitialized={apiDataInitialized}
-                  rentals={rentals}
-                  prices={prices}
-                />
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <MyProfile
-                  loggedUser={loggedUser}
-                  users={users}
-                  setUsers={setUsers}
-                  setLoggedUser={setLoggedUser}
-                />
-              }
-            />
-            <Route
-              path="/reservation/:_id"
-              element={
-                <ReservationFocus
-                  reservations={reservations}
-                  items={items}
-                  loggedUser={loggedUser}
-                  setReservations={setReservations}
-                  apiDataInitialized={apiDataInitialized}
-                  companyInfo={companyInfo}
-                />
-              }
-            />
-            <Route
-              path="/confirmEmail/:token"
-              element={
-                <ConfirmEmail
-                  setLoggedUser={setLoggedUser}
-                  users={users}
-                  apiDataInitialized={apiDataInitialized}
-                />
-              }
-            />
-            <Route
-              path="/contact"
-              element={<Contact companyInfo={companyInfo} />}
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AccessGuard>
-        <Footer />
-      </Router>
-    </>
+    <Router>
+      <Navbar
+        users={users}
+        loggedUser={loggedUser}
+        setLoggedUser={setLoggedUser}
+        setNewReservationSuccess={setNewReservationSuccess}
+        setUsers={setUsers}
+      />
+      <AccessGuard wait={!apiDataInitialized}>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <ReservationPanel
+                users={users}
+                setUsers={setUsers}
+                loggedUser={loggedUser}
+                setLoggedUser={setLoggedUser}
+                reservations={reservations}
+                setNewReservationSuccess={setNewReservationSuccess}
+                newReservationSuccess={newReservationSuccess}
+                setReservations={setReservations}
+                items={items}
+                companyInfo={companyInfo}
+                apiDataInitialized={apiDataInitialized}
+                prices={prices}
+              />
+            }
+          />
+          <Route
+            path="/reservations"
+            element={
+              <MyReservations
+                reservations={reservations}
+                newReservationSuccess={newReservationSuccess}
+                loggedUser={loggedUser}
+                items={items}
+                apiDataInitialized={apiDataInitialized}
+                rentals={rentals}
+                prices={prices}
+              />
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <MyProfile
+                loggedUser={loggedUser}
+                users={users}
+                setUsers={setUsers}
+                setLoggedUser={setLoggedUser}
+              />
+            }
+          />
+          <Route
+            path="/reservation/:_id"
+            element={
+              <ReservationFocus
+                reservations={reservations}
+                items={items}
+                loggedUser={loggedUser}
+                setReservations={setReservations}
+                apiDataInitialized={apiDataInitialized}
+                companyInfo={companyInfo}
+              />
+            }
+          />
+          <Route
+            path="/confirmEmail/:token"
+            element={
+              <ConfirmEmail
+                setLoggedUser={setLoggedUser}
+                users={users}
+                apiDataInitialized={apiDataInitialized}
+              />
+            }
+          />
+          <Route
+            path="/contact"
+            element={<Contact companyInfo={companyInfo} />}
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </AccessGuard>
+      <Footer />
+    </Router>
   );
 }
 

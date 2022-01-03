@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { makeStyles } from "@mui/styles";
 import { Button, Grid, Typography, Container } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import EditIcon from "@mui/icons-material/Edit";
@@ -8,48 +7,9 @@ import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import BookIcon from "@mui/icons-material/Book";
 import LoginIcon from "@mui/icons-material/Login";
 
-import Auth from "./Auth/Auth";
-import { User, CompanyInfo } from "./general/types";
-
-const useStyles = makeStyles({
-  root: {
-    backgroundColor: "white",
-    textAlign: "center",
-  },
-  item: {
-    paddingTop: "15px",
-    paddingBottom: "15px",
-    paddingRight: "15px",
-  },
-  item2: {
-    width: "100%",
-    height: "0",
-  },
-  main: {
-    paddingTop: "15px",
-    paddingBottom: "15px",
-  },
-  auth: {
-    paddingBottom: "60px",
-    paddingTop: "30px",
-    marginLeft: "auto",
-    marginRight: "auto",
-  },
-  topBar: {
-    height: "3px",
-    backgroundColor: "#1B72CE",
-    width: "100%",
-  },
-  margin: {
-    padding: "20px 0",
-  },
-  paddingBottom: {
-    paddingBottom: "10px",
-  },
-  paddingRight: {
-    paddingRight: "7px",
-  },
-});
+import Auth from "../Auth/Auth";
+import { User } from "../general/types";
+import { useStyles } from "./styles";
 
 interface NavbarProps {
   users: User[] | null;
@@ -57,7 +17,6 @@ interface NavbarProps {
   setLoggedUser: (value: User | null | undefined) => void;
   setNewReservationSuccess: (newVal: boolean | null) => void;
   setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
-  companyInfo?: CompanyInfo;
 }
 
 const Navbar = ({
@@ -66,7 +25,6 @@ const Navbar = ({
   setLoggedUser,
   setNewReservationSuccess,
   setUsers,
-  companyInfo,
 }: NavbarProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -104,7 +62,7 @@ const Navbar = ({
     }
   }, [loggedUser]);
 
-  const title = localStorage.getItem('title');
+  const title = localStorage.getItem("title");
   const pageTitle = title ? title : "System rezerwacji on-line";
 
   return (
