@@ -10,15 +10,12 @@ import {
   Alert,
 } from "@mui/material";
 
-import { sendApiRequest } from "../async/sendApiRequest";
 import {
   Item,
   User,
   Reservation,
   Price,
   ItemPrice,
-  CrudOperation,
-  Collection,
   CompanyInfo,
 } from "../general/types";
 import AvailableItems from "./AvailableItems/AvailableItems";

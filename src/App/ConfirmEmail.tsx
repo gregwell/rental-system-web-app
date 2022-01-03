@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { sendApiRequest } from "./async/sendApiRequest";
 import AccessGuard from "./general/AccessGuard";
 import CustomContainer from "./general/CustomContainer";

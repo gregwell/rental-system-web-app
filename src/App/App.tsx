@@ -16,7 +16,7 @@ import {
 import { sendApiRequest } from "./async/sendApiRequest";
 import MyReservations from "./MyReservations/MyReservations";
 import MyProfile from "./MyProfile/MyProfile";
-import { ReservationFocus } from "./ReservationFocus";
+import ReservationFocus from "./ReservationFocus";
 import NotFound from "./general/NotFound";
 import { decryptObject, encryptObject } from "./utils";
 import { init } from "@emailjs/browser";
