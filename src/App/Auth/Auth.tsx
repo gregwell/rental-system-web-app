@@ -21,6 +21,7 @@ import {
   CrudOperation,
   Collection,
   AuthFormFields,
+  Path,
 } from "../constants/types";
 import { sendApiRequest } from "../async/sendApiRequest";
 import {
@@ -333,7 +334,7 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
 
       setRandomEmailCode(code);
 
-      const link = `http://localhost:3000/confirmEmail/${encrypt(
+      const link = `http://localhost:3000${Path.confirmEmail}/${encrypt(
         JSON.stringify(
           encryptObject({
             name: user.name,

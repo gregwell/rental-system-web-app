@@ -1,11 +1,12 @@
 import CustomContainer from "./general/CustomContainer";
 import { Alert, AlertTitle } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Path } from "./constants/types";
 
 export const NotFound = () => {
   const navigate = useNavigate();
   setTimeout(() => {
-    navigate("/");
+    navigate(Path.home);
   }, 4000);
 
   return (

@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
 import { Button } from "@mui/material";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
+import { Path } from "./constants/types";
 
 const useStyles = makeStyles({
   root: {
@@ -26,7 +27,7 @@ const Footer = () => {
   const navigate = useNavigate();
 
   const onButtonClick = () => {
-    navigate("/contact");
+    navigate(Path.contact);
   };
 
   return (

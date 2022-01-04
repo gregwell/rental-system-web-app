@@ -8,6 +8,7 @@ import {
   Collection,
   CrudOperation,
   CompanyInfo,
+  Path,
 } from "../constants/types";
 
 import { makeStyles } from "@mui/styles";
@@ -115,7 +116,7 @@ export const ReservationFocus = ({
       const foundReservation = reservations?.find((r) => r._id === _id);
 
       if (!foundReservation) {
-        navigate("*");
+        navigate(Path.notFound);
         return;
       }
 
@@ -272,7 +273,7 @@ export const ReservationFocus = ({
           </Grid>
           <ContactField
             item={item}
-            reservation={reservation}
+            service={reservation}
             companyInfo={companyInfo}
             startDateFormatted={startDateFormatted}
             finishDateFormatted={finishDateFormatted}

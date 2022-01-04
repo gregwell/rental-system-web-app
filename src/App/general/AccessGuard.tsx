@@ -2,6 +2,7 @@ import { Alert, AlertTitle, CircularProgress, Container } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import CustomContainer from "./CustomContainer";
 import { useNavigate } from "react-router-dom";
+import {Path} from "../constants/types";
 
 const useStyles = makeStyles({
   progressContainer: {
@@ -23,7 +24,7 @@ const AccessGuard = ({ deny, wait, children }: AccessGuardProps) => {
 
   if (!wait && deny) {
     setTimeout(() => {
-      navigate("/");
+      navigate(Path.home);
     }, 2500);
   }
 

@@ -23,24 +23,26 @@ interface ContactFieldProps {
   companyInfo?: CompanyInfo;
   startDateFormatted: string;
   finishDateFormatted: string;
-  reservation?: Reservation | Rental | null;
+  service?: Reservation | Rental | null;
   item?: Item | null;
   loggedUser?: User | null;
+  rental?: boolean;
 }
 
 const ContactField = ({
   companyInfo,
   startDateFormatted,
   finishDateFormatted,
-  reservation,
+  service,
   item,
   loggedUser,
+  rental,
 }: ContactFieldProps) => {
   const [query, setQuery] = useState<string>("");
   const [querySuccess, setQuerySuccess] = useState<boolean | null>(null);
   const classes = useStyles();
 
-  if (!reservation || !loggedUser || !reservation || !companyInfo) {
+  if (!service || !loggedUser || !service || !companyInfo) {
     return null;
   }
 
@@ -53,11 +55,11 @@ const ContactField = ({
       await emailjs.send("service_s5znq5v", "clientQuery", {
         startDate: startDateFormatted,
         queryText: query,
-        reservationId: reservation?._id,
+        serviceId: service?._id,
         itemFullName: `${item?.producer} ${item?.model} (rozmiar: ${item?.size})`,
         finishDate: finishDateFormatted,
         clientFullName: `${loggedUser?.name} ${loggedUser?.surname}`,
-        clientId: reservation?.userId,
+        clientId: service?.userId,
         companyEmail: companyInfo?.email,
         clientEmail: loggedUser?.email,
       });
@@ -69,13 +71,14 @@ const ContactField = ({
     }
   };
 
+  const alertText = rental ? " tego wypożyczenia" : "tej rezerwacji";
+
   return (
     <>
       <Grid item xs={12}>
         <Alert severity="info">
           <AlertTitle>
-            Na tej stronie możesz wysłać zapytanie e-mail dotyczące tej
-            rezerwacji.
+            {`Na tej stronie możesz wysłać zapytanie e-mail dotyczące ${alertText}.`}
           </AlertTitle>
           {`Pamiętaj, że w nagłych przypadkach możesz skontaktować się z nami pod numerem telefonu ${companyInfo?.phone}`}
         </Alert>
@@ -100,7 +103,7 @@ const ContactField = ({
             <TextField
               multiline
               rows={4}
-              placeholder="Tutaj wpisz treść swojego zapytania do tej rezerwacji..."
+              placeholder="Tutaj wpisz treść swojego zapytania..."
               variant="standard"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
@@ -118,7 +121,6 @@ const ContactField = ({
           </Grid>
         </>
       )}
-      P
     </>
   );
 };

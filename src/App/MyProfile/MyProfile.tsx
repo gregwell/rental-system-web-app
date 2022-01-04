@@ -11,7 +11,7 @@ import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-import { CrudOperation, User, Collection } from "../constants/types";
+import { CrudOperation, User, Collection, Path } from "../constants/types";
 import SingleProfileItem from "./SingleProfileItem";
 import { sendApiRequest } from "../async/sendApiRequest";
 import { encrypt, encryptObject } from "../utils";
@@ -92,7 +92,7 @@ const MyProfile = ({
       const timer = setTimeout(() => {
         setDeleteUserSuccessful(null);
         setLoggedUser(null);
-        navigate("/");
+        navigate(Path.home);
       }, 2500);
       return () => clearTimeout(timer);
     }

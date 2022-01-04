@@ -8,7 +8,7 @@ import BookIcon from "@mui/icons-material/Book";
 import LoginIcon from "@mui/icons-material/Login";
 
 import Auth from "../Auth/Auth";
-import { User } from "../constants/types";
+import { Path, User } from "../constants/types";
 import { useStyles } from "./styles";
 
 interface NavbarProps {
@@ -38,22 +38,22 @@ const Navbar = ({
   const signOut = () => {
     setLoggedUser(null);
     localStorage.setItem("user", "");
-    navigate("/");
+    navigate(Path.home);
   };
 
   const goToReservations = () => {
     setNewReservationSuccess(null);
-    navigate("/services");
+    navigate(Path.services);
   };
 
   const goToHome = () => {
     setNewReservationSuccess(null);
-    navigate("/");
+    navigate(Path.home);
   };
 
   const goToProfile = () => {
     setNewReservationSuccess(null);
-    navigate("/profile");
+    navigate(Path.profile);
   };
 
   useEffect(() => {

@@ -12,6 +12,7 @@ import {
   Rental,
   Price,
   CompanyInfo,
+  Path,
 } from "./constants/types";
 import { sendApiRequest } from "./async/sendApiRequest";
 import MyServices from "./MyServices/MyServices";
@@ -132,7 +133,7 @@ function App() {
       <AccessGuard wait={!apiDataInitialized}>
         <Routes>
           <Route
-            path="/"
+            path={Path.home}
             element={
               <ReservationPanel
                 users={users}
@@ -152,7 +153,7 @@ function App() {
           />
 
           <Route
-            path="/services"
+            path={Path.services}
             element={
               <MyServices
                 reservations={reservations}
@@ -167,7 +168,7 @@ function App() {
           />
 
           <Route
-            path="/profile"
+            path={Path.profile}
             element={
               <MyProfile
                 loggedUser={loggedUser}
@@ -179,7 +180,7 @@ function App() {
           />
 
           <Route
-            path="/reservation/:_id"
+            path={`${Path.singleReservation}/:_id`}
             element={
               <ReservationFocus
                 reservations={reservations}
@@ -193,7 +194,7 @@ function App() {
           />
 
           <Route
-            path="/rental/:_id"
+            path={`${Path.singleRental}/:_id`}
             element={
               <RentalFocus
                 rentals={rentals}
@@ -206,7 +207,7 @@ function App() {
           />
 
           <Route
-            path="/confirmEmail/:token"
+            path={`${Path.confirmEmail}/:token`}
             element={
               <ConfirmEmail
                 setLoggedUser={setLoggedUser}
@@ -217,10 +218,10 @@ function App() {
           />
 
           <Route
-            path="/contact"
+            path={Path.contact}
             element={<Contact companyInfo={companyInfo} />}
           />
-          <Route path="*" element={<NotFound />} />
+          <Route path={Path.notFound} element={<NotFound />} />
         </Routes>
       </AccessGuard>
       <Footer />

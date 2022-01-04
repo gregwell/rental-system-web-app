@@ -113,3 +113,14 @@ export interface CompanyInfo {
 export interface GroupedItems {
   [key: string]: Item[];
 }
+
+export enum Path {
+  home = "/",
+  services = "/services",
+  profile = "/profile",
+  singleReservation = "/reservation",
+  singleRental = "/rental",
+  confirmEmail = "/confirmEmail",
+  contact = "/contact",
+  notFound = "*",
+}

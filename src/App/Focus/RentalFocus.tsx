@@ -5,6 +5,7 @@ import {
   User,
   Status,
   ItemType,
+  Path,
 } from "../constants/types";
 import { makeStyles } from "@mui/styles";
 import { useEffect, useState } from "react";
@@ -94,7 +95,7 @@ const RentalFocus = ({
       const foundRental = rentals?.find((r) => r._id === _id);
 
       if (!foundRental) {
-        navigate("*");
+        navigate(Path.notFound);
         return;
       }
 
@@ -180,8 +181,9 @@ const RentalFocus = ({
           ))}
 
           <ContactField
+            rental
             item={item}
-            reservation={rental}
+            service={rental}
             companyInfo={companyInfo}
             startDateFormatted={startDateFormatted}
             finishDateFormatted={finishDateFormatted}

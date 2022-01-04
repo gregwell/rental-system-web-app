@@ -11,6 +11,7 @@ import {
   ItemPrice,
   CrudOperation,
   Collection,
+  Path,
 } from "../constants/types";
 import { sendApiRequest } from "../async/sendApiRequest";
 import Auth from "../Auth/Auth";
@@ -85,7 +86,7 @@ export const ReservationConfirmation = ({
 
   useEffect(() => {
     if (newReservationSuccess === true) {
-      navigate("/services");
+      navigate(Path.services);
 
       /*
       emailjs.send("service_s5znq5v", "template_wwn9abw", {

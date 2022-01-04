@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
 
 import { formatDate } from "../utils";
-import { Reservation, Item, ItemType, Status } from "../constants/types";
+import { Reservation, Item, ItemType, Status, Path } from "../constants/types";
 import CustomIcon from "../general/CustomIcon";
 import { colors } from "../constants/colors";
 
@@ -70,7 +70,7 @@ const SingleReservation = ({ reservation, item }: SingleReservationProps) => {
   const navigate = useNavigate();
 
   const onClick = () => {
-    navigate(`/reservation/${reservation?._id}`);
+    navigate(`${Path.singleReservation}/${reservation?._id}`);
   };
 
   const makeStylesProps = {
