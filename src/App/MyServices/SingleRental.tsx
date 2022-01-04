@@ -8,6 +8,7 @@ import { Rental, Item, ItemType, Price, Path } from "../constants/types";
 import CustomIcon from "../general/CustomIcon";
 import { colors } from "../constants/colors";
 import { calculateReservationPriceForEachType } from "../ReservationPanel/utils";
+import RentalPriceDisplay from "./RentalPriceDisplay";
 
 const useStyles = makeStyles({
   singlePanel: {
@@ -126,20 +127,7 @@ const SingleRental = ({ rental, item, prices }: SingleReservationProps) => {
                 ></Grid>
               </Grid>
             </Grid>
-            {rental && rental.status === "true" && (
-              <Grid item xs={12} sm={6} md={5} className={classes.lastItem}>
-                <Typography className={classes.reservationText}>
-                  <Typography variant="h5">
-                    {`${priceData?.price} PLN`}
-                  </Typography>
-                  <Typography variant="overline">
-                    {`naliczone do tej pory / za ${priceData?.howMuch} ${
-                      priceData?.isPerDay ? "d." : "godz."
-                    }`}
-                  </Typography>
-                </Typography>
-              </Grid>
-            )}
+            <RentalPriceDisplay priceData={priceData} rental={rental}/>
           </Grid>
         </Container>
       </div>
