@@ -107,6 +107,7 @@ export interface CompanyInfo {
   open?: string;
   close?: string;
   address?: string;
+  percentage?: string;
 }
 
 export interface GroupedItems {

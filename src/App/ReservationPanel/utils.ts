@@ -76,9 +76,20 @@ export const filterOutReservedItems = (
   return filteredItems;
 };
 
-export const groupItems = (items: Item[]): GroupedItems => {
+export const groupItems = ({
+  items,
+  bysize,
+}: {
+  items: Item[] | null;
+  bysize?: boolean;
+}): GroupedItems => {
+  if (!items) {
+    return {} as GroupedItems;
+  }
+
   return items.reduce((acc: GroupedItems, curr: Item) => {
-    const fullName = `${curr.type} ${curr.producer} ${curr.model}`;
+    const basic = `${curr.type} ${curr.producer} ${curr.model}`;
+    const fullName = bysize ? `${basic} ${curr.size}` : basic;
 
     if (acc[fullName]) {
       acc[fullName].push(curr);
@@ -88,6 +99,28 @@ export const groupItems = (items: Item[]): GroupedItems => {
     acc[fullName] = [curr];
     return acc;
   }, {});
+};
+
+export const removeBackupItems = (
+  groupedItems: GroupedItems,
+  percentage: string
+): GroupedItems => {
+  const grouped = JSON.parse(JSON.stringify(groupedItems));
+
+  for (const prop in grouped) {
+    const length = grouped[prop].length;
+    const spliceCount = Math.ceil((length * parseInt(percentage)) / 100);
+
+    if (length === spliceCount) {
+      delete grouped[prop];
+    }
+
+    if (length !== spliceCount) {
+      grouped[prop] = grouped[prop].splice(0, length - spliceCount);
+    }
+  }
+
+  return grouped;
 };
 
 export const calculateReservationPriceForEachType = (

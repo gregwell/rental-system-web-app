@@ -26,6 +26,7 @@ import {
   getPolishName,
   filterOutReservedItems,
   groupItems,
+  removeBackupItems,
 } from "./utils";
 
 const useStyles = makeStyles({
@@ -107,13 +108,27 @@ const ReservationPanel = ({
     );
   }, [prices, startDate, finishDate]);
 
+  console.log(items);
+
+  const itemsLessByPercentage = groupItems({
+    items: items,
+    bysize: true,
+  });
+
+  const itemsWithoutBackups = removeBackupItems(
+    itemsLessByPercentage,
+    companyInfo.percentage as string
+  );
+
+  const itemsWithoutBackupsArray = Object.values(itemsWithoutBackups).flat();
+
   const filteredItems = filterOutReservedItems(
     startDate,
     finishDate,
     reservations,
-    items
+    itemsWithoutBackupsArray
   );
-  const groupedFilteredItems = groupItems(filteredItems);
+  const groupedFilteredItems = groupItems({ items: filteredItems });
 
   const onSearchButtonClick = useCallback(() => {
     setIsShowingReservationForm(false);
@@ -160,7 +175,7 @@ const ReservationPanel = ({
     Object.keys(groupedFilteredItems).length > 0 &&
     !showWrongHoursAlert;
 
-    console.log(groupedFilteredItems);
+  console.log(groupedFilteredItems);
 
   return (
     <>
