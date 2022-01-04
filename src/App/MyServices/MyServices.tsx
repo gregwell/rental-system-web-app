@@ -37,7 +37,7 @@ const useStyles = makeStyles({
   },
 });
 
-interface MyReservationsProps {
+interface MyServicesProps {
   reservations: Reservation[] | null;
   newReservationSuccess: boolean | null;
   loggedUser: User | null | undefined;
@@ -47,7 +47,7 @@ interface MyReservationsProps {
   prices: Price[];
 }
 
-const MyReservations = ({
+const MyServices = ({
   loggedUser,
   reservations,
   newReservationSuccess,
@@ -55,7 +55,7 @@ const MyReservations = ({
   prices,
   rentals,
   apiDataInitialized,
-}: MyReservationsProps) => {
+}: MyServicesProps) => {
   const classes = useStyles();
 
   if (reservations && reservations.length > 0) {
@@ -156,4 +156,4 @@ const MyReservations = ({
   );
 };
 
-export default MyReservations;
+export default MyServices;

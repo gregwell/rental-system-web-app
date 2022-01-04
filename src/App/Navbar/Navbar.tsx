@@ -43,7 +43,7 @@ const Navbar = ({
 
   const goToReservations = () => {
     setNewReservationSuccess(null);
-    navigate("/reservations");
+    navigate("/services");
   };
 
   const goToHome = () => {

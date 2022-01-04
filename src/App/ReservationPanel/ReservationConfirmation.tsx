@@ -85,7 +85,7 @@ export const ReservationConfirmation = ({
 
   useEffect(() => {
     if (newReservationSuccess === true) {
-      navigate("/reservations");
+      navigate("/services");
 
       /*
       emailjs.send("service_s5znq5v", "template_wwn9abw", {

@@ -14,7 +14,7 @@ import {
   CompanyInfo,
 } from "./constants/types";
 import { sendApiRequest } from "./async/sendApiRequest";
-import MyReservations from "./MyReservations/MyReservations";
+import MyServices from "./MyServices/MyServices";
 import MyProfile from "./MyProfile/MyProfile";
 import ReservationFocus from "./Focus/ReservationFocus";
 import RentalFocus from "./Focus/RentalFocus";
@@ -152,9 +152,9 @@ function App() {
           />
 
           <Route
-            path="/reservations"
+            path="/services"
             element={
-              <MyReservations
+              <MyServices
                 reservations={reservations}
                 newReservationSuccess={newReservationSuccess}
                 loggedUser={loggedUser}
@@ -192,7 +192,7 @@ function App() {
             }
           />
 
-            <Route
+          <Route
             path="/rental/:_id"
             element={
               <RentalFocus
