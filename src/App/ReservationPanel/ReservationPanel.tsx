@@ -154,10 +154,21 @@ const ReservationPanel = ({
       finishDate.getHours() < open ||
       finishDate.getHours() >= close);
 
+  const showReturnBeforePickupAlert =
+    startDate &&
+    finishDate &&
+    finishDate.getTime() < startDate.getTime() + 3599999;
+
   const ReservationTimeAlert = () => {
     if (showWrongHoursAlert) {
       return (
         <Alert severity="warning">{`Conajmniej jedna wybrana godzina odbioru/zwrotu znajduje się poza godzinami pracy wypożyczalni (${companyInfo?.open} - ${companyInfo?.close}). Wybierz inne godziny.`}</Alert>
+      );
+    }
+
+    if (showReturnBeforePickupAlert) {
+      return (
+        <Alert severity="warning">{`Wybrane godziny są nieprawidłowe. Minimalny czas wynajmu to jedna godzina.`}</Alert>
       );
     }
 
@@ -173,9 +184,8 @@ const ReservationPanel = ({
   const showAvailableItems =
     !isShowingReservationForm &&
     Object.keys(groupedFilteredItems).length > 0 &&
-    !showWrongHoursAlert;
-
-  console.log(groupedFilteredItems);
+    !showWrongHoursAlert &&
+    !showReturnBeforePickupAlert;
 
   return (
     <>
