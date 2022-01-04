@@ -127,7 +127,9 @@ const SingleRental = ({ rental, item, prices }: SingleReservationProps) => {
                 ></Grid>
               </Grid>
             </Grid>
-            <RentalPriceDisplay priceData={priceData} rental={rental}/>
+            <Grid item xs={12} sm={6} md={5} className={classes.lastItem}>
+              <RentalPriceDisplay priceData={priceData} rental={rental} />
+            </Grid>
           </Grid>
         </Container>
       </div>

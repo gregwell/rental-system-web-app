@@ -12,7 +12,7 @@ const useStyles = makeStyles({
 });
 
 interface RentalPriceDisplayProps {
-  rental?: Rental;
+  rental?: Rental | null;
   priceData?: ItemPrice;
 }
 
@@ -24,16 +24,14 @@ const RentalPriceDisplay = ({ rental, priceData }: RentalPriceDisplayProps) => {
   }
 
   return (
-    <Grid item xs={12} sm={6} md={5} className={classes.lastItem}>
-      <Typography className={classes.reservationText}>
-        <Typography variant="h5">{`${priceData?.price} PLN`}</Typography>
-        <Typography variant="overline">
-          {`naliczone do tej pory / za ${priceData?.howMuch} ${
-            priceData?.isPerDay ? "d." : "godz."
-          }`}
-        </Typography>
+    <Typography className={classes.reservationText}>
+      <Typography variant="h5">{`${priceData?.price} PLN`}</Typography>
+      <Typography variant="overline">
+        {`naliczone do tej pory / za ${priceData?.howMuch} ${
+          priceData?.isPerDay ? "d." : "godz."
+        }`}
       </Typography>
-    </Grid>
+    </Typography>
   );
 };
 

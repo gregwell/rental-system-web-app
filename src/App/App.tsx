@@ -202,6 +202,7 @@ function App() {
                 loggedUser={loggedUser}
                 apiDataInitialized={apiDataInitialized}
                 companyInfo={companyInfo}
+                prices={prices}
               />
             }
           />

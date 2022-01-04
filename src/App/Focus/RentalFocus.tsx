@@ -6,6 +6,7 @@ import {
   Status,
   ItemType,
   Path,
+  Price,
 } from "../constants/types";
 import { makeStyles } from "@mui/styles";
 import { useEffect, useState } from "react";
@@ -17,6 +18,8 @@ import { colors } from "../constants/colors";
 import { Grid, Typography, Button } from "@mui/material";
 import CustomIcon from "../general/CustomIcon";
 import ContactField from "./ContactField";
+import RentalPriceDisplay from "../MyServices/RentalPriceDisplay";
+import { calculateReservationPriceForEachType } from "../ReservationPanel/utils";
 
 const useStyles = makeStyles({
   focus: {
@@ -76,6 +79,7 @@ interface RentalFocusProps {
   loggedUser: User | null | undefined;
   apiDataInitialized: boolean;
   companyInfo?: CompanyInfo;
+  prices: Price[];
 }
 
 const RentalFocus = ({
@@ -84,6 +88,7 @@ const RentalFocus = ({
   loggedUser,
   apiDataInitialized,
   companyInfo,
+  prices,
 }: RentalFocusProps) => {
   const { _id } = useParams();
   const navigate = useNavigate();
@@ -135,6 +140,16 @@ const RentalFocus = ({
     things.push(`Data zwrotu: ${finishDateFormatted}`);
   }
 
+  const priceTable = calculateReservationPriceForEachType(
+    prices,
+    new Date(parseInt(rental?.startDate as string)),
+    new Date(Date.now())
+  );
+
+  const priceData = priceTable?.find(
+    (priceItem) => priceItem.type === item?.type
+  );
+
   return (
     <AccessGuard
       wait={loggedUser === undefined || !rentalPrepared}
@@ -179,6 +194,10 @@ const RentalFocus = ({
               </Typography>
             </Grid>
           ))}
+
+          <Grid item xs={12} className={classes.lastItem}>
+            <RentalPriceDisplay priceData={priceData} rental={rental} />
+          </Grid>
 
           <ContactField
             rental
