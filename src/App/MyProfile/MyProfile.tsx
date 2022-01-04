@@ -15,7 +15,7 @@ import { CrudOperation, User, Collection } from "../constants/types";
 import SingleProfileItem from "./SingleProfileItem";
 import { sendApiRequest } from "../async/sendApiRequest";
 import { encrypt, encryptObject } from "../utils";
-import AccessGuard from "../reusable/AccessGuard";
+import AccessGuard from "../general/AccessGuard";
 
 const useStyles = makeStyles({
   panel: {

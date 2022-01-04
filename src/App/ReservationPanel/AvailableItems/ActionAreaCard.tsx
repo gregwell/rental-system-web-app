@@ -1,7 +1,7 @@
 import { Typography, Grid, Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
-import CustomIcon from "../../reusable/CustomIcon";
+import CustomIcon from "../../general/CustomIcon";
 import { ItemPrice, ItemType, Item } from "../../constants/types";
 
 const useStyles = makeStyles({

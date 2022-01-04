@@ -22,7 +22,7 @@ import { decryptObject, encryptObject } from "./utils";
 import { init } from "@emailjs/browser";
 import Footer from "./Footer";
 import Contact from "./Contact";
-import AccessGuard from "./reusable/AccessGuard";
+import AccessGuard from "./general/AccessGuard";
 import ConfirmEmail from "./ConfirmEmail";
 
 init(process.env.REACT_APP_EMAILJS as string);

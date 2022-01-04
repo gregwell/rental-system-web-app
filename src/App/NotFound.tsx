@@ -1,4 +1,4 @@
-import CustomContainer from "./reusable/CustomContainer";
+import CustomContainer from "./general/CustomContainer";
 import { Alert, AlertTitle } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 

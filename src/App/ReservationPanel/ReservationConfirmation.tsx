@@ -14,11 +14,11 @@ import {
 } from "../constants/types";
 import { sendApiRequest } from "../async/sendApiRequest";
 import Auth from "../Auth/Auth";
-import CustomIcon from "../reusable/CustomIcon";
+import CustomIcon from "../general/CustomIcon";
 import emailjs from "@emailjs/browser";
 import { formatDate } from "../utils";
 import { getPolishName } from "./utils";
-import CustomContainer from "../reusable/CustomContainer";
+import CustomContainer from "../general/CustomContainer";
 
 const useStyles = makeStyles({
   root: {

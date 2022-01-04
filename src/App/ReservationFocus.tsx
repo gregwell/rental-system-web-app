@@ -19,12 +19,12 @@ import {
 import emailjs from "@emailjs/browser";
 import { makeStyles } from "@mui/styles";
 import { useParams, useNavigate } from "react-router-dom";
-import CustomContainer from "./reusable/CustomContainer";
-import CustomIcon from "./reusable/CustomIcon";
+import CustomContainer from "./general/CustomContainer";
+import CustomIcon from "./general/CustomIcon";
 import { formatDate } from "./utils";
 import { colors } from "./constants/colors";
 import { useState, useEffect } from "react";
-import AccessGuard from "./reusable/AccessGuard";
+import AccessGuard from "./general/AccessGuard";
 import { sendApiRequest } from "./async/sendApiRequest";
 
 const useStyles = makeStyles({

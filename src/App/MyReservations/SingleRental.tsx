@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import { formatDate } from "../utils";
 import { Rental, Item, ItemType, Price } from "../constants/types";
-import CustomIcon from "../reusable/CustomIcon";
+import CustomIcon from "../general/CustomIcon";
 import { colors } from "../constants/colors";
 import { calculateReservationPriceForEachType } from "../ReservationPanel/utils";
 
