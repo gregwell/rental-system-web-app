@@ -1,11 +1,4 @@
-import {
-  Typography,
-  Grid,
-  Button,
-  TextField,
-  Alert,
-  AlertTitle,
-} from "@mui/material";
+import { Typography, Grid, Button } from "@mui/material";
 import {
   Reservation,
   Item,
@@ -15,17 +8,18 @@ import {
   Collection,
   CrudOperation,
   CompanyInfo,
-} from "./constants/types";
-import emailjs from "@emailjs/browser";
+} from "../constants/types";
+
 import { makeStyles } from "@mui/styles";
 import { useParams, useNavigate } from "react-router-dom";
-import CustomContainer from "./general/CustomContainer";
-import CustomIcon from "./general/CustomIcon";
-import { formatDate } from "./utils";
-import { colors } from "./constants/colors";
+import CustomContainer from "../general/CustomContainer";
+import CustomIcon from "../general/CustomIcon";
+import { formatDate } from "../utils";
+import { colors } from "../constants/colors";
 import { useState, useEffect } from "react";
-import AccessGuard from "./general/AccessGuard";
-import { sendApiRequest } from "./async/sendApiRequest";
+import AccessGuard from "../general/AccessGuard";
+import { sendApiRequest } from "../async/sendApiRequest";
+import ContactField from "./ContactField";
 
 const useStyles = makeStyles({
   focus: {
@@ -84,12 +78,6 @@ const useStyles = makeStyles({
   alert: {
     textAlign: "left",
   },
-  textField: {
-    width: "100%",
-    backgroundColor: "white",
-    borderRadius: "10px",
-    marginLeft: "10px",
-  },
 });
 
 interface ReservationFocusProps {
@@ -111,9 +99,6 @@ export const ReservationFocus = ({
 }: ReservationFocusProps) => {
   const { _id } = useParams();
   const navigate = useNavigate();
-
-  const [query, setQuery] = useState<string>("");
-  const [querySuccess, setQuerySuccess] = useState<boolean | null>(null);
 
   const [updateDataSuccesful, setUpdateDataSuccesful] = useState<
     boolean | null
@@ -223,30 +208,12 @@ export const ReservationFocus = ({
     setReservations(updatedReservations);
   };
 
-  const handleEmailSend = async () => {
-    if (!companyInfo) {
-      return;
-    }
-
-    try {
-      await emailjs.send("service_s5znq5v", "clientQuery", {
-        startDate: startDateFormatted,
-        queryText: query,
-        reservationId: reservation?._id,
-        itemFullName: `${item?.producer} ${item?.model} (rozmiar: ${item?.size})`,
-        finishDate: finishDateFormatted,
-        clientFullName: `${loggedUser?.name} ${loggedUser?.surname}`,
-        clientId: reservation?.userId,
-        companyEmail: companyInfo?.email,
-        clientEmail: loggedUser?.email,
-      });
-      console.log("success");
-      setQuerySuccess(true);
-    } catch (error) {
-      console.log("failed");
-      setQuerySuccess(false);
-    }
-  };
+  const things = [
+    `Data odbioru: ${startDateFormatted}`,
+    `Data zwrotu: ${finishDateFormatted}`,
+    `Cena: ${reservation?.price as string} zł`,
+    `Status: ${reservation?.status}`,
+  ];
 
   return (
     <AccessGuard
@@ -275,26 +242,22 @@ export const ReservationFocus = ({
               {item && `Rozmiar: ${item.size}`}
             </Typography>
           </Grid>
-          <Grid item xs={12} sm={6} md={12}>
-            <Typography variant="h5" className={classes.reservationText}>
-              {`Data odbioru: ${startDateFormatted}`}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6} md={12}>
-            <Typography variant="h5" className={classes.reservationText}>
-              {`Data zwrotu: ${finishDateFormatted}`}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6} md={12}>
-            <Typography variant="h5" className={classes.reservationText}>
-              {`Cena: ${reservation?.price as string} zł`}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6} md={12} className={classes.reservationText}>
-            <Typography variant="h5" className={classes.reservationText}>
-              {`Status: ${reservation?.status}`}
-            </Typography>
-          </Grid>
+
+          {things.map((thing) => (
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={12}
+              className={classes.reservationText}
+              key={thing}
+            >
+              <Typography variant="h5" className={classes.reservationText}>
+                {thing}
+              </Typography>
+            </Grid>
+          ))}
+
           <Grid item xs={12} sm={6} md={12}>
             {reservation?.status !== Status.cancelled &&
               parseInt(reservation?.startDate as string) > Date.now() && (
@@ -307,53 +270,14 @@ export const ReservationFocus = ({
                 </Button>
               )}
           </Grid>
-          <Grid item xs={12}>
-            <Alert severity="info">
-              <AlertTitle>
-                Na tej stronie możesz wysłać zapytanie e-mail dotyczące tej
-                rezerwacji.
-              </AlertTitle>
-              {`Pamiętaj, że w nagłych przypadkach możesz skontaktować się z nami pod numerem telefonu ${companyInfo?.phone}`}
-            </Alert>
-          </Grid>
-          {querySuccess !== null ? (
-            <Grid item xs={12}>
-              {querySuccess === true ? (
-                <Alert severity="success">
-                  <AlertTitle>Zapytanie zostało wysłane.</AlertTitle>Odpowiedź
-                  dostaniesz na email zarejestrowany w serwisie.
-                </Alert>
-              ) : (
-                <Alert severity="error">
-                  <AlertTitle>Wystąpił błąd!</AlertTitle>
-                  {`Skontakuj się z wypożyczalnią pod numerem telefonu ${companyInfo?.phone} aby uzyskać informacje.`}
-                </Alert>
-              )}
-            </Grid>
-          ) : (
-            <>
-              <Grid item xs={12} sm={6} md={12}>
-                <TextField
-                  multiline
-                  rows={4}
-                  placeholder="Tutaj wpisz treść swojego zapytania do tej rezerwacji..."
-                  variant="standard"
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  className={classes.textField}
-                />
-              </Grid>
-              <Grid item>
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={handleEmailSend}
-                >
-                  Wyślij zapytanie
-                </Button>
-              </Grid>
-            </>
-          )}
+          <ContactField
+            item={item}
+            reservation={reservation}
+            companyInfo={companyInfo}
+            startDateFormatted={startDateFormatted}
+            finishDateFormatted={finishDateFormatted}
+            loggedUser={loggedUser}
+          />
         </Grid>
       </CustomContainer>
     </AccessGuard>

@@ -16,7 +16,8 @@ import {
 import { sendApiRequest } from "./async/sendApiRequest";
 import MyReservations from "./MyReservations/MyReservations";
 import MyProfile from "./MyProfile/MyProfile";
-import ReservationFocus from "./ReservationFocus";
+import ReservationFocus from "./Focus/ReservationFocus";
+import RentalFocus from "./Focus/RentalFocus";
 import NotFound from "./NotFound";
 import { decryptObject, encryptObject } from "./utils";
 import { init } from "@emailjs/browser";
@@ -149,6 +150,7 @@ function App() {
               />
             }
           />
+
           <Route
             path="/reservations"
             element={
@@ -163,6 +165,7 @@ function App() {
               />
             }
           />
+
           <Route
             path="/profile"
             element={
@@ -174,6 +177,7 @@ function App() {
               />
             }
           />
+
           <Route
             path="/reservation/:_id"
             element={
@@ -187,6 +191,20 @@ function App() {
               />
             }
           />
+
+            <Route
+            path="/rental/:_id"
+            element={
+              <RentalFocus
+                rentals={rentals}
+                items={items}
+                loggedUser={loggedUser}
+                apiDataInitialized={apiDataInitialized}
+                companyInfo={companyInfo}
+              />
+            }
+          />
+
           <Route
             path="/confirmEmail/:token"
             element={
@@ -197,6 +215,7 @@ function App() {
               />
             }
           />
+
           <Route
             path="/contact"
             element={<Contact companyInfo={companyInfo} />}
