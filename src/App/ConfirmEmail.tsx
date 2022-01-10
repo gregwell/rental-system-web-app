@@ -4,7 +4,7 @@ import { sendApiRequest } from "./async/sendApiRequest";
 import AccessGuard from "./general/AccessGuard";
 import CustomContainer from "./general/CustomContainer";
 import { Collection, CrudOperation, User } from "./constants/types";
-import { decrypt, decryptObject } from "./utils";
+import { decrypt, decryptObject, decryptLong } from "./utils";
 import { Alert, AlertTitle } from "@mui/material";
 
 interface ConfirmEmailProps {
@@ -30,7 +30,7 @@ const ConfirmEmail = ({
 
     const createUser = async () => {
       const changedChars = token?.replace(/temporarySolution/g, "/");
-      const decryptedToken = decrypt(changedChars);
+      const decryptedToken = decryptLong(changedChars);
       const parsedObj = JSON.parse(decryptedToken);
 
       if (

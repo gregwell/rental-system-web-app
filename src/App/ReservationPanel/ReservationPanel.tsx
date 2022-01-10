@@ -66,7 +66,6 @@ interface ReservationPanelProps {
   newReservationSuccess: boolean | null;
   setReservations: React.Dispatch<React.SetStateAction<Reservation[]>>;
   companyInfo: CompanyInfo;
-  apiDataInitialized: boolean;
   prices: Price[];
 }
 
@@ -82,7 +81,6 @@ const ReservationPanel = ({
   items,
   prices,
   companyInfo,
-  apiDataInitialized,
 }: ReservationPanelProps) => {
   const classes = useStyles();
 

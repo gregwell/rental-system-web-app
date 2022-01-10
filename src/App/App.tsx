@@ -20,7 +20,7 @@ import MyProfile from "./MyProfile/MyProfile";
 import ReservationFocus from "./Focus/ReservationFocus";
 import RentalFocus from "./Focus/RentalFocus";
 import NotFound from "./NotFound";
-import { decryptObject, encryptObject } from "./utils";
+import { decryptObject, encrypt, encryptObject } from "./utils";
 import { init } from "@emailjs/browser";
 import Footer from "./Footer";
 import Contact from "./Contact";
@@ -121,6 +121,8 @@ function App() {
     }
   }, [apiDataInitialized]);
 
+  console.log(encrypt("admin"));
+
   return (
     <Router>
       <Navbar
@@ -146,7 +148,6 @@ function App() {
                 setReservations={setReservations}
                 items={items}
                 companyInfo={companyInfo}
-                apiDataInitialized={apiDataInitialized}
                 prices={prices}
               />
             }

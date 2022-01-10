@@ -1,6 +1,7 @@
+import CryptoJS from "crypto-js";
 import crypto from "crypto-js";
 
-export const encrypt = (str: string | undefined): string => {
+export const encryptLong = (str: string | undefined): string => {
   if (str === "" || str === undefined) {
     return "";
   }
@@ -13,7 +14,7 @@ export const encrypt = (str: string | undefined): string => {
   return encrypted;
 };
 
-export const decrypt = (encryptedText: string | undefined): string => {
+export const decryptLong = (encryptedText: string | undefined): string => {
   if (encryptedText === undefined || encryptedText === "") {
     return "";
   }
@@ -24,6 +25,62 @@ export const decrypt = (encryptedText: string | undefined): string => {
   ).toString(crypto.enc.Utf8);
 
   return decrypted;
+};
+
+const generateKey = (salt: string) => {
+  const passPhrase = process.env.REACT_APP_HASH_KEY as string;
+  console.log(passPhrase);
+
+  var key = CryptoJS.PBKDF2(passPhrase, CryptoJS.enc.Hex.parse(salt), {
+    keySize: 4,
+    iterations: 1000,
+  });
+  return key;
+};
+
+export const encrypt = (str: string | undefined): string => {
+  if (str === "" || str === undefined) {
+    return "";
+  }
+
+  const salt = process.env.REACT_APP_KRYPTOGRAPHIC_KEY as string;
+  const iv = CryptoJS.lib.WordArray.random(128 / 8).toString(CryptoJS.enc.Hex);
+
+  const encrypted = CryptoJS.AES.encrypt(str, generateKey(salt), {
+    iv: CryptoJS.enc.Hex.parse(iv),
+  });
+  const base64 = encrypted.ciphertext.toString(CryptoJS.enc.Base64);
+  const result = salt + base64.substring(0, base64.length - 2) + iv;
+
+  return result;
+};
+
+export const decrypt = (encryptedText: string | undefined): string => {
+  if (encryptedText === undefined || encryptedText === "") {
+    return "";
+  }
+
+  const salt = process.env.REACT_APP_KRYPTOGRAPHIC_KEY as string;
+  const iv = encryptedText.substring(
+    encryptedText.length - 32,
+    encryptedText.length
+  );
+  const cipherParams = CryptoJS.lib.CipherParams.create({
+    ciphertext: CryptoJS.enc.Base64.parse(
+      encryptedText.substring(32, encryptedText.length - 32) + "=="
+    ),
+  });
+
+  const decrypted = CryptoJS.AES.decrypt(cipherParams, generateKey(salt), {
+    iv: CryptoJS.enc.Hex.parse(iv),
+  });
+
+  console.log(decrypted.toString(CryptoJS.enc.Utf8));
+
+  const temp = decrypted.toString(CryptoJS.enc.Utf8);
+  console.log(temp);
+
+  return temp;
 };
 
 export const encryptObject = (object: any): any =>

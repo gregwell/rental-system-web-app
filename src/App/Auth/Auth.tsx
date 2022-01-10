@@ -30,7 +30,7 @@ import {
   decryptObject,
   formatCode,
   removeDashes,
-  encrypt,
+  encryptLong,
 } from "../utils";
 import { alerts, alertTitles, buttonLabels, sectionLabels } from "./constants";
 import FormField from "./FormField";
@@ -220,11 +220,13 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
       return;
     }
 
+    const googleId: string = res?.googleId ? res.googleId.slice(0, 14) : "";
+
     const userFound: User | undefined = users?.find((user) => {
       return (
         user?.googleId &&
         user?.googleId.length > 0 &&
-        decrypt(user?.googleId) === res?.googleId
+        decrypt(user?.googleId) === googleId
       );
     });
 
@@ -236,7 +238,7 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
     }
 
     if (!userFound) {
-      setGoogleId(res.googleId);
+      setGoogleId(googleId);
 
       const updatedUser = user;
       updatedUser.email = res.profileObj?.email;
@@ -276,7 +278,7 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
 
     setUser(userFound);
     setShowCodeRegisterForm(true);
-
+    
   }, [codeInput, user, users]);
 
   const handleCodeRegister = async () => {
@@ -293,6 +295,8 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
       password: user.password,
       idCard: user.idCard,
     };
+
+    console.log(postBody);
 
     const updated: User = encryptObject(postBody);
 
@@ -335,7 +339,7 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
 
       setRandomEmailCode(code);
 
-      const link = `http://localhost:3000${Path.confirmEmail}/${encrypt(
+      const link = `http://localhost:3000${Path.confirmEmail}/${encryptLong(
         JSON.stringify(
           encryptObject({
             name: user.name,
