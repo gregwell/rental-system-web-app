@@ -14,12 +14,14 @@ interface SingleProfileItemProps {
   caption: string;
   value: string;
   setValue: (val: string) => void;
+  disabled?: boolean;
 }
 
 export const SingleProfileItem = ({
   value,
   caption,
   setValue,
+  disabled,
 }: SingleProfileItemProps) => {
   const classes = useStyles();
 
@@ -32,6 +34,7 @@ export const SingleProfileItem = ({
       </Grid>
       <Grid item xs={8}>
         <TextField
+          disabled={disabled ? disabled : false}
           value={value}
           className={classes.textField}
           onChange={(event) => setValue(event.target.value)}

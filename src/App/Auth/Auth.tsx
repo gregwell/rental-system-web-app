@@ -276,6 +276,7 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
 
     setUser(userFound);
     setShowCodeRegisterForm(true);
+
   }, [codeInput, user, users]);
 
   const handleCodeRegister = async () => {
@@ -541,7 +542,7 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
               <Grid item xs={12} sm={12} md={12}>
                 <Typography>{sectionLabels.firstGoogleLogin}</Typography>
               </Grid>
-              <FormField field="email" setUser={setUser} user={user} />
+              <FormField field="email" disabled setUser={setUser} user={user} />
               <FormField field="name" setUser={setUser} user={user} />
               <FormField field="surname" setUser={setUser} user={user} />
               <FormField field="phone" setUser={setUser} user={user} />

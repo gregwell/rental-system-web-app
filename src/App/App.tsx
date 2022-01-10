@@ -75,7 +75,7 @@ function App() {
   }, [loggedUser]);
 
   useEffect(() => {
-    if (companyInfo.title) {
+    if (companyInfo?.title) {
       localStorage.setItem("title", companyInfo.title);
     }
   }, [companyInfo.title]);

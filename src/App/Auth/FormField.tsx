@@ -7,6 +7,7 @@ interface FormFieldProps {
   user: AuthFormFields;
   setUser: (value: React.SetStateAction<AuthFormFields>) => void;
   narrow?: boolean;
+  disabled?: boolean;
 }
 
 const FormField = ({
@@ -14,10 +15,12 @@ const FormField = ({
   user,
   setUser,
   narrow,
+  disabled,
 }: FormFieldProps) => {
   return (
     <Grid item xs={12} md={narrow ? (6 as GridSize) : (12 as GridSize)}>
       <TextField
+        disabled={disabled ? true : false}
         label={getFormFieldName(field)}
         variant="outlined"
         fullWidth

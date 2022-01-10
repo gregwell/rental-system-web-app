@@ -76,6 +76,7 @@ export async function sendApiRequest({
       : response.data.documents;
   } catch (error) {
     console.log(error);
+
     if (setState) {
       setState(false);
     }
