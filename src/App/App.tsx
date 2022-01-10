@@ -20,7 +20,7 @@ import MyProfile from "./MyProfile/MyProfile";
 import ReservationFocus from "./Focus/ReservationFocus";
 import RentalFocus from "./Focus/RentalFocus";
 import NotFound from "./NotFound";
-import { decryptObject, encrypt, encryptObject } from "./utils";
+import { decryptObject, encryptObject } from "./utils";
 import { init } from "@emailjs/browser";
 import Footer from "./Footer";
 import Contact from "./Contact";
@@ -120,8 +120,6 @@ function App() {
       prepareApiData();
     }
   }, [apiDataInitialized]);
-
-  console.log(encrypt("admin"));
 
   return (
     <Router>

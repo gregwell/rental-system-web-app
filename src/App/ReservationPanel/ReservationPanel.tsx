@@ -106,8 +106,6 @@ const ReservationPanel = ({
     );
   }, [prices, startDate, finishDate]);
 
-  console.log(items);
-
   const itemsLessByPercentage = groupItems({
     items: items,
     bysize: true,

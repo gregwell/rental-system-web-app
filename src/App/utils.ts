@@ -29,7 +29,6 @@ export const decryptLong = (encryptedText: string | undefined): string => {
 
 const generateKey = (salt: string) => {
   const passPhrase = process.env.REACT_APP_HASH_KEY as string;
-  console.log(passPhrase);
 
   var key = CryptoJS.PBKDF2(passPhrase, CryptoJS.enc.Hex.parse(salt), {
     keySize: 4,
@@ -75,12 +74,9 @@ export const decrypt = (encryptedText: string | undefined): string => {
     iv: CryptoJS.enc.Hex.parse(iv),
   });
 
-  console.log(decrypted.toString(CryptoJS.enc.Utf8));
+  const result = decrypted.toString(CryptoJS.enc.Utf8);
 
-  const temp = decrypted.toString(CryptoJS.enc.Utf8);
-  console.log(temp);
-
-  return temp;
+  return result;
 };
 
 export const encryptObject = (object: any): any =>

@@ -278,7 +278,6 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
 
     setUser(userFound);
     setShowCodeRegisterForm(true);
-    
   }, [codeInput, user, users]);
 
   const handleCodeRegister = async () => {
@@ -295,8 +294,6 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
       password: user.password,
       idCard: user.idCard,
     };
-
-    console.log(postBody);
 
     const updated: User = encryptObject(postBody);
 
@@ -352,14 +349,21 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
           })
         )
       ).replace(/\//g, "temporarySolution")}`;
-      console.log(link);
+
+      //functionality turned off, to do not run off of send email count limit
+      //to get an email into email agent, uncomment
+
       /*
       await emailjs.send("service_s5znq5v", "confirmEmail", {
         code: code,
         enteredEmail: user.email,
         link: link,
       });
-*/
+      */
+
+      //now , the email confirmation is possible by clicking the link logged to the browser console
+      console.log(link);
+
       setEmailSent(true);
     } catch (error) {
       console.log("could not send email");
