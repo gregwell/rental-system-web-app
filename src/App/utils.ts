@@ -8,7 +8,7 @@ export const encryptLong = (str: string | undefined): string => {
 
   const encrypted = crypto.AES.encrypt(
     str,
-    process.env.REACT_APP_HASH_KEY as string
+    "password"
   ).toString();
 
   return encrypted;
@@ -21,7 +21,7 @@ export const decryptLong = (encryptedText: string | undefined): string => {
 
   const decrypted = crypto.AES.decrypt(
     encryptedText,
-    process.env.REACT_APP_HASH_KEY as string
+    "password"
   ).toString(crypto.enc.Utf8);
 
   return decrypted;
@@ -60,10 +60,12 @@ export const decrypt = (encryptedText: string | undefined): string => {
   }
 
   const salt = process.env.REACT_APP_KRYPTOGRAPHIC_KEY as string;
+
   const iv = encryptedText.substring(
     encryptedText.length - 32,
     encryptedText.length
   );
+
   const cipherParams = CryptoJS.lib.CipherParams.create({
     ciphertext: CryptoJS.enc.Base64.parse(
       encryptedText.substring(32, encryptedText.length - 32) + "=="

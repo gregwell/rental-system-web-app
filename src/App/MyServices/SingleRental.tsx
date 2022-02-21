@@ -61,8 +61,6 @@ interface SingleReservationProps {
 
 const SingleRental = ({ rental, item, prices }: SingleReservationProps) => {
   const startDateFormatted = formatDate(rental?.startDate);
-  const finishDateFormatted =
-    rental?.finishDate !== "" ? formatDate(rental?.finishDate) : "";
 
   const navigate = useNavigate();
 
@@ -73,10 +71,6 @@ const SingleRental = ({ rental, item, prices }: SingleReservationProps) => {
   const makeStylesProps = {
     isArchived: rental?.status !== "true",
   };
-
-  console.log(prices);
-  console.log(new Date(parseInt(rental.startDate)));
-  console.log(new Date(Date.now()));
 
   const priceTable = calculateReservationPriceForEachType(
     prices,
