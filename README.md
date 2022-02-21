@@ -1,9 +1,22 @@
-to be updated
-
 to do:
 
 - implement some global state management system like redux to tidy up the code
 - clean up spaghetti code
+
+## Tech stack: ## 
+
+- HTML5
+- TypeScript
+- React
+- CSS (CSS-in-JS)
+- Material-ui
+- React Router
+- EmailJS
+- Google OAuth Authentication
+- Axios
+- npm
+- Jest
+- CryptoJS
 
 ## Screenshots:
 
