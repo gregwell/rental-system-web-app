@@ -20,7 +20,11 @@ to do:
 
 ## Screenshots:
 
+- mobile:
 ![responsible](/readme_images/responsible.png "Responsible screenshots")
+
+- desktop: 
+
 ![responsible](/readme_images/overview.png "Responsible screenshots")
 ![responsible](/readme_images/reservations.png "Responsible screenshots")
 ![responsible](/readme_images/reservation.png "Responsible screenshots")
