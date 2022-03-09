@@ -11,6 +11,7 @@ The theoretical side was described in [this document](/projekt-dyplomowy.pdf). T
 - HTML5
 - TypeScript
 - React
+- MongoDB Atlas
 - CSS (CSS-in-JS)
 - Material-ui
 - React Router
