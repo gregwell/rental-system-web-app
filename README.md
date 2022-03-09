@@ -1,12 +1,7 @@
-## Description: 
+## Description:
 
 Engineering project. Grade: 5.0
 Implementation of the rental management system created in a team of two. I was responsible for the client side (web application created in TypeScript, React) and my collegue was responsible for the employee side (desktop application written in Java). Beyond the implementation, we were both responsible for the design of the system (compare existing solutions, set the requirements for our system..)
-
-## Possible improvements:
-
-- implement some global state management system like redux to tidy up the code
-- clean up spaghetti code
 
 ## Tech stack:
 
@@ -38,3 +33,8 @@ Implementation of the rental management system created in a team of two. I was r
 ![responsible](/readme_images/google-login.png "Responsible screenshots")
 ![responsible](/readme_images/email-verification.png "Responsible screenshots")
 ![responsible](/readme_images/email-requests.png "Responsible screenshots")
+
+## Possible improvements:
+
+- implement some global state management system like redux to tidy up the code
+- clean up spaghetti code
