@@ -1,7 +1,10 @@
 ## Description:
 
-Engineering project. Grade: 5.0
 Implementation of the rental management system created in a team of two. I was responsible for the client side (web application created in TypeScript, React) and my collegue was responsible for the employee side (desktop application written in Java). Beyond the implementation, we were both responsible for the design of the system (compare existing solutions, set the requirements for our system..)
+
+## Engineering thesis:
+
+The theoretical side was described in [this document](/projekt-dyplomowy.pdf). The text was written in Polish language(!).
 
 ## Tech stack:
 
