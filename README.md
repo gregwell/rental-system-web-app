@@ -4,7 +4,7 @@ Implementation of the rental management system created in a team of two. I was r
 
 ## Engineering thesis:
 
-The theoretical side was described in [this document](/projekt-dyplomowy.pdf). The text was written in Polish language(!).
+The theoretical side was described in [our engineering thesis](/projekt-dyplomowy.pdf). The document language is Polish.
 
 ## Tech stack:
 
