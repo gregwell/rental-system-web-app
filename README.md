@@ -25,7 +25,8 @@ The theoretical side was described in [our engineering thesis](/projekt-dyplomow
 ## Screenshots:
 
 - mobile:
-  ![responsible](/readme_images/responsible.png "Responsible screenshots")
+
+![responsible](/readme_images/responsible.png "Responsible screenshots")
 
 - desktop:
 
