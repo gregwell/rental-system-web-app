@@ -1,6 +1,6 @@
 ## Description:
 
-Implementation of the rental management system created in a team of two. I was responsible for the client side (web application created in TypeScript, React) and my collegue was responsible for the employee side (desktop application written in Java). Beyond the implementation, we were both responsible for the design of the system (compare existing solutions, set the requirements for our system..)
+Implementation of the rental management system created in a team of two. I was responsible for the client side (web application created in TypeScript, React - this repo) and my collegue was responsible for the employee side (desktop application written in Java). Beyond the implementation, we were both responsible for the design of the system (compare existing solutions, set the requirements for our system..)
 
 ## Engineering thesis:
 
