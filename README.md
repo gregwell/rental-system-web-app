@@ -8,10 +8,10 @@ The theoretical side was described in [our engineering thesis](/projekt-dyplomow
 
 ## Tech stack:
 
-- HTML5
-- TypeScript
-- React
+- **TypeScript**
+- **React**
 - MongoDB Atlas
+- HTML5
 - CSS (CSS-in-JS)
 - Material-ui
 - React Router
