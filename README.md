@@ -1,12 +1,12 @@
 ## Description:
 
-A web application that allows booking equipment for rental, managing reservations and current rentals made on-site. Along with the desktop application forms one coherent system.
+A web application that allows booking equipment for rental, managing reservations and current rentals made on-site. Along with the desktop application forms one coherent **rental management system**.
 
 ![responsible](/readme_images/responsible.png "Responsible mobile screenshot")
 
 ## Division of responsibilities:
 
-Implementation of the rental management system created in a team of two. I was responsible for the client side (web application created in TypeScript, React - this repo) and my collegue was responsible for the employee side (desktop application written in Java). Beyond the implementation, we were both responsible for the design of the system (compare existing solutions, set the requirements for our system..)
+Implementation of the **rental management system** created in a team of two. I was responsible for the client side (web application created in TypeScript, React - this repo) and my collegue was responsible for the employee side (desktop application written in Java). Beyond the implementation, we were both responsible for the design of the system (compare existing solutions, set the requirements for our system..)
 
 ## The paper:
 
@@ -30,7 +30,7 @@ Theoretical background was described in our [engineering thesis](/engineering-th
 
 ## Functional requirements - web app
 
-Authentication:
+### Authentication:
 
 1. Customer registration via e-mail, including confirmation of email correctness by
 entering the code sent to the mailbox, as well as through a hyperlink in the message received.
@@ -41,7 +41,7 @@ entering the code sent to the mailbox, as well as through a hyperlink in the mes
 
 4. Customer login to an account created in any way, including SSO.
 
-The customer can:
+### The customer can:
 
 5. Edit his personal data.
 
@@ -63,7 +63,7 @@ The customer can:
 
 14. View contact details for the rental company, updated in real time from the desktop application.
 
-General:
+### General:
 
 14. Maintain the user session even after closing the browser. Logging out takes place only after pressing the Logout button.
 
