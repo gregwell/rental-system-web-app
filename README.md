@@ -4,17 +4,15 @@ A web application that allows booking equipment for rental, managing reservation
 
 ![responsible](/readme_images/responsible.png "Responsible mobile screenshot")
 
-## Division of responsibilities:
+## Rental management system
 
-Implementation of the **rental management system** created in a team of two. I was responsible for the client side (web application created in TypeScript, React - this repo) and my collegue was responsible for the employee side (desktop application written in Java). Beyond the implementation, we were both responsible for the design of the system (compare existing solutions, set the requirements for our system..)
+Project created in a team of two. I was responsible for the client side (web application created in TypeScript, React - this repo) and my collegue was responsible for the employee side (desktop application written in Java). Beyond the implementation, we were both responsible for the design of the system (compare existing solutions, set the requirements for our system..)
 
-### Simpliefied system design scheme:
+Theoretical background was described in our [engineering thesis](/engineering-thesis.pdf). The paper was written and defended at AGH University of Science and Technology in January 2022 with a grade of 5.0.
 
 ![uml diagram](/readme_images/uml-diagram.png "UML diagram")
 
-## The paper:
 
-Theoretical background was described in our [engineering thesis](/engineering-thesis.pdf). The paper was written and defended at AGH University of Science and Technology in January 2022 with a grade of 5.0.
 
 ## Tech stack:
 
@@ -32,7 +30,7 @@ Theoretical background was described in our [engineering thesis](/engineering-th
 - Jest
 - CryptoJS
 
-## Functional requirements - web app
+## Functional requirements
 
 ### Authentication:
 
