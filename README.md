@@ -12,10 +12,6 @@ Implementation of the rental management system created in a team of two. I was r
 
 Theoretical background was described in our [engineering thesis](/engineering-thesis.pdf). The paper was written and defended at AGH University of Science and Technology in January 2022 with a grade of 5.0.
 
-## Simplified system design scheme:
-
-![uml](/readme_images/uml-diagram.png "UML Diagram")
-
 ## Tech stack:
 
 - **TypeScript**
