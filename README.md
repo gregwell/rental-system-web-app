@@ -12,7 +12,7 @@ Theoretical background was described in our [engineering thesis](/engineering-th
 
 ![uml diagram](/readme_images/uml-diagram.png "UML diagram")
 
-
+*Simplified system design*
 
 ## Tech stack:
 
