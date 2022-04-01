@@ -10,9 +10,9 @@ Project created in a team of two. I was responsible for the client side (web app
 
 Theoretical background was described in our [engineering thesis](/engineering-thesis.pdf). The paper was written and defended at AGH University of Science and Technology in January 2022 with a grade of 5.0.
 
-![uml diagram](/readme_images/uml-diagram.png "UML diagram")
+Simplified system design:
 
-*Simplified system design*
+![uml diagram](/readme_images/uml-diagram.png "UML diagram")
 
 ## Tech stack:
 
