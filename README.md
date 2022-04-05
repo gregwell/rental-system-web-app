@@ -89,3 +89,4 @@ entering the code sent to the mailbox, as well as through a hyperlink in the mes
 - implement some global state management system like redux to tidy up the code
 - clean up spaghetti code
 - hash passwords instead of encrypting them (?)
+- wrap up multiple Promises into one Promise.all (?)
