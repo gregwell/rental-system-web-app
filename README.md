@@ -76,13 +76,14 @@ entering the code sent to the mailbox, as well as through a hyperlink in the mes
 ## Screenshots:
 
 ![responsible](/readme_images/reservations.png "Responsible screenshots")
+![responsible](/readme_images/google-login.png "Responsible screenshots")
 ![responsible](/readme_images/login.png "Responsible screenshots")
 ![responsible](/readme_images/overview.png "Responsible screenshots")
 ![responsible](/readme_images/reservation.png "Responsible screenshots")
 ![responsible](/readme_images/profile.png "Responsible screenshots")
-![responsible](/readme_images/google-login.png "Responsible screenshots")
 ![responsible](/readme_images/email-verification.png "Responsible screenshots")
 ![responsible](/readme_images/email-requests.png "Responsible screenshots")
+![responsible](/readme_images/responsible.png "Responsible mobile screenshot")
 
 ## Possible improvements:
 
