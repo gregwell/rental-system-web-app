@@ -1,12 +1,12 @@
 ## Description:
 
-A web application that allows booking equipment for rental, managing reservations and current rentals made on-site. Along with the desktop application forms one coherent **rental management system**.
+A web application that allows booking equipment for rental, managing reservations and current rentals made on-site. Along with [the desktop application](/https://github.com/Mehuu26/RentalManagementSystem) forms one coherent **rental management system**.
 
 ![responsible](/readme_images/responsible.png "Responsible mobile screenshot")
 
 ## Rental management system
 
-Project created in a team of two. I was responsible for the customer side (web application created in TypeScript, React - this repo) and my collegue was responsible for the employee side (desktop application written in Java). Beyond the implementation, we were both responsible for the design of the system (compare existing solutions, set the requirements for our system, integrate data...)
+Project created in a team of two. I was responsible for the customer side (web application created in TypeScript, React - this repo) and my collegue was responsible for the employee side ([desktop application](https://github.com/Mehuu26/RentalManagementSystem) written in Java). Beyond the implementation, we were both responsible for the design of the system (compare existing solutions, set the requirements for our system, integrate data...)
 
 Theoretical background was described in our [engineering thesis](/engineering-thesis.pdf). The paper was written and defended at AGH University of Science and Technology in January 2022 with a grade of 5.0.
 
