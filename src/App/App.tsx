@@ -37,6 +37,7 @@ function App() {
 
   const [apiDataInitialized, setApiDataInitialized] = useState<boolean>(false);
 
+  //one object apiData
   const [users, setUsers] = useState<User[] | null>(null);
   const [prices, setPrices] = useState<Price[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -78,34 +79,33 @@ function App() {
     if (companyInfo?.title) {
       localStorage.setItem("title", companyInfo.title);
     }
-  }, [companyInfo.title]);
+  }, [companyInfo]);
 
   useEffect(() => {
+    //fetchAll
     const prepareApiData = async () => {
-      const fetchedReservations = await sendApiRequest({
-        collection: Collection.reservations,
-        operation: CrudOperation.READ,
-      });
-      const fetchedUsers = await sendApiRequest({
-        collection: Collection.users,
-        operation: CrudOperation.READ,
-      });
-      const fetchedItems = await sendApiRequest({
-        collection: Collection.items,
-        operation: CrudOperation.READ,
-      });
-      const fetchedCompanyInfo = await sendApiRequest({
-        collection: Collection.company,
-        operation: CrudOperation.READ,
-      });
-      const fetchedRentals = await sendApiRequest({
-        collection: Collection.rentals,
-        operation: CrudOperation.READ,
-      });
-      const fetchedPrices = await sendApiRequest({
-        collection: Collection.prices,
-        operation: CrudOperation.READ,
-      });
+      const [
+        fetchedReservations,
+        fetchedUsers,
+        fetchedItems,
+        fetchedCompanyInfo,
+        fetchedRentals,
+        fetchedPrices,
+      ] = await Promise.all(
+        [
+          Collection.reservations,
+          Collection.users,
+          Collection.items,
+          Collection.company,
+          Collection.rentals,
+          Collection.prices,
+        ].map((collection) => {
+          return sendApiRequest({
+            collection: collection,
+            operation: CrudOperation.READ,
+          });
+        })
+      );
 
       setItems(fetchedItems as Item[]);
       setUsers(fetchedUsers as User[]);
