@@ -113,7 +113,7 @@ const ReservationPanel = ({
 
   const itemsWithoutBackups = removeBackupItems(
     itemsLessByPercentage,
-    companyInfo.percentage as string
+    companyInfo?.percentage as string
   );
 
   const itemsWithoutBackupsArray = Object.values(itemsWithoutBackups).flat();
