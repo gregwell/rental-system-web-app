@@ -84,12 +84,12 @@ function App() {
             Collection.company,
             Collection.rentals,
             Collection.prices,
-          ].map((collection) => {
-            return sendApiRequest({
+          ].map((collection) =>
+            sendApiRequest({
               collection: collection,
               operation: CrudOperation.READ,
-            });
-          })
+            })
+          )
         );
 
       dispatch((prev: State) => ({
