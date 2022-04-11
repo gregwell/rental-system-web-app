@@ -4,6 +4,16 @@ import { init } from "@emailjs/browser";
 
 import ReservationPanel from "./ReservationPanel/ReservationPanel";
 import Navbar from "./Navbar/Navbar";
+import { sendApiRequest } from "./async/sendApiRequest";
+import MyServices from "./MyServices/MyServices";
+import MyProfile from "./MyProfile/MyProfile";
+import ReservationFocus from "./Focus/ReservationFocus";
+import RentalFocus from "./Focus/RentalFocus";
+import NotFound from "./NotFound";
+import Footer from "./Footer";
+import Contact from "./Contact";
+import AccessGuard from "./general/AccessGuard";
+import ConfirmEmail from "./ConfirmEmail";
 import {
   User,
   Reservation,
@@ -16,17 +26,7 @@ import {
   Path,
   State,
 } from "./constants/types";
-import { sendApiRequest } from "./async/sendApiRequest";
-import MyServices from "./MyServices/MyServices";
-import MyProfile from "./MyProfile/MyProfile";
-import ReservationFocus from "./Focus/ReservationFocus";
-import RentalFocus from "./Focus/RentalFocus";
-import NotFound from "./NotFound";
 import { decryptObject, encryptObject } from "./utils";
-import Footer from "./Footer";
-import Contact from "./Contact";
-import AccessGuard from "./general/AccessGuard";
-import ConfirmEmail from "./ConfirmEmail";
 
 init(process.env.REACT_APP_EMAILJS as string);
 
