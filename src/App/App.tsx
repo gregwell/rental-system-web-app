@@ -114,6 +114,7 @@ function App() {
   return (
     <Router>
       <Navbar state={state} dispatch={dispatch} />
+
       <AccessGuard wait={!apiDataInitialized}>
         <Routes>
           <Route
@@ -173,9 +174,11 @@ function App() {
             path={Path.contact}
             element={<Contact companyInfo={state.companyInfo} />}
           />
+
           <Route path={Path.notFound} element={<NotFound />} />
         </Routes>
       </AccessGuard>
+
       <Footer />
     </Router>
   );
