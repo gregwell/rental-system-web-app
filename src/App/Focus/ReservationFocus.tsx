@@ -1,14 +1,13 @@
 import { Typography, Grid, Button } from "@mui/material";
 import {
   Reservation,
-  Item,
   ItemType,
   Status,
-  User,
   Collection,
   CrudOperation,
-  CompanyInfo,
   Path,
+  StateProps,
+  State,
 } from "../constants/types";
 
 import { makeStyles } from "@mui/styles";
@@ -81,22 +80,14 @@ const useStyles = makeStyles({
   },
 });
 
-interface ReservationFocusProps {
-  reservations: Reservation[] | null;
-  items: Item[] | null;
-  loggedUser: User | null | undefined;
-  setReservations: React.Dispatch<React.SetStateAction<Reservation[]>>;
+interface ReservationFocusProps extends StateProps {
   apiDataInitialized: boolean;
-  companyInfo?: CompanyInfo;
 }
 
 export const ReservationFocus = ({
-  reservations,
-  items,
-  loggedUser,
-  setReservations,
+  state,
+  dispatch,
   apiDataInitialized,
-  companyInfo,
 }: ReservationFocusProps) => {
   const { _id } = useParams();
   const navigate = useNavigate();
@@ -113,14 +104,15 @@ export const ReservationFocus = ({
 
   useEffect(() => {
     const prepareReservationState = () => {
-      const foundReservation = reservations?.find((r) => r._id === _id);
+      const foundReservation = state.reservations?.find((r) => r._id === _id);
 
       if (!foundReservation) {
         navigate(Path.notFound);
         return;
       }
 
-      const userHasPermission = loggedUser?._id === foundReservation?.userId;
+      const userHasPermission =
+        state.loggedUser?._id === foundReservation?.userId;
 
       if (userHasPermission) {
         setReservation(foundReservation);
@@ -134,9 +126,15 @@ export const ReservationFocus = ({
       prepareReservationState();
       setReservationPrepared(true);
     }
-  }, [_id, apiDataInitialized, loggedUser?._id, navigate, reservations]);
+  }, [
+    _id,
+    apiDataInitialized,
+    navigate,
+    state.loggedUser?._id,
+    state.reservations,
+  ]);
 
-  const item = items?.find((i) => i.productId === reservation?.productId);
+  const item = state.items?.find((i) => i.productId === reservation?.productId);
 
   const makeStylesProps = {
     isCancelled: reservation?.status === Status.cancelled ? true : false,
@@ -162,7 +160,7 @@ export const ReservationFocus = ({
   };
 
   const onCancelReservation = async () => {
-    if (!loggedUser) {
+    if (!state.loggedUser) {
       return;
     }
 
@@ -195,18 +193,21 @@ export const ReservationFocus = ({
 
     setReservation(updatedReservation);
 
-    if (!reservations) {
-      setReservations([updatedReservation]);
+    if (!state.reservations) {
+      dispatch((prev: State) => ({
+        ...prev,
+        reservations: [updatedReservation],
+      }));
       return;
     }
 
-    const updatedReservations = reservations.reduce((acc, curr) => {
+    const updatedReservations = state.reservations.reduce((acc, curr) => {
       const reservation = curr._id === _id ? updatedReservation : curr;
       acc.push(reservation);
       return acc;
     }, [] as Reservation[]);
 
-    setReservations(updatedReservations);
+    dispatch((prev: State) => ({ ...prev, reservations: updatedReservations }));
   };
 
   const things = [
@@ -218,12 +219,14 @@ export const ReservationFocus = ({
 
   return (
     <AccessGuard
-      wait={loggedUser === undefined || !reservationPrepared}
+      wait={state.loggedUser === undefined || !reservationPrepared}
       deny={reservation === null}
     >
       <CustomContainer
         textAlign="left"
-        backgroundColor={loggedUser ? getBgColor(reservation?.status) : "white"}
+        backgroundColor={
+          state.loggedUser ? getBgColor(reservation?.status) : "white"
+        }
       >
         <Grid container spacing={2}>
           <Grid item xs={3} sm={3} md={2} lg={1.5}>
@@ -274,10 +277,9 @@ export const ReservationFocus = ({
           <ContactField
             item={item}
             service={reservation}
-            companyInfo={companyInfo}
             startDateFormatted={startDateFormatted}
             finishDateFormatted={finishDateFormatted}
-            loggedUser={loggedUser}
+            state={state}
           />
         </Grid>
       </CustomContainer>

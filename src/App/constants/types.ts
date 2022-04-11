@@ -124,3 +124,19 @@ export enum Path {
   contact = "/contact",
   notFound = "*",
 }
+
+export interface State {
+  users: User[] | null;
+  prices: Price[];
+  reservations: Reservation[];
+  items: Item[];
+  rentals: Rental[];
+  companyInfo: CompanyInfo;
+  loggedUser: User | null | undefined;
+  newReservationSuccess: boolean | null;
+}
+
+export interface StateProps {
+  state: State;
+  dispatch: React.Dispatch<React.SetStateAction<State>>;
+}

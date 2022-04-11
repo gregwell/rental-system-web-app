@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
+import { init } from "@emailjs/browser";
 
 import ReservationPanel from "./ReservationPanel/ReservationPanel";
 import Navbar from "./Navbar/Navbar";
@@ -13,6 +14,7 @@ import {
   Price,
   CompanyInfo,
   Path,
+  State,
 } from "./constants/types";
 import { sendApiRequest } from "./async/sendApiRequest";
 import MyServices from "./MyServices/MyServices";
@@ -21,7 +23,6 @@ import ReservationFocus from "./Focus/ReservationFocus";
 import RentalFocus from "./Focus/RentalFocus";
 import NotFound from "./NotFound";
 import { decryptObject, encryptObject } from "./utils";
-import { init } from "@emailjs/browser";
 import Footer from "./Footer";
 import Contact from "./Contact";
 import AccessGuard from "./general/AccessGuard";
@@ -30,89 +31,76 @@ import ConfirmEmail from "./ConfirmEmail";
 init(process.env.REACT_APP_EMAILJS as string);
 
 function App() {
-  const [loggedUser, setLoggedUser] = useState<User | null | undefined>(
-    undefined
-  );
-  const [loggedUserPrepared, setLoggedUserPrepared] = useState<boolean>(false);
-
+  const [loggedUserInitialized, setLoggedUserInitialized] =
+    useState<boolean>(false);
   const [apiDataInitialized, setApiDataInitialized] = useState<boolean>(false);
 
-  //one object apiData
-  const [users, setUsers] = useState<User[] | null>(null);
-  const [prices, setPrices] = useState<Price[]>([]);
-  const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [items, setItems] = useState<Item[]>([]);
-  const [rentals, setRentals] = useState<Rental[]>([]);
-  const [companyInfo, setCompanyInfo] = useState<CompanyInfo>(
-    {} as CompanyInfo
-  );
-
-  const [newReservationSuccess, setNewReservationSuccess] = useState<
-    boolean | null
-  >(null);
+  const [state, dispatch] = useState<State>({} as State);
 
   useEffect(() => {
     const prepareLoggedUserState = () => {
       const localStorageItem = localStorage.getItem("user");
 
       if (localStorageItem && localStorageItem !== "") {
-        setLoggedUser(decryptObject(JSON.parse(localStorageItem)));
+        dispatch((prev: State) => ({
+          ...prev,
+          state: decryptObject(JSON.parse(localStorageItem)),
+        }));
       }
 
       if (!localStorageItem) {
-        setLoggedUser(null);
+        dispatch((prev: State) => ({ ...prev, state: null }));
       }
-      setLoggedUserPrepared(true);
+      setLoggedUserInitialized(true);
     };
-    if (!loggedUserPrepared) {
+    if (!loggedUserInitialized) {
       prepareLoggedUserState();
     }
-  }, [loggedUserPrepared]);
+  }, [loggedUserInitialized]);
 
   useEffect(() => {
-    if (loggedUser) {
-      localStorage.setItem("user", JSON.stringify(encryptObject(loggedUser)));
-    }
-  }, [loggedUser]);
-
-  useEffect(() => {
-    if (companyInfo?.title) {
-      localStorage.setItem("title", companyInfo.title);
-    }
-  }, [companyInfo]);
-
-  useEffect(() => {
-    //fetchAll
-    const prepareApiData = async () => {
-      const [
-        fetchedReservations,
-        fetchedUsers,
-        fetchedItems,
-        fetchedCompanyInfo,
-        fetchedRentals,
-        fetchedPrices,
-      ] = await Promise.all(
-        [
-          Collection.reservations,
-          Collection.users,
-          Collection.items,
-          Collection.company,
-          Collection.rentals,
-          Collection.prices,
-        ].map((collection) => {
-          return sendApiRequest({
-            collection: collection,
-            operation: CrudOperation.READ,
-          });
-        })
+    if (state.loggedUser) {
+      localStorage.setItem(
+        "user",
+        JSON.stringify(encryptObject(state.loggedUser))
       );
+    }
+  }, [state.loggedUser]);
 
-      setItems(fetchedItems as Item[]);
-      setUsers(fetchedUsers as User[]);
-      setPrices(fetchedPrices as Price[]);
-      setRentals(fetchedRentals as Rental[]);
-      setReservations(fetchedReservations as Reservation[]);
-      setCompanyInfo(fetchedCompanyInfo[0] as CompanyInfo);
+  useEffect(() => {
+    if (state.companyInfo?.title) {
+      localStorage.setItem("title", state.companyInfo.title);
+    }
+  }, [state.companyInfo?.title]);
+
+  useEffect(() => {
+    const prepareApiData = async () => {
+      const [reservations, users, items, companyInfo, rentals, prices] =
+        await Promise.all(
+          [
+            Collection.reservations,
+            Collection.users,
+            Collection.items,
+            Collection.company,
+            Collection.rentals,
+            Collection.prices,
+          ].map((collection) => {
+            return sendApiRequest({
+              collection: collection,
+              operation: CrudOperation.READ,
+            });
+          })
+        );
+
+      dispatch((prev: State) => ({
+        ...prev,
+        items: items as Item[],
+        users: users as User[],
+        prices: prices as Price[],
+        rentals: rentals as Rental[],
+        reservations: reservations as Reservation[],
+        companyInfo: companyInfo[0] as CompanyInfo,
+      }));
 
       setApiDataInitialized(true);
     };
@@ -123,71 +111,37 @@ function App() {
 
   return (
     <Router>
-      <Navbar
-        users={users}
-        loggedUser={loggedUser}
-        setLoggedUser={setLoggedUser}
-        setNewReservationSuccess={setNewReservationSuccess}
-        setUsers={setUsers}
-      />
+      <Navbar state={state} dispatch={dispatch} />
       <AccessGuard wait={!apiDataInitialized}>
         <Routes>
           <Route
             path={Path.home}
-            element={
-              <ReservationPanel
-                users={users}
-                setUsers={setUsers}
-                loggedUser={loggedUser}
-                setLoggedUser={setLoggedUser}
-                reservations={reservations}
-                setNewReservationSuccess={setNewReservationSuccess}
-                newReservationSuccess={newReservationSuccess}
-                setReservations={setReservations}
-                items={items}
-                companyInfo={companyInfo}
-                prices={prices}
-              />
-            }
+            element={<ReservationPanel state={state} dispatch={dispatch} />}
           />
 
           <Route
             path={Path.services}
             element={
               <MyServices
-                reservations={reservations}
-                newReservationSuccess={newReservationSuccess}
-                loggedUser={loggedUser}
-                items={items}
+                state={state}
+                dispatch={dispatch}
                 apiDataInitialized={apiDataInitialized}
-                rentals={rentals}
-                prices={prices}
               />
             }
           />
 
           <Route
             path={Path.profile}
-            element={
-              <MyProfile
-                loggedUser={loggedUser}
-                users={users}
-                setUsers={setUsers}
-                setLoggedUser={setLoggedUser}
-              />
-            }
+            element={<MyProfile state={state} dispatch={dispatch} />}
           />
 
           <Route
             path={`${Path.singleReservation}/:_id`}
             element={
               <ReservationFocus
-                reservations={reservations}
-                items={items}
-                loggedUser={loggedUser}
-                setReservations={setReservations}
                 apiDataInitialized={apiDataInitialized}
-                companyInfo={companyInfo}
+                state={state}
+                dispatch={dispatch}
               />
             }
           />
@@ -196,12 +150,8 @@ function App() {
             path={`${Path.singleRental}/:_id`}
             element={
               <RentalFocus
-                rentals={rentals}
-                items={items}
-                loggedUser={loggedUser}
                 apiDataInitialized={apiDataInitialized}
-                companyInfo={companyInfo}
-                prices={prices}
+                state={state}
               />
             }
           />
@@ -210,16 +160,16 @@ function App() {
             path={`${Path.confirmEmail}/:token`}
             element={
               <ConfirmEmail
-                setLoggedUser={setLoggedUser}
-                users={users}
                 apiDataInitialized={apiDataInitialized}
+                state={state}
+                dispatch={dispatch}
               />
             }
           />
 
           <Route
             path={Path.contact}
-            element={<Contact companyInfo={companyInfo} />}
+            element={<Contact companyInfo={state.companyInfo} />}
           />
           <Route path={Path.notFound} element={<NotFound />} />
         </Routes>

@@ -3,19 +3,17 @@ import { useParams } from "react-router-dom";
 import { sendApiRequest } from "./async/sendApiRequest";
 import AccessGuard from "./general/AccessGuard";
 import CustomContainer from "./general/CustomContainer";
-import { Collection, CrudOperation, User } from "./constants/types";
+import { Collection, CrudOperation, State, StateProps } from "./constants/types";
 import { decrypt, decryptObject, decryptLong } from "./utils";
 import { Alert, AlertTitle } from "@mui/material";
 
-interface ConfirmEmailProps {
-  setLoggedUser: React.Dispatch<React.SetStateAction<User | null | undefined>>;
-  users: User[] | null;
+interface ConfirmEmailProps extends StateProps {
   apiDataInitialized: boolean;
 }
 
 const ConfirmEmail = ({
-  setLoggedUser,
-  users,
+  state,
+  dispatch,
   apiDataInitialized,
 }: ConfirmEmailProps) => {
   const { token } = useParams();
@@ -34,7 +32,7 @@ const ConfirmEmail = ({
       const parsedObj = JSON.parse(decryptedToken);
 
       if (
-        users?.find((user) => {
+        state.users?.find((user) => {
           return decrypt(user.email) === decrypt(parsedObj.email);
         })
       ) {
@@ -52,18 +50,19 @@ const ConfirmEmail = ({
       setSuccess(true);
 
       parsedObj._id = insertedId;
-      users?.push(parsedObj);
+      state.users?.push(parsedObj);
 
       const decryptedObj = decryptObject(parsedObj);
       decryptedObj._id = insertedId;
-      setLoggedUser(decryptedObj);
+
+      dispatch((prev: State) => ({ ...prev, loggedUser: decryptedObj }));
     };
 
     if (!doneOnce) {
       setDoneOnce(true);
       createUser();
     }
-  }, [apiDataInitialized, doneOnce, setLoggedUser, success, token, users]);
+  }, [apiDataInitialized, dispatch, doneOnce, state.users, token]);
 
   return (
     <AccessGuard wait={success === null || !apiDataInitialized}>

@@ -22,6 +22,8 @@ import {
   Collection,
   AuthFormFields,
   Path,
+  StateProps,
+  State,
 } from "../constants/types";
 import { sendApiRequest } from "../async/sendApiRequest";
 import {
@@ -56,13 +58,7 @@ const useStyles = makeStyles({
   },
 });
 
-interface AuthProps {
-  users: User[] | null;
-  setLoggedUser: (value: User | null | undefined) => void;
-  setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
-}
-
-const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
+const Auth = ({ state, dispatch }: StateProps) => {
   const classes = useStyles();
 
   const [showGoogleRegisterForm, setShowGoogleRegisterForm] =
@@ -130,13 +126,13 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
       body: encryptedPostBody,
     })) as string;
 
-    if (users) {
+    if (state.users) {
       encryptedPostBody._id = insertedId;
-      users.push(encryptedPostBody);
+      state.users.push(encryptedPostBody);
     }
 
     postBody._id = insertedId;
-    setLoggedUser(postBody);
+    dispatch((prev: State) => ({ ...prev, loggedUser: postBody }));
   }, [
     user.password,
     user.passwordSecond,
@@ -146,12 +142,12 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
     user.email,
     user.phone,
     randomEmailCode,
-    users,
-    setLoggedUser,
+    state.users,
+    dispatch,
   ]);
 
   const handleLogin = useCallback(() => {
-    const userFound: User | undefined = users?.find((currUser) => {
+    const userFound: User | undefined = state.users?.find((currUser) => {
       return (
         currUser?.email.length > 0 &&
         decrypt(currUser?.email) === user.loginEmail
@@ -171,9 +167,9 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
     }
 
     decryptedUserFound._id = userFound._id;
-    setLoggedUser(decryptedUserFound);
+    dispatch((prev: State) => ({ ...prev, loggedUser: decryptedUserFound }));
     return;
-  }, [users, user.loginPassword, user.loginEmail, setLoggedUser]);
+  }, [dispatch, state.users, user.loginEmail, user.loginPassword]);
 
   const handleGoogleRegister = async () => {
     if (!googleId) {
@@ -199,12 +195,12 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
     })) as string;
 
     encryptedPostBody._id = insertedId;
-    if (users) {
-      users.push(encryptedPostBody);
+    if (state.users) {
+      state.users.push(encryptedPostBody);
     }
 
     postBody._id = insertedId;
-    setLoggedUser(postBody);
+    dispatch((prev: State) => ({ ...prev, loggedUser: postBody }));
   };
 
   const googleSuccess = async (
@@ -222,7 +218,7 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
 
     const googleId: string = res?.googleId ? res.googleId.slice(0, 14) : "";
 
-    const userFound: User | undefined = users?.find((user) => {
+    const userFound: User | undefined = state.users?.find((user) => {
       return (
         user?.googleId &&
         user?.googleId.length > 0 &&
@@ -233,7 +229,7 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
     if (userFound) {
       const decryptedUserFound: User = decryptObject(userFound);
 
-      setLoggedUser(decryptedUserFound);
+      dispatch((prev: State) => ({ ...prev, loggedUser: decryptedUserFound }));
       return;
     }
 
@@ -261,7 +257,7 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
     }
     setNoSuchCode(false);
 
-    const userFound: User | undefined = users?.find((user) => {
+    const userFound: User | undefined = state.users?.find((user) => {
       return user?._id === removeDashes(codeInput);
     });
 
@@ -278,7 +274,7 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
 
     setUser(userFound);
     setShowCodeRegisterForm(true);
-  }, [codeInput, user, users]);
+  }, [codeInput, user, state.users]);
 
   const handleCodeRegister = async () => {
     if (!codeInput) {
@@ -311,20 +307,20 @@ const Auth = ({ users, setLoggedUser, setUsers }: AuthProps) => {
       return;
     }
 
-    setLoggedUser(postBody);
+    dispatch((prev: State) => ({ ...prev, loggedUser: postBody }));
 
-    if (!users) {
-      setUsers([updated]);
+    if (!state.users) {
+      dispatch((prev: State) => ({ ...prev, users: [updated] }));
       return;
     }
 
-    const updatedUsers = users.reduce((acc, curr) => {
+    const updatedUsers = state.users.reduce((acc, curr) => {
       const user = curr._id === removeDashes(codeInput) ? updated : curr;
       acc.push(user);
       return acc;
     }, [] as User[]);
 
-    setUsers(updatedUsers);
+    dispatch((prev: State) => ({ ...prev, users: updatedUsers }));
   };
 
   const onSendEmail = async () => {

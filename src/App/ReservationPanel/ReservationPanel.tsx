@@ -10,14 +10,7 @@ import {
   Alert,
 } from "@mui/material";
 
-import {
-  Item,
-  User,
-  Reservation,
-  Price,
-  ItemPrice,
-  CompanyInfo,
-} from "../constants/types";
+import { Item, State, ItemPrice, StateProps } from "../constants/types";
 import AvailableItems from "./AvailableItems/AvailableItems";
 import { ReservationDateTimePicker } from "./ReservationDateTimePicker";
 import { ReservationConfirmation } from "./ReservationConfirmation";
@@ -55,37 +48,11 @@ const useStyles = makeStyles({
   },
 });
 
-interface ReservationPanelProps {
-  users: User[] | null;
-  setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
-  items: Item[] | null;
-  loggedUser: User | null | undefined;
-  setLoggedUser: (value: User | null | undefined) => void;
-  reservations: Reservation[] | null;
-  setNewReservationSuccess: (newValue: boolean | null) => void;
-  newReservationSuccess: boolean | null;
-  setReservations: React.Dispatch<React.SetStateAction<Reservation[]>>;
-  companyInfo: CompanyInfo;
-  prices: Price[];
-}
-
-const ReservationPanel = ({
-  users,
-  setUsers,
-  loggedUser,
-  setLoggedUser,
-  reservations,
-  setNewReservationSuccess,
-  newReservationSuccess,
-  setReservations,
-  items,
-  prices,
-  companyInfo,
-}: ReservationPanelProps) => {
+const ReservationPanel = ({ state, dispatch }: StateProps) => {
   const classes = useStyles();
 
-  const uniqueTypes = items
-    ? new Set(items.map((item) => item.type as string))
+  const uniqueTypes = state.items
+    ? new Set(state.items.map((item) => item.type as string))
     : [];
 
   const types = Array.from(uniqueTypes).map((type) => getPolishName(type));
@@ -102,18 +69,18 @@ const ReservationPanel = ({
 
   useEffect(() => {
     setPricesTable(
-      calculateReservationPriceForEachType(prices, startDate, finishDate)
+      calculateReservationPriceForEachType(state.prices, startDate, finishDate)
     );
-  }, [prices, startDate, finishDate]);
+  }, [state.prices, startDate, finishDate]);
 
   const itemsLessByPercentage = groupItems({
-    items: items,
+    items: state.items,
     bysize: true,
   });
 
   const itemsWithoutBackups = removeBackupItems(
     itemsLessByPercentage,
-    companyInfo?.percentage as string
+    state.companyInfo?.percentage as string
   );
 
   const itemsWithoutBackupsArray = Object.values(itemsWithoutBackups).flat();
@@ -121,30 +88,30 @@ const ReservationPanel = ({
   const filteredItems = filterOutReservedItems(
     startDate,
     finishDate,
-    reservations,
+    state.reservations,
     itemsWithoutBackupsArray
   );
   const groupedFilteredItems = groupItems({ items: filteredItems });
 
   const onSearchButtonClick = useCallback(() => {
     setIsShowingReservationForm(false);
-    setNewReservationSuccess(null);
-  }, [setNewReservationSuccess]);
+    dispatch((prev: State) => ({ ...prev, newReservationSuccess: null }));
+  }, [dispatch]);
 
   const searchPanelText =
-    newReservationSuccess === false
+    state.newReservationSuccess === false
       ? "Wyszukaj ponownie"
       : isShowingReservationForm
       ? "... lub wyszukaj ponowie"
       : "Wybierz termin i sprawdź dostępny sprzęt";
 
-  const open = parseInt(companyInfo?.open as string);
-  const close = parseInt(companyInfo?.close as string);
+  const open = parseInt(state.companyInfo?.open as string);
+  const close = parseInt(state.companyInfo?.close as string);
 
   const showWrongHoursAlert =
     startDate &&
     finishDate &&
-    companyInfo &&
+    state.companyInfo &&
     (startDate.getHours() < open ||
       startDate.getHours() >= close ||
       finishDate.getHours() < open ||
@@ -158,7 +125,7 @@ const ReservationPanel = ({
   const ReservationTimeAlert = () => {
     if (showWrongHoursAlert) {
       return (
-        <Alert severity="warning">{`Conajmniej jedna wybrana godzina odbioru/zwrotu znajduje się poza godzinami pracy wypożyczalni (${companyInfo?.open} - ${companyInfo?.close}). Wybierz inne godziny.`}</Alert>
+        <Alert severity="warning">{`Conajmniej jedna wybrana godzina odbioru/zwrotu znajduje się poza godzinami pracy wypożyczalni (${state.companyInfo?.open} - ${state.companyInfo?.close}). Wybierz inne godziny.`}</Alert>
       );
     }
 
@@ -173,7 +140,7 @@ const ReservationPanel = ({
     }
 
     return (
-      <Alert severity="info">{`Wypożyczalnia czynna w godzinach ${companyInfo?.open} - ${companyInfo?.close}.  Miej to na uwadze wybierając godziny wynajmu. `}</Alert>
+      <Alert severity="info">{`Wypożyczalnia czynna w godzinach ${state.companyInfo?.open} - ${state.companyInfo?.close}.  Miej to na uwadze wybierając godziny wynajmu. `}</Alert>
     );
   };
 
@@ -192,14 +159,9 @@ const ReservationPanel = ({
           startDate={startDate}
           finishDate={finishDate}
           isUserLogged={false}
-          users={users}
-          setUsers={setUsers}
-          loggedUser={loggedUser}
-          setLoggedUser={setLoggedUser}
           pricesTable={pricesTable}
-          setNewReservationSuccess={setNewReservationSuccess}
-          newReservationSuccess={newReservationSuccess}
-          setReservations={setReservations}
+          state={state}
+          dispatch={dispatch}
         />
       )}
       <div className={classes.panel}>

@@ -1,13 +1,4 @@
-import {
-  Rental,
-  CompanyInfo,
-  Item,
-  User,
-  Status,
-  ItemType,
-  Path,
-  Price,
-} from "../constants/types";
+import { Rental, ItemType, Path, State } from "../constants/types";
 import { makeStyles } from "@mui/styles";
 import { useEffect, useState } from "react";
 import { formatDate } from "../utils";
@@ -15,7 +6,7 @@ import { useNavigate, useParams } from "react-router";
 import AccessGuard from "../general/AccessGuard";
 import CustomContainer from "../general/CustomContainer";
 import { colors } from "../constants/colors";
-import { Grid, Typography, Button } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import CustomIcon from "../general/CustomIcon";
 import ContactField from "./ContactField";
 import RentalPriceDisplay from "../MyServices/RentalPriceDisplay";
@@ -74,22 +65,11 @@ const useStyles = makeStyles({
 });
 
 interface RentalFocusProps {
-  rentals: Rental[] | null;
-  items: Item[] | null;
-  loggedUser: User | null | undefined;
   apiDataInitialized: boolean;
-  companyInfo?: CompanyInfo;
-  prices: Price[];
+  state: State;
 }
 
-const RentalFocus = ({
-  rentals,
-  items,
-  loggedUser,
-  apiDataInitialized,
-  companyInfo,
-  prices,
-}: RentalFocusProps) => {
+const RentalFocus = ({ state, apiDataInitialized }: RentalFocusProps) => {
   const { _id } = useParams();
   const navigate = useNavigate();
   const [rental, setRental] = useState<Rental | undefined | null>(undefined);
@@ -97,14 +77,14 @@ const RentalFocus = ({
 
   useEffect(() => {
     const prepareReservationState = () => {
-      const foundRental = rentals?.find((r) => r._id === _id);
+      const foundRental = state.rentals?.find((r) => r._id === _id);
 
       if (!foundRental) {
         navigate(Path.notFound);
         return;
       }
 
-      const userHasPermission = loggedUser?._id === foundRental?.userId;
+      const userHasPermission = state.loggedUser?._id === foundRental?.userId;
 
       if (userHasPermission) {
         setRental(foundRental);
@@ -118,9 +98,9 @@ const RentalFocus = ({
       prepareReservationState();
       setRentalPrepared(true);
     }
-  }, [_id, apiDataInitialized, loggedUser?._id, navigate, rentals]);
+  }, [_id, apiDataInitialized, navigate, state.loggedUser?._id, state.rentals]);
 
-  const item = items?.find((i) => i.productId === rental?.productId);
+  const item = state.items?.find((i) => i.productId === rental?.productId);
 
   const startDateFormatted = formatDate(rental?.startDate);
   const finishDateFormatted = formatDate(rental?.finishDate);
@@ -141,7 +121,7 @@ const RentalFocus = ({
   }
 
   const priceTable = calculateReservationPriceForEachType(
-    prices,
+    state.prices,
     new Date(parseInt(rental?.startDate as string)),
     new Date(Date.now())
   );
@@ -152,7 +132,7 @@ const RentalFocus = ({
 
   return (
     <AccessGuard
-      wait={loggedUser === undefined || !rentalPrepared}
+      wait={state.loggedUser === undefined || !rentalPrepared}
       deny={rental === null}
     >
       <CustomContainer
@@ -203,10 +183,9 @@ const RentalFocus = ({
             rental
             item={item}
             service={rental}
-            companyInfo={companyInfo}
             startDateFormatted={startDateFormatted}
             finishDateFormatted={finishDateFormatted}
-            loggedUser={loggedUser}
+            state={state}
           />
         </Grid>
       </CustomContainer>

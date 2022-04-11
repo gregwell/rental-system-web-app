@@ -6,7 +6,7 @@ import { makeStyles } from "@mui/styles";
 import {
   Item,
   Reservation,
-  User,
+  State,
   Status,
   ItemPrice,
   CrudOperation,
@@ -50,30 +50,20 @@ interface ReservationConfirmationProps {
   startDate: Date | null;
   finishDate: Date | null;
   isUserLogged: boolean;
-  users: User[] | null;
-  setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
-  loggedUser: User | null | undefined;
-  setLoggedUser: (value: User | null | undefined) => void;
   pricesTable: ItemPrice[] | null;
   setIsShowingReservationForm: (value: boolean) => void;
-  setNewReservationSuccess: (newValue: boolean | null) => void;
-  newReservationSuccess: boolean | null;
-  setReservations: React.Dispatch<React.SetStateAction<Reservation[]>>;
+  state: State;
+  dispatch: React.Dispatch<React.SetStateAction<State>>;
 }
 
 export const ReservationConfirmation = ({
   choosenItem,
   startDate,
   finishDate,
-  users,
-  setUsers,
-  loggedUser,
-  setLoggedUser,
   setIsShowingReservationForm,
   pricesTable,
-  setNewReservationSuccess,
-  newReservationSuccess,
-  setReservations,
+  state,
+  dispatch,
 }: ReservationConfirmationProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -85,7 +75,7 @@ export const ReservationConfirmation = ({
   const [currentReservation, setCurrentReservation] = useState<Reservation>();
 
   useEffect(() => {
-    if (newReservationSuccess === true) {
+    if (state.newReservationSuccess === true) {
       navigate(Path.services);
 
       /*
@@ -98,30 +88,21 @@ export const ReservationConfirmation = ({
       });
       */
 
-      setReservations((prevState) => {
-        const arr = [...prevState, currentReservation] as Reservation[];
-        return arr;
-      });
+      dispatch((prev: State) => ({
+        ...state,
+        reservations: [
+          ...prev.reservations,
+          currentReservation,
+        ] as Reservation[],
+      }));
     }
-  }, [
-    choosenItem.model,
-    choosenItem.producer,
-    choosenItem.size,
-    currentReservation,
-    finishDate,
-    loggedUser?.name,
-    loggedUser?.surname,
-    navigate,
-    newReservationSuccess,
-    setReservations,
-    startDate,
-  ]);
+  }, [currentReservation, dispatch, navigate, state]);
 
   const onSendReservation = useCallback(async () => {
-    if (choosenItem && startDate && finishDate && loggedUser) {
+    if (choosenItem && startDate && finishDate && state.loggedUser) {
       const reservationPostData: Reservation = {
         productId: choosenItem.productId,
-        userId: loggedUser._id as string,
+        userId: state.loggedUser._id as string,
         startDate: startDate.getTime().toString(),
         finishDate: finishDate.getTime().toString(),
         price: itemPrice?.price.toString() as string,
@@ -129,6 +110,14 @@ export const ReservationConfirmation = ({
       };
 
       setCurrentReservation(reservationPostData);
+
+      const setNewReservationSuccess = (success: boolean) => {
+        dispatch((prev: State) => ({
+          ...prev,
+          newReservationSuccess: success,
+        }));
+      };
+
       const insertedId = (await sendApiRequest({
         collection: Collection.reservations,
         operation: CrudOperation.CREATE,
@@ -141,11 +130,11 @@ export const ReservationConfirmation = ({
     }
   }, [
     choosenItem,
+    dispatch,
     finishDate,
     itemPrice?.price,
-    loggedUser,
-    setNewReservationSuccess,
     startDate,
+    state.loggedUser,
   ]);
 
   if (!startDate || !finishDate) {
@@ -155,7 +144,7 @@ export const ReservationConfirmation = ({
   return (
     <>
       <CustomContainer noPaddingBottom>
-        {newReservationSuccess === false ? (
+        {state.newReservationSuccess === false ? (
           <div className={classes.title}>
             <Alert severity="error">
               <AlertTitle>Błąd!</AlertTitle>
@@ -195,18 +184,12 @@ export const ReservationConfirmation = ({
                 {`(stawka ${itemPrice?.isPerDay ? "dzienna" : "godzinna"})`}
               </Typography>
               <br />
-              {!!loggedUser ? (
+              {!!state.loggedUser ? (
                 <Button onClick={onSendReservation} variant="contained">
                   Rezerwuję
                 </Button>
               ) : (
-                <>
-                  <Auth
-                    users={users}
-                    setLoggedUser={setLoggedUser}
-                    setUsers={setUsers}
-                  />
-                </>
+                <Auth state={state} dispatch={dispatch} />
               )}
             </div>
             <div className={classes.goBack}>

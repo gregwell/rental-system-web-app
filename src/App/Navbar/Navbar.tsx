@@ -8,24 +8,10 @@ import BookIcon from "@mui/icons-material/Book";
 import LoginIcon from "@mui/icons-material/Login";
 
 import Auth from "../Auth/Auth";
-import { Path, User } from "../constants/types";
+import { Path, State, StateProps } from "../constants/types";
 import { useStyles } from "./styles";
 
-interface NavbarProps {
-  users: User[] | null;
-  loggedUser: User | null | undefined;
-  setLoggedUser: (value: User | null | undefined) => void;
-  setNewReservationSuccess: (newVal: boolean | null) => void;
-  setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
-}
-
-const Navbar = ({
-  users,
-  loggedUser,
-  setLoggedUser,
-  setNewReservationSuccess,
-  setUsers,
-}: NavbarProps) => {
+const Navbar = ({ state, dispatch }: StateProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
 
@@ -36,31 +22,35 @@ const Navbar = ({
   };
 
   const signOut = () => {
-    setLoggedUser(null);
+    dispatch((prev: State) => ({ ...prev, loggedUser: null }));
     localStorage.setItem("user", "");
     navigate(Path.home);
   };
 
+  const eraseNewReservationSuccess = () => {
+    dispatch((prev: State) => ({ ...prev, newReservationSuccess: null }));
+  };
+
   const goToReservations = () => {
-    setNewReservationSuccess(null);
+    eraseNewReservationSuccess();
     navigate(Path.services);
   };
 
   const goToHome = () => {
-    setNewReservationSuccess(null);
+    eraseNewReservationSuccess();
     navigate(Path.home);
   };
 
   const goToProfile = () => {
-    setNewReservationSuccess(null);
+    eraseNewReservationSuccess();
     navigate(Path.profile);
   };
 
   useEffect(() => {
-    if (loggedUser) {
+    if (state.loggedUser) {
       setShowAuth(false);
     }
-  }, [loggedUser]);
+  }, [state.loggedUser]);
 
   const title = localStorage.getItem("title");
   const pageTitle = title ? title : "System rezerwacji on-line";
@@ -74,18 +64,18 @@ const Navbar = ({
         </div>
       </Grid>
       <Grid item className={classes.item} md={1.5} xs={12}>
-        {!loggedUser ? (
+        {!state.loggedUser ? (
           <Button variant="contained" color="primary" onClick={onButtonClick}>
             <LoginIcon className={classes.paddingRight} />
             {showAuth ? "Ukryj" : "Zaloguj się"}
           </Button>
         ) : (
           <>
-            <Typography>{`Cześć ${loggedUser.name}!`}</Typography>
+            <Typography>{`Cześć ${state.loggedUser.name}!`}</Typography>
           </>
         )}
       </Grid>
-      {!!loggedUser && (
+      {!!state.loggedUser && (
         <Container className={classes.paddingBottom}>
           <Grid container>
             <Grid item xs={12} sm={6} md={3}>
@@ -121,11 +111,7 @@ const Navbar = ({
         <>
           <div className={classes.topBar} />
           <div className={classes.auth}>
-            <Auth
-              users={users}
-              setLoggedUser={setLoggedUser}
-              setUsers={setUsers}
-            />
+            <Auth state={state} dispatch={dispatch} />
           </div>
         </>
       )}

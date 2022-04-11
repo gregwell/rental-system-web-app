@@ -3,14 +3,7 @@ import { makeStyles } from "@mui/styles";
 
 import SingleReservation from "./SingleReservation";
 import SingleRental from "./SingleRental";
-import {
-  Reservation,
-  User,
-  Item,
-  Status,
-  Rental,
-  Price,
-} from "../constants/types";
+import { StateProps, Status } from "../constants/types";
 import AccessGuard from "../general/AccessGuard";
 
 const useStyles = makeStyles({
@@ -37,42 +30,32 @@ const useStyles = makeStyles({
   },
 });
 
-interface MyServicesProps {
-  reservations: Reservation[] | null;
-  newReservationSuccess: boolean | null;
-  loggedUser: User | null | undefined;
-  items: Item[] | null;
+interface MyServicesProps extends StateProps {
   apiDataInitialized: boolean;
-  rentals: Rental[];
-  prices: Price[];
 }
 
 const MyServices = ({
-  loggedUser,
-  reservations,
-  newReservationSuccess,
-  items,
-  prices,
-  rentals,
+  state,
+  dispatch,
   apiDataInitialized,
 }: MyServicesProps) => {
   const classes = useStyles();
 
-  if (reservations && reservations.length > 0) {
-    reservations?.push(
-      reservations.splice(
-        reservations.findIndex((v) => v?.status === Status.cancelled),
+  if (state.reservations && state.reservations.length > 0) {
+    state.reservations?.push(
+      state.reservations.splice(
+        state.reservations.findIndex((v) => v?.status === Status.cancelled),
         1
       )[0]
     );
   }
 
-  const loggedUserRentals = rentals.filter(
-    (rental) => rental.userId === loggedUser?._id
+  const loggedUserRentals = state.rentals.filter(
+    (rental) => rental.userId === state.loggedUser?._id
   );
 
   return (
-    <AccessGuard wait={loggedUser === undefined} deny={loggedUser === null}>
+    <AccessGuard wait={state.loggedUser === undefined} deny={state.loggedUser === null}>
       <AccessGuard wait={!apiDataInitialized}>
         <div className={classes.panel}>
           <Container className={classes.reservation}>
@@ -80,7 +63,7 @@ const MyServices = ({
               Aktualne rezerwacje i wypożyczenia:
             </Typography>
             <div className={classes.alert}>
-              {newReservationSuccess === true && (
+              {state.newReservationSuccess === true && (
                 <Alert severity="success">
                   <AlertTitle>
                     Rezerwacja została dokonana pomyślnie!
@@ -94,15 +77,15 @@ const MyServices = ({
               <SingleRental
                 key={rental._id}
                 rental={rental}
-                item={items?.find(
+                item={state.items?.find(
                   (item) => item.productId === rental.productId
                 )}
-                prices={prices}
+                prices={state.prices}
               />
             ))}
 
-            {!!reservations &&
-              reservations
+            {!!state.reservations &&
+              state.reservations
                 .filter(
                   (reservation) => parseInt(reservation.startDate) > Date.now()
                 )
@@ -111,12 +94,12 @@ const MyServices = ({
                 })
                 .map((reservation) => {
                   return (
-                    loggedUser &&
-                    reservation.userId === loggedUser._id && (
+                    state.loggedUser &&
+                    reservation.userId === state.loggedUser._id && (
                       <SingleReservation
                         key={reservation._id}
                         reservation={reservation}
-                        item={items?.find(
+                        item={state.items?.find(
                           (item) => item.productId === reservation.productId
                         )}
                       />
@@ -127,8 +110,8 @@ const MyServices = ({
             <Typography variant="h5" className={classes.alert}>
               Rezerwacje i wypożyczenia archiwalne:
             </Typography>
-            {!!reservations &&
-              reservations
+            {!!state.reservations &&
+              state.reservations
                 .filter(
                   (reservation) => parseInt(reservation.startDate) < Date.now()
                 )
@@ -137,12 +120,12 @@ const MyServices = ({
                 })
                 .map((reservation) => {
                   return (
-                    loggedUser &&
-                    reservation.userId === loggedUser._id && (
+                    state.loggedUser &&
+                    reservation.userId === state.loggedUser._id && (
                       <SingleReservation
                         key={reservation._id}
                         reservation={reservation}
-                        item={items?.find(
+                        item={state.items?.find(
                           (item) => item.productId === reservation.productId
                         )}
                       />

@@ -11,7 +11,14 @@ import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-import { CrudOperation, User, Collection, Path } from "../constants/types";
+import {
+  CrudOperation,
+  User,
+  Collection,
+  Path,
+  StateProps,
+  State,
+} from "../constants/types";
 import SingleProfileItem from "./SingleProfileItem";
 import { sendApiRequest } from "../async/sendApiRequest";
 import { encrypt, encryptObject } from "../utils";
@@ -46,19 +53,7 @@ const useStyles = makeStyles({
   },
 });
 
-interface MyProfileProps {
-  loggedUser: User | null | undefined;
-  users: User[] | null;
-  setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
-  setLoggedUser: React.Dispatch<React.SetStateAction<User | null | undefined>>;
-}
-
-const MyProfile = ({
-  loggedUser,
-  users,
-  setUsers,
-  setLoggedUser,
-}: MyProfileProps) => {
+const MyProfile = ({ state, dispatch }: StateProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
 
@@ -68,11 +63,11 @@ const MyProfile = ({
   const [email, setEmail] = useState<string>("");
 
   useEffect(() => {
-    setName(loggedUser?.name as string);
-    setSurname(loggedUser?.surname as string);
-    setPhone(loggedUser?.phone as string);
-    setEmail(loggedUser?.email as string);
-  }, [loggedUser]);
+    setName(state.loggedUser?.name as string);
+    setSurname(state.loggedUser?.surname as string);
+    setPhone(state.loggedUser?.phone as string);
+    setEmail(state.loggedUser?.email as string);
+  }, [state.loggedUser]);
 
   const [updateDataSuccesful, setUpdateDataSuccesful] = useState<
     boolean | null
@@ -91,29 +86,29 @@ const MyProfile = ({
     if (deleteUserSuccessful === true) {
       const timer = setTimeout(() => {
         setDeleteUserSuccessful(null);
-        setLoggedUser(null);
+        dispatch((prev: State) => ({ ...prev, loggedUser: null }));
         navigate(Path.home);
       }, 2500);
       return () => clearTimeout(timer);
     }
-  }, [deleteUserSuccessful, loggedUser, navigate, setLoggedUser]);
+  }, [deleteUserSuccessful, dispatch, navigate]);
 
   const onDeleteUser = async () => {
-    if (!loggedUser) {
+    if (!state.loggedUser) {
       return;
     }
 
     await sendApiRequest({
       collection: Collection.users,
       operation: CrudOperation.DELETE,
-      filter: { _id: { $oid: loggedUser._id } },
+      filter: { _id: { $oid: state.loggedUser._id } },
       setState: setDeleteUserSuccessful,
     });
 
     await sendApiRequest({
       collection: Collection.reservations,
       operation: CrudOperation.DELETE_MANY,
-      filter: { userId: loggedUser._id },
+      filter: { userId: state.loggedUser._id },
       setState: setDeleteUserReservationsSuccessful,
     });
 
@@ -124,39 +119,42 @@ const MyProfile = ({
       return;
     }
 
-    if (users) {
-      setUsers(
-        users.filter((user) => {
-          return !(user?._id === loggedUser._id);
-        })
-      );
+    if (state.users) {
+      const filtered = state.users.filter((user) => {
+        if (state.loggedUser === undefined || state.loggedUser === null) {
+          return false;
+        }
+        return !(user?._id === state.loggedUser._id);
+      });
+
+      dispatch((prev: State) => ({ ...prev, users: filtered }));
     }
   };
 
   const onUpdate = () => {
-    if (!loggedUser) {
+    if (!state.loggedUser) {
       return;
     }
 
     const updated: any = {};
-    let updatedLoggedUser = { ...loggedUser };
+    let updatedLoggedUser = { ...state.loggedUser };
 
-    if (name !== loggedUser.name) {
+    if (name !== state.loggedUser.name) {
       updated.name = encrypt(name);
       updatedLoggedUser.name = name;
     }
 
-    if (surname !== loggedUser.surname) {
+    if (surname !== state.loggedUser.surname) {
       updated.surname = encrypt(surname);
       updatedLoggedUser.surname = surname;
     }
 
-    if (phone !== loggedUser.phone) {
+    if (phone !== state.loggedUser.phone) {
       updated.phone = encrypt(phone);
       updatedLoggedUser.phone = phone;
     }
 
-    if (email !== loggedUser.email) {
+    if (email !== state.loggedUser.email) {
       updated.email = encrypt(email);
       updatedLoggedUser.email = email;
     }
@@ -164,7 +162,7 @@ const MyProfile = ({
     sendApiRequest({
       collection: Collection.users,
       operation: CrudOperation.UPDATE,
-      filter: { _id: { $oid: loggedUser._id } },
+      filter: { _id: { $oid: state.loggedUser._id } },
       update: {
         $set: updated,
       },
@@ -175,27 +173,36 @@ const MyProfile = ({
       return;
     }
 
-    setLoggedUser(updatedLoggedUser);
+    dispatch((prev: State) => ({ ...prev, loggedUser: updatedLoggedUser }));
 
-    if (!users) {
-      setUsers([updated]);
+    if (!state.users) {
+      dispatch((prev: State) => ({ ...prev, users: [updated] }));
       return;
     }
 
-    const updatedUsers = users.reduce((acc, curr) => {
+    const updatedUsers = state.users.reduce((acc, curr) => {
+      if (state.loggedUser === undefined || state.loggedUser === null) {
+        return acc;
+      }
+
       const user =
-        curr._id === loggedUser._id ? encryptObject(updatedLoggedUser) : curr;
+        curr._id === state.loggedUser._id
+          ? encryptObject(updatedLoggedUser)
+          : curr;
       acc.push(user);
       return acc;
     }, [] as User[]);
 
-    setUsers(updatedUsers);
+    dispatch((prev: State) => ({ ...prev, users: updatedUsers }));
   };
   return (
-    <AccessGuard wait={loggedUser === undefined} deny={loggedUser === null}>
+    <AccessGuard
+      wait={state.loggedUser === undefined}
+      deny={state.loggedUser === null}
+    >
       <div className={classes.panel}>
         <Container className={classes.reservation}>
-          {!!loggedUser && (
+          {!!state.loggedUser && (
             <>
               <Typography variant="h5">Edycja profilu</Typography>
               <Grid container spacing={4}>

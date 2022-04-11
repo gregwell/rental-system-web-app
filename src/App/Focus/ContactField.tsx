@@ -1,11 +1,10 @@
 import { Alert, AlertTitle, Grid, TextField, Button } from "@mui/material";
 import emailjs from "@emailjs/browser";
 import {
-  CompanyInfo,
   Reservation,
   Rental,
   Item,
-  User,
+  State,
 } from "../constants/types";
 import { useState } from "react";
 import { makeStyles } from "@mui/styles";
@@ -20,34 +19,32 @@ const useStyles = makeStyles({
 });
 
 interface ContactFieldProps {
-  companyInfo?: CompanyInfo;
   startDateFormatted: string;
   finishDateFormatted: string;
   service?: Reservation | Rental | null;
   item?: Item | null;
-  loggedUser?: User | null;
   rental?: boolean;
+  state: State;
 }
 
 const ContactField = ({
-  companyInfo,
+  state,
   startDateFormatted,
   finishDateFormatted,
   service,
   item,
-  loggedUser,
   rental,
 }: ContactFieldProps) => {
   const [query, setQuery] = useState<string>("");
   const [querySuccess, setQuerySuccess] = useState<boolean | null>(null);
   const classes = useStyles();
 
-  if (!service || !loggedUser || !service || !companyInfo) {
+  if (!service || !state.loggedUser || !service || !state.companyInfo) {
     return null;
   }
 
   const handleEmailSend = async () => {
-    if (!companyInfo) {
+    if (!state.companyInfo) {
       return;
     }
 
@@ -58,10 +55,10 @@ const ContactField = ({
         serviceId: service?._id,
         itemFullName: `${item?.producer} ${item?.model} (rozmiar: ${item?.size})`,
         finishDate: finishDateFormatted,
-        clientFullName: `${loggedUser?.name} ${loggedUser?.surname}`,
+        clientFullName: `${state.loggedUser?.name} ${state.loggedUser?.surname}`,
         clientId: service?.userId,
-        companyEmail: companyInfo?.email,
-        clientEmail: loggedUser?.email,
+        companyEmail: state.companyInfo?.email,
+        clientEmail: state.loggedUser?.email,
       });
       console.log("success");
       setQuerySuccess(true);
@@ -80,7 +77,7 @@ const ContactField = ({
           <AlertTitle>
             {`Na tej stronie możesz wysłać zapytanie e-mail dotyczące ${alertText}.`}
           </AlertTitle>
-          {`Pamiętaj, że w nagłych przypadkach możesz skontaktować się z nami pod numerem telefonu ${companyInfo?.phone}`}
+          {`Pamiętaj, że w nagłych przypadkach możesz skontaktować się z nami pod numerem telefonu ${state.companyInfo?.phone}`}
         </Alert>
       </Grid>
       {querySuccess !== null ? (
@@ -93,7 +90,7 @@ const ContactField = ({
           ) : (
             <Alert severity="error">
               <AlertTitle>Wystąpił błąd!</AlertTitle>
-              {`Skontakuj się z wypożyczalnią pod numerem telefonu ${companyInfo?.phone} aby uzyskać informacje.`}
+              {`Skontakuj się z wypożyczalnią pod numerem telefonu ${state.companyInfo?.phone} aby uzyskać informacje.`}
             </Alert>
           )}
         </Grid>
