@@ -75,16 +75,18 @@ function App() {
 
   useEffect(() => {
     const prepareApiData = async () => {
+      const collections = [
+        Collection.reservations,
+        Collection.users,
+        Collection.items,
+        Collection.company,
+        Collection.rentals,
+        Collection.prices,
+      ];
+
       const [reservations, users, items, companyInfo, rentals, prices] =
         await Promise.all(
-          [
-            Collection.reservations,
-            Collection.users,
-            Collection.items,
-            Collection.company,
-            Collection.rentals,
-            Collection.prices,
-          ].map((collection) =>
+          collections.map((collection) =>
             sendApiRequest({
               collection: collection,
               operation: CrudOperation.READ,
